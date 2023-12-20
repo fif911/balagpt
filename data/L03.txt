@@ -1,0 +1,1210 @@
+--------------------------------------------------------------------------------
+
+Part 01
+
+--------------------------------------------------------------------------------
+
+The trust of the server, the case of the mid-neck attack, or when we have 
+visibility of the
+communication between the client and the server, so we know the sequence and 
+acknowledgement
+numbers, and the only thing we need to worry about is the acknowledgement storm 
+that takes
+place when we start injecting data, right?
+Now, we're going to do...
+All of these attacks were, especially the mid-neck attack, was fairly advanced, 
+but
+not advanced enough to our liking, so we're going to do something more 
+interesting today.
+Okay, so there's a program that can do this, and the thing that we're going to 
+do today
+is look at pure off-path TCP hijacking, so that's the toughest thing to do.
+
+The idea is that we are on the other side of the internet, there is a server 
+which may
+or may not be communicating with some client, we want to find out if this is 
+the case, and
+if this is the case, we want to hijack that connection.
+
+We don't see the connection, we don't see the data, we don't have the sequence 
+numbers,
+we don't have the acknowledgement numbers, we don't even have the port numbers 
+that are
+being used by the connection.
+
+So all of these things have to be inferred somewhat, and that's what we're 
+going to do
+with this attack, so it's a new hope for the attackers, you know, after all of 
+this
+mid-neck and gensure, mumbo-jumbo, which was kind of cool some time ago, what 
+can we do today?
+And it's based on a paper that was published in 2016, usenix security.
+
+So it's an interesting attack, the idea is that we use global rate limiting 
+that provides
+us with a little bit of information that's surprisingly powerful, that we can 
+exploit
+to obtain all the information that we're missing, so that is the port number, 
+the sequence number
+and the acknowledgement number.
+
+And it's an interesting attack to discuss for multiple reasons.
+So first, it's a good illustration of a situation where people try to remedy a 
+security problem,
+which was minor, a really trivial security problem I would say, they had a fix 
+for this
+and the fix created a much bigger security problem.
+
+This is not an uncommon scenario, it happens all the time, right, so there's a 
+fix for
+one thing and it creates all sorts of mayhem on the other end.
+The other reason why this is interesting is that this is the first time we're 
+starting
+to look at a real side channel in the net.
+
+So this is based on a side channel and the side channel in this particular case 
+is based
+on this rate limit, so it's again a secure measure to make sure that there's 
+not an insane
+number of packets being sent potentially through an attack.
+
+So it's a TCP based side channel that existed in Linux, later than version 3.6.
+And the idea is that given any two IP addresses on the internet, a blind 
+attacker, so not
+able to see any of the traffic between these client and server, can infer that 
+there is
+a connection, can infer the port number, can infer the sequence number and can 
+infer the
+announcement number and then either reset the connection to terminate an 
+existing connection
+or inject data.
+
+So visually there's a victim server and a client server all far away, we are 
+far away,
+we don't see anything but we still want to terminate or inject data.
+
+So what we're going to use is a security measure that was taken because of a 
+smaller problem.
+It was described in the request for comments of the standard RFC 5961 which 
+tried to remedy
+the fact that even on the existing situation, so without any modification, a 
+blind attacker
+could, if the blind attacker was very lucky, terminate someone's connection or 
+even inject
+data, very unlikely, but it could happen.
+And the way you could do that is by simply being lucky with packets that you 
+send.
+For instance, you send a spoof packet where you have some known source 
+destination ports
+and IP addresses, assuming that you know the source port number, which is a 
+rather
+big assumption, and then you have to be lucky with a sequence number that you 
+select.
+It happens to be in window.
+Then you could terminate somebody else's connection.
+It's not very likely that you're lucky, but it could happen.
+And similarly, as we shall see later, you could, if you were super lucky, also 
+inject
+data.
+To remedy that, RFC 5961 was proposed and implemented in a number of operating 
+systems,
+and in one in particular, in Linux, it was implemented well.
+
+That was the difference between the implementation of Linux and the 
+implementation of some of
+the other operating systems.
+
+It was implemented correctly on Linux, and that made it vulnerable.
+That's unfortunate, but that is the case.
+What the RFC changed was the response to certain actions, when a sync packet 
+arrived,
+when a reset packet arrived, or when a simple data packet arrived.
+There were fairly, conceptually fairly advanced modifications, but it's not all 
+that in practice
+you wouldn't even see all that much of it.
+The idea was that prior to 5961, we had a sequence number space of 2 to the 
+power of 32,
+which is illustrated in a somewhat funky manner as a circle.
+That represents 2 to the power of 32.
+If your attacker would send a spoofed IP packet, a spoofed SYN packet, what 
+would happen is
+that it would always be acknowledged if it was not in the receiver's window.
+
+If it was not in the receiver window, you would simply acknowledge the SYN 
+packet, but
+if a SYN packet arrived that was in the receiver's window, it would reset the 
+connection.
+
+Now, in this picture, the receiver window looks like a very large chunk of the 
+2 to the power of 32
+space that you have, but in reality, of course, it's only a tiny sliver, so 
+it's unlikely that this would happen.
+By the way, why would they reset the connection if you receive a SYN packet 
+that is in window?
+Why would you even ever receive a SYN packet that is in window?
+You're assuming that packets got lost and someone is trying to initiate the 
+difference?
+Exactly that. You're receiving a SYN packet that should not happen.
+
+You have apparently already established the connection, now you're receiving a 
+SYN packet
+with the same port number and it's in window.
+I mean, what is going on? That should never happen.
+
+Well, it only happens if apparently the other side thinks the connection is dead
+and is trying to set up a new connection.
+In that case, you terminate the connection because apparently it's time for a 
+new connection.
+That's the undoing.
+
+Now, as mentioned, if you were very lucky as an attacker, you could send a SYN 
+packet with the right sequence number
+and reset somebody else's connection, which is not good, so they rabbit in them 
+by adding some additional behaviour.
+Now, if the SYN packet was sent and it was not in the window or in window, it 
+didn't actually matter,
+you didn't reset the connection and you didn't automatically ignore the SYN 
+connection,
+instead what you did was send a challenge ACK to the other side.
+
+So it's a smooth SYN packet.
+You would send a challenge ACK to the person that you were trying to 
+impersonate.
+So you would not receive it as an attacker obviously.
+
+The challenge ACK would then have to be confirmed with actual reset from the 
+other side with the right sequence number.
+If the packet is sent from a legitimate site, the legitimate site would receive 
+that challenge ACK
+and it would send a reset packet with the correct sequence number.
+
+And the correct sequence number would be easy to determine from the legitimate 
+site because you just sent it an ACK.
+So you also know which sequence number to use.
+And only then you would lose the connection.
+So that's the way it would work.
+
+And the attacker doesn't have access to that challenge ACK so it cannot do this.
+So now you can no longer reset the connection.
+Alright, what about the receiving of packets?
+That also changes.
+Sorry, the receiving of reset packets.
+That also changes.
+So in the early 5961 days you would have two situations.
+You could receive a reset packet that was out of window and a reset packet that 
+was in window.
+If it was in window, you would reset the connection.
+So this is what we've been assuming so far all along.
+If it was out of window, you simply drop it.
+So it's not in window, you can simply ignore it.
+And just to clarify, maybe I should have done this earlier.
+So there's a receiver window which starts with receive.next.
+So that is the next packet that I'm expecting to receive.
+And the receiver next plus the receiver window is the last packet that I expect 
+to receive.
+That is the window.
+So what they changed was now if anything is out of window, we still simply drop 
+the packet.
+
+But if we receive a reset packet that happens to be in the receiver window, we 
+don't automatically reset the connection.
+So that, what we're going to do is we're sending a challenge ACK again.
+And then the other side has to confirm that it really wants to terminate this 
+connection.
+Only if we receive a reset connection that exactly matches the next packet that 
+we expect to receive do we immediately reset the connection.
+So what are the conditions in the set match?
+Well, so this is what you can then use for the other side.
+The other side will then send back a reset packet with the exact match and then 
+you can tear it down.
+That was the sole reason behind that.
+
+Again, the attacker doesn't see this challenge ACK so cannot determine what the 
+right orange packet should be and therefore cannot simply reset the packet.
+So this can go further if it's not the exact match, right?
+It could go forever except that it's really easy to determine what the exact 
+match should be because you're getting the challenge ACK which contains the 
+acknowledgement number.
+So you know which number to use.
+Okay, finally, so these are two different things that are happening on the SYN 
+packets, on reset packets.
+There's also a change in the way we receive data after RFC 5961.
+So, before RFC 5961 we had a very large accept window.
+It was roughly half of the sequence number space, right?
+So this is 4G, this was 2G roughly, right?
+So two gigawatt of box that was all in the accept window.
+If anything is out of the accept window it will simply be dropped.
+If it was in the accept window it would be processed.
+But before you go there, there's another check.
+So before you even look at the acknowledgement numbers, you look at the 
+sequence numbers to make sure that it is in the accept window, in the receiver 
+window.
+So packet comes in, contains data, you first check whether or not the sequence 
+number is in the receiver window and if it is in the receiver window you go and 
+check whether or not the acknowledgement number is acceptable.
+And it's acceptable if it's in anywhere of the semi-circle at the top.
+Only in this part we simply call it invalid.
+Okay, well the change is illustrated here already with the two colours.
+We now make a distinction between an accept window and a challenge window.
+And only if we receive packets with an acknowledgement number that is in the 
+blue area, in the accept window, we actually process the data.
+And if it's in the challenge window, we send a challenge out.
+Okay, so now we have a much smaller sliver of the 2 to the power of 32 sequence 
+numbers that we have that the attacker has to guess.
+So that sounds good, right? It sounds like the right thing to do, make it much 
+less likely, in fact extremely unlikely, that an attacker can still reset the 
+connection for instance, or inject it.
+
+Okay, so we're going to use the following definitions.
+We have the sequence number, secc, receiver next is the next byte, next octet 
+that the receiver expects to receive.
+The receiver window, wnt, first unacknowledged bytes, the una first 
+unacknowledged bytes, and the max window that the sender has ever seen.
+So these abbreviations will appear on the actual slides. I'll repeat them when 
+appropriate.
+And what we do is when we receive a packet, we check first, it's a data packet, 
+right?
+We check first if the sequence number is okay.
+So if the sequence number is in the receiver window, next, if that is okay, it 
+will check if the acknowledgement number is acceptable.
+So if it's within the accept window itself, it will simply process it.
+And the accept window is, if we look at the figure, the circle, it's just a 
+little blue area.
+So it's the first unacknowledged byte minus some number, and that number is the 
+largest window that the sender has seen.
+
+So it will simply say, we don't know exactly what would be the right accept 
+window, but let's say it's not going to be more than what we have seen in the 
+past.
+What is unacknowledged byte?
+It's a byte that was sent by the sender, but so far we have not seen an 
+acknowledgement from the other side, which is the first unacknowledged byte.
+You don't know if the receiver received it or not.
+Right, remember last time we explained how TCP acknowledges everything, and if 
+it acknowledges byte 100, it says it received everything up to 100.
+And this is the first byte that was sent out, but we're still waiting for the 
+acknowledgement.
+The TCP sender can send a window full of bytes, and then it has a date for 
+acknowledgement to come in, and the first acknowledgement that's waiting for is 
+that one.
+Alright, and then we send a challenge hack.
+If it's in the very large area that was illustrated in yellow on the previous 
+slide, that runs all the way from roughly where we are now, and minus half of 
+that space.
+Okay, good. That's all clear, right? So now we understand the new way of doing 
+TCP.
+This is fantastic. We can no longer do these byte attacks anymore.
+And there is some vulnerability. There's a vulnerability in this that is 
+related to all of these actions.
+And specifically to one of the security measures that was taken because you 
+didn't want to send out Internet numbers for seven times.
+So if you just send a large number of packets that are in this large area, your 
+sender would be posting its client with challenge hacks.
+They would just send as many challenge hacks as it could.
+So to prevent that, there had to be a measure to limit the number of challenge 
+hacks that you could send.
+That's what the RFC prescribed. Is that clear? If you just make this 
+unrestricted, there will be lots of challenge hacks that potentially will be 
+sent.
+So when will the challenge actually trigger? There are three situations that 
+we've discussed.
+When there is a SYN packet, which has all the four flow tuples in place.
+So it has to have the right source IP address, the right destination IP 
+address, the right source port number, and the right destination port.
+So if that is all the case, then you would trigger a challenge hack if the SYN 
+was in the window.
+You would also send a challenge hack if there was a reset packet, which not 
+only had to have all the four tuples in place correctly, but also it had to 
+have the right sequence number.
+So a sequence number that is in the window. That was an additional. Then we 
+would also send a challenge hack.
+We would also send a challenge hack if, in the case of a data packet, if all 
+the four tuples were correct.
+The sequence number was correct, but also the sequence number was in the 
+window, but also the acknowledgement number had to be in the challenge window.
+So there is a progression of things that could lead to the sending of a 
+challenge hack.
+Again, we don't want to have an infinite number of challenge hacks sent by the 
+server or by the client. It doesn't matter.
+It can go either way, because that would lead to a lot of extra traffic being 
+sent from one end of the window.
+To prevent that, there had to be some measure in place that would limit the 
+number of challenge hacks being sent.
+Some rate limit of challenge hacks. It didn't prescribe in detail how it should 
+be implemented, but there had to be a rate limit.
+
+Linux was the only operating system at the time that implemented DATCOMs 
+correctly.
+So what we are going to do is we are going to attack in three steps.
+First we are going to see if there is a... Yes?
+Was there no rate limit at all whatsoever under the operating system?
+I don't remember what the term I... That suggests that I actually knew. I never 
+knew this.
+But it was not properly implemented. That's all I know.
+
+Okay, so what we are going to do is we are going to use these different 
+triggers for challenge hacks to progressively learn more about the connection, 
+if there is any, between a client and a server.
+So the first challenge hack that is triggered by a since packet, we use to 
+learn the core number.
+The second challenge hack that is triggered by a reset packet, we use to learn 
+the sequence number.
+And finally, the one for the data, we use to learn the acknowledgement number.
+So let's see how we are going to do that.
+Well, first of all, what is the crux of the rate limiting here? Because that is 
+really what it is all about.
+It is a global rate limit. And whenever you hear someone say global and you are 
+in security, you should start thinking, well, is this safe?
+If there is a single thing for many users, whatever it is, a single shared 
+resource that is potentially a side channel.
+This is certainly a side channel.
+
+So there was a global rate limit of challenge hacks that could be sent every 
+second, regardless of the connection.
+And in the Linux implementation it was 100, so you could send 100 challenge 
+hacks per second.
+Normally you don't send challenge hacks because all the situations that I 
+described earlier are rare situations.
+They would not normally occur, so 100 challenge hacks is quite liberal.
+So there was a 100 challenge hacks that could be sent every second and then it 
+would be reset, a new second would start, you would have a budget of 100 
+challenge hacks again.
+So if we would send 100 reset packets according to the scheme that we saw 
+earlier that would trigger challenge hacks, and we would send them ourselves, 
+we would also receive 100 challenge hacks.
+That is the implication there.
+So what we can do is we send 100 challenge hacks, sorry, we send 100 reset 
+packets, 100 reset segments, so that we expect 100 challenge hacks to arrive 
+back at us, to be returned to us.
+And while we are doing this, we also send one spoofed SYN packet, a single 
+spoofed SYN packet, with the IP address of the client that we want to see if 
+there is a connection between that client and the server.
+The attacker is spoofing the IP of the client?
+Only the SYN packet, so it has a legitimate connection to the server.
+But not a reset?
+It doesn't reset, it just sends packets that would lead to a challenge hack, so 
+it doesn't really reset the connection, it just sends packets that would lead 
+to a reset.
+Okay.
+Right? Does that do?
+Yeah.
+Alright. Why? Why does it do that?
+What does this benefit the attacker? So you said 100 reset packets, don't reset 
+the connection, just see if the challenge hacks come back.
+Just to clarify, when is the SYN packet sent in comparison to the 100 reset 
+packets?
+Let's say it's simultaneous, so you are doing this at the same time. It has to 
+be at least within that same one second interval.
+I cannot say what would happen, but I assume that the server will not be able 
+to send to the client this challenge hack of not knowing, and you can benefit 
+it somehow?
+Yeah, it's the other way around, so it's almost correct.
+That would only receive 99.
+Yeah, exactly, it's the other way around.
+So, because there is a SYN packet that is sent with a spoofed IP address, let's 
+assume that we guessed the port number correctly, right?
+So the source port number of the client was guessed correctly by the attacker, 
+then a challenge hack would be sent to the real client, to the legitimate 
+client, and then there's only a budget of 99 challenge hacks left.
+So that means the attacker only receives 99 challenge hacks, basically 
+conveying a message that I guessed correctly.
+The spoofed SYN packet had the correct port number.
+Isn't that a race condition, because you could potentially have all of your 
+reset packets get challenge hacked, and then it drops the challenge hack to the 
+part that is...
+Well, if you send the SYN packet as the first packet, make sure that it 
+arrives, but you have to send it all within the same one interval.
+We'll talk about synchronization later.
+This assumes a quiet server that's not sending any other challenge hacks to 
+anyone else, otherwise the budget would be...
+
+Correct, but it's a quiet server in the challenge hack, so normally you won't 
+have a lot of challenge hacks.
+
+So it's a common thing?
+Is this clear, this part?
+Okay, so that's what we do. We send a spoof packet with the guessed value for 
+the source port number, and if it's a correct guess, there will be only 99 
+challenge hacks coming back to the attacker.
+Okay, if it's a wrong guess, so the port number is incorrect, you will still 
+get your 100 reset packets, your 100 challenges.
+Okay, so now we know the port number, and we simply go from there.
+It's the next thing. The next thing, remember, we needed to have four tuple 
+correct, and the sequence number.
+In the case of a reset packet, we have this idea that everything had to be the 
+same, and the four tuple had to be the same, and we also had to have a valid 
+value for the sequence number.
+So we have the four tuple. We've already guessed that using the previous trick 
+with the syn packet.
+Now we just need to have a sequence number that is in window. We do the same 
+thing.
+So we again send a number of spoofed reset packets to see how many challenge 
+hacks we get back, and then we also send a spoofed reset packet to see if our 
+guess for the sequence number is at least okayish in window.
+And again, if we receive 99 challenge hacks from the server, we know that our 
+guess was correct.
+
+So you still send the 100 legitimate resets and one spoofed reset.
+
+So for one of them, you rely on the fact that if the guesses are incorrect, the 
+original, the legitimate client gets a challenge.
+And for the endorsement number, we do the same thing again, but now we use the 
+final trigger for a challenge hack, which is data that has a correct four 
+tuple, has a sequence number that is in window, and has an endorsement number 
+that is in the server.
+So all good. So we send for the first case, we send one spoofed reset packet 
+and 100 legitimate reset packets, and for the second case, for the last piece 
+of information that we need, the endorsement number, we send a spoofed data 
+packet and 100 legitimate reset packets.
+And if we see 99 challenge hacks, then we know that we've guessed.
+So here, this is illustrated as a figure from the paper. It's more complicated, 
+perhaps, than is needed. I think all of the information has already been 
+conveyed.
+So here we have the attacker, there's a client, and there's a server. There's 
+also a client and there's also a server. There's two situations.
+Here, when there is a connection between the client and the server, the 
+off-path attacker sends a packet with a spoofed SYN hack, and the server sends 
+one of the challenge hacks to the client.
+And then it sends 100 reset packets and checks and sees that there are only 99 
+challenge hacks coming back.
+
+So here's the case with the active connection on the left, then there's a case 
+with no connection on the right, and this is done for finding the port number, 
+finding the sequence number, and finding the acknowledgement number.
+That's a complex figure. So out of the 100 packets you've sent, how do you know 
+which of those have the correct combination?
+So the only correct combination is in the spoofed one. For all the 100 ones, 
+you know that they are not correct.
+They are correct in the sense that they are correct for you and will lead to a 
+challenge hack, but they are a legitimate connection with the server.
+It's only that one spoofed packet that you sent that has to have the right 
+guess.
+
+**Binary Search Approach**
+            |
+            v
+
+So you can only send one per second then?
+See, that is the thing, right? That's going to take a long time. What can we do?
+Excellent. So what you can do is maybe send lots of these spoofed packets and 
+see if, you know maybe, assume that we can send as many as we want, right?
+So what we're going to do is, how many guesses do we have to make for the port 
+numbers? 2 to the power 16, right?
+So the port number for TCP is 16 bits, so roughly 2 to the power 16 times you 
+need to guess.
+But let's just assume that we can send as many packets as we want. What we can 
+do is send 2 to the power 16 divided by 2, right?
+So 32,000 packets with guesses for port numbers. And then see if we receive 99 
+challenge hacks back.
+If we receive 99 challenge hacks back, we know that the right one, the right 
+port number was in that set, that set of 32,000, right?
+And then we do it again, we halve the port space, so we send another 16,000. If 
+it's still in there, we know that it is in that set.
+If it's not in there, it must have been the other half. So then we try that and 
+we simply do a binary search on the space.
+Can you clarify again how we send more than one spoofed packet in the second 
+slide?
+Yeah, in the second slide. So you can see, here's how we send more than one 
+spoofed SIM packet, clearly.
+But this is simply what's happening. So the attacker now sends still 100 reset 
+packets, but also sends 32,000, roughly, packets with a spoofed IP address and 
+a new guess for the port number.
+So you try port number 1024, 1025, 1000, and you keep doing that.
+All of those are sent to the server and only one of them, if any, will trigger 
+a challenge hack, because all the other ones will be wrong, will simply be 
+wrong guesses.
+But one of them, if it's in the set, will trigger a challenge hack, and that 
+means that you're going to get exactly the same pattern of when you send a 
+single spoofed SIM packet.
+You get one fewer challenge hack from the server, so 99.
+Is there any risk here, because you're sending more packets, so there's more 
+that the server needs to compute, and if the ordering of your SIM packets and 
+your reset packets gets overlapped, then you might not be within that one 
+second window?
+Yeah, so the one second window, that is perhaps an issue. Let's talk about 
+that, but I'm not sure if that is the next slide. You're right on the money 
+there.
+The binary search has continued, I did have a few more slides, so we've 
+progressively halved the size of the window. Is the binary search part clear to 
+everyone?
+
+**Time Synchronization**
+           |
+           v
+
+Then the time synchronization. We don't know exactly when the period starts 
+where we get 100 challenges, so every one second on the server side, it starts 
+getting a new version of 100 challenges, but when exactly is that?
+So how do we synchronize between the attacker and the server, so that we know 
+exactly now is the time that we get a new set of 100 attacks?
+You could probe for some time before, with different spacings.
+Exactly, so that's exactly what's happening. So what we're going to do to do 
+this is send 200 reset packets evenly spaced in, so we send 200 reset packets 
+all evenly spaced in one second.
+How many challenge acts could we get back? I'm not sure of the answers on the 
+slide now. In the best case, so how many challenge acts at the maximum could we 
+receive?
+200.
+200, right? In the case that we start in one second, send 100 challenge acts in 
+the half second of the first second, and 100 in the first half second of the 
+second second, we would get 100 challenge acts back.
+
+And then we can start adjusting, so we can simply adjust and say, okay, so this 
+was clearly not okay, so we can get maximum 200 challenge acts.
+So now we adjust simply until we get exactly 100 challenge acts back, then we 
+are synchronized with that server.
+
+So if we space them a little bit differently and then we get exactly 100 
+challenge acts, we are okay, we know where to start of the intervals.
+Now, it could be the case that sending 32,000 spoofed packets is too much for 
+you or for the server to process in a second.
+Nowadays, perhaps that's no longer that much of an issue, but depending on who 
+you're talking to, it might be.
+And then you'll have to not do it completely binary search, but you're going to 
+have to make smaller batches.
+In principle, you can also make batches of 1,000, so then it's not in that 
+1,000 set. Let's try the next 1,000.
+
+Doesn't tracking network have any reliability coming to life? Because I imagine 
+that on a local server, network is always fine.
+But if I could do this with a target, let's say in Australia, would that make 
+everything a lot difficult?
+Yes, because you could have packet loss independent of what you're trying to do.
+So what does that mean? What is the implication?
+That you might get false positives.
+You might get false positives. How would you solve this problem?
+Do it how many times?
+Yeah, exactly. It's statistics. In the end, it's all statistics.
+
+This is what you get. By the way, it's a super good question because this is 
+what you get with all side channels.
+In the end, it's noisy, and that means that you probably have to repeat the 
+experiment a number of times, and then you get the right answer.
+Also on the Internet, wouldn't there be latency variations on the individual 
+target?
+Possibly. You mean that you might get out of the one second interval or so?
+Yeah, ICMP varies by a significant amount of seconds.
+Although a second is long, so you can get around the world a couple of times.
+But yeah, noise is always an interesting problem.
+In this case, if you do this time synchronization, you can do that very quickly.
+So in a couple of seconds, you're synchronized with the server.
+You know exactly when it ticks, and then you can watch it.
+All right, this is the main idea of the first side channel attack that we 
+discussed in this class.
+Any questions about this?
+
+I also feel like this is a kind of behavior that's very obvious.
+I'm a sysadmin who's in charge of maintaining the server that's being attacked 
+in this way.
+This is a very conspicuous way of attacking runways.
+Yes, you see a lot of spoofed IP packets, thousands of spoofed IP packets.
+That's very noticeable. You're very loud as an attacker.
+This is true. If you're monitoring for it, assuming you're monitoring for it, 
+this is clearly noisy.
+And we're going to get to that in a later lecture.
+All right, I think it's probably break time now, right?
+Let's roll up first.
+
+--------------------------------------------------------------------------------
+
+Part 02
+
+--------------------------------------------------------------------------------
+
+The key thing here, right, so there's a global rate limit that was shared 
+across all the connections.
+So there's two things that you can do.
+Is you make sure that you eliminate the side channel completely by having rate 
+limits in connection, right?
+So no one was shared.
+Or you make the channel so noisy that it's practically impossible to do this.
+By changing the ACK limit, varying this by a bit at a time, so that it becomes 
+unreliable.
+So you could do all that.
+You could also make a very, very large rate limit.
+So the number of packets that you challenge ACK packets that you could send was 
+so large that it also became impactful.
+Which is a temporary measure, not very reliable.
+Okay.
+So in 2020, unfortunately, there was an update.
+Which is, again, a nice illustration of once something has been found, has been 
+published, it becomes a new goal and objective in and of itself.
+So if it's patched, people are going to look for other things that they can do 
+to still make that attack possible.
+Which is what happened here.
+And so I'm going to talk about that.
+It's another off-path TCP exploit which does not use this global rate limit but 
+uses something else.
+But I believe, if I'm not misremembering, I think we're going to do a small 
+diversion on it.
+We're going to at least first look at what we're going to be using.
+So we no longer have this global acknowledgement challenge ACK rate limit that 
+is usable as such.
+This was passed. It was at least now practically impossible.
+So the attacker had to find something new.
+And instead of this challenge ACK rate limit, it used the IP identifier.
+IP identifier. I'm sure you all remember, what was that used for again? It's in 
+every IP datagram. Used for what?
+Retrospectively, you will all fail your bachelor degrees in computer science.
+The IP identifier. Anybody?
+So it's used, for instance, during fragmentation.
+So when you have an IP packet, it cannot go through a particular pipe because 
+it's too big.
+It gets fragmented.
+And all of the fragments of that IP datagram will have the same IP identifier 
+so that the receiver is able to piece them all together again.
+It looks at all the fragments and says they all belong together.
+Then there is a more fragments following flag that says, you know, if the flag 
+is set to one, you know that there are more fragments that are still arriving.
+And then there is an offset indication that indicates where this particular 
+fragment fits in the larger IP datagram.
+And with all of that information combined, you can piece together the IP 
+datagram, the original IP datagram.
+I'm sure you all remember, but you know, were shy to report.
+
+Anyway, so there is this IP identifier in every IP datagram.
+So here is the more fragments following flag.
+There is also another flag there that says tote fragment.
+If that is set, it basically is an indication that you are not allowed to 
+fragment this packet.
+It has to be kept in one piece.
+And then, what else was I going to say?
+Is there anything else?
+Oh yeah, then there was the fragment offset, which indicates for a particular 
+fragment where it fits.
+Where the bytes in this packet fit in the original data graph.
+So if the offset is zero, this is the start of the fragment.
+If the offset is 100, it's somewhat further in the packet.
+It's not actually offset 100, but we don't need to talk about it yet.
+So it's for the fragmentation of IP datagrams, IPv4 datagrams.
+So this new attack used these IP identifiers and also used challenge acts.
+So they clearly were inspired by the original attack and tried to figure out 
+how they could use a challenge act without having this global rate limit to 
+play with.
+So they used the IP identifier as a shared counter.
+So there was again something that is shared.
+And whenever anything is shared, just like in the global rate limit, it really 
+was very little that was shared.
+The amount of information was very limited and it was enough to get very 
+detailed information.
+The full board number, the full sequence number, the full announcement number.
+Fantastic, right? That's often the case with side channels.
+And as you shall see, that is also the case here.
+
+Right, so now there's the Intermato.
+Because it's another type of attack, although it's really a port scanning 
+attack, that uses the IP identifier.
+And it's a port scanning attack that is different from the ones that we briefly 
+discussed.
+We looked at connect scans and half open scans and we looked at the Christmas 
+scan and we looked at the thin scan all briefly.
+Here's a different one.
+It's an indirect one.
+So the idea is that you scan through another machine.
+Through a machine that is, in the original description of this, it's referred 
+to as a relay zombie.
+So what we're going to do is we're going to send a spoof TCP send packet to the 
+target that we really want to scan.
+And that's going to lead to an interaction with the relay zombie.
+So what happens is we have three machines. I think there's an illustration 
+somewhere.
+So we have three machines.
+And the first thing that we do as an attacker is talk to the relay zombie.
+Why? Because we want to know what its IP identifier is.
+And the IP identifier in the early days was simply incremented by one.
+For every IP datagram that was sent, you would increment your IP identifier by 
+one.
+It's a little bit more difficult now, but we'll talk about that later.
+So anyway, if I communicate with the relay zombie, for instance by sending it a 
+synapse, even though we have no connection,
+the relay zombie is going to say, I have no idea where this comes from, let me 
+just reset this.
+I'm going to reply with a reset packet.
+That's fine, but then I know the IP identifier of the zombie machine.
+So the idea is that the zombie is quiet. It's idle, that's why it's called an 
+idle scan.
+It doesn't receive a lot of trust.
+So I know the IP identifier, and that will be the IP identifier for a while.
+So for a few tens of milliseconds while I carry out the attack.
+The next thing I do is send a spoofed packet to the target that I'm really 
+interested in.
+But I don't want to send it from my name, because then I stand out, it's too 
+conspicuous.
+Maybe there's an intrusion detection system looking for syn packets coming from 
+the outside.
+So what I'm going to do is I'm going to send it to the target with a spoofed IP 
+address of the zombie.
+So I'm pretending to be the relay zombie, which means that the server is going 
+to reply to the zombie.
+So if I send a SYNAC pretending to be the relay zombie, the server is going to 
+send a SYN to the target pretending to be the relay zombie.
+The server is going to send a SYNAC to the relay zombie.
+And again, the relay zombie is going to say, wait, what? I know nothing of this.
+So it's going to reset that connection, so it's going to send a reset packet to 
+the target, to the server.
+But when it does that, what will happen?
+The image is a bit different than what you're telling.
+The server is sending a reset to the zombie, right?
+So I'm not SYNAC, but the server sends a reset to the zombie.
+Let's see, it's on the right side.
+That should not be correct, I think.
+Maybe the port is not open.
+Oh yeah, there's a close port.
+Here we go.
+Man, who knows? I'm having sweat.
+So here now it's okay again.
+So it sends back, in this case the port is open, it sends back a SYNAC to the 
+zombie.
+And the zombie is going to say, where does this come from?
+And it will send a reset back.
+What does that mean?
+The ID will be something that the attacker knows.
+Exactly, so the IP identifier will be incremented because of this packet that 
+is sent.
+So if I now, in the third stage of this attack, or this scan, sample the IP 
+identifier again,
+I will see that it's incremented not by one, but by two.
+So it has responded apparently to the server.
+And of course this only works if this is a quiet machine.
+If it sends packets all the time, the IP identifier will increment in 
+unpredictable ways,
+and will not be accessible.
+If it's a quiet machine, in this case it's a printer that sits perhaps 
+somewhere,
+and then you have to do the IP scan.
+No question?
+Maybe a question.
+It only works for a quiet machine, but also for a certain, rather old machine, 
+right?
+That does not randomize the IP.
+Yeah, so we'll talk about how it increments now.
+You can still do it, but it requires a bit more work.
+This is clear, and if the port is closed, as mentioned here,
+so here we send a SYN, this port was closed, it's not open,
+the server will send a reset packet back to the zombie relay,
+and that will lead to no responses from the zombies.
+So if we now sample the IP identifier, it will be an increment of one.
+Fantastic.
+Now you know a little bit about how these IP identifiers would be set and 
+incremented in the past,
+but now it's a little bit more difficult.
+
+
+We're going to talk about what is more difficult.
+So all of this is related to this IP identifier field
+that is at least set in every datagram and is picked in some way, but how?
+So it's all about the IP identifier, and it's somewhat more random.
+How do we actually pick this IP identifier in a modern system?
+Well, in Linux, from 4.8 version, 4.18 onwards, it was picked in a complex way.
+So you basically had a counter per connection.
+So you have a counter per connection, so your counter is not going to be my 
+counter,
+so I can send all the packets that I want to your system,
+and it will not be incrementing, because you use a different counter.
+Except if you're not.
+So what it would do is it would pick a counter depending on stuff.
+For instance, it could pick a counter per connection, per socket in other words,
+or it could also, in some exceptional cases, very rare, it could pick a shared 
+counter based on a hash.
+So then it would pick one of 2048 different counters selected based on a hash 
+of some stuff
+that we're going to look at in a minute.
+How would it make this decision?
+Well, it had this nice decision tree.
+If the packet that it wanted to send is a reset packet, then it would set the 
+IP identifier to zero.
+Not even pick a counter, it would simply be zero.
+This has to do with another side channel that we're not going to talk about, so 
+this is not a secure domain.
+If it wasn't a reset, it was just a regular packet, it would look at the don't 
+fragment field.
+Remember I showed two flags and more fragments, following field and a don't 
+fragment field,
+which basically indicates I don't want this packet to be fragmented.
+If the don't fragment field is set to one, which is almost always the case 
+nowadays in TCP,
+it would pick, normally unless it's a SYNAC packet, it would pick a counter per 
+socket,
+a unique counter for that socket, not shared with the attacker or anybody else.
+That's not good for the packet.
+However, if the packet could be fragmented, so if the IP datagram did not have 
+the don't fragment flag set,
+it would pick one of the 2048 counters that were available, based on some hash 
+value.
+Even though that's a large number, so it's a lot of counters, it's still shared.
+It's shared between some of the IP addresses out there.
+So that is a situation that we are interested in.
+We want to have a shared counter, because when I say shared, you think?
+Side channel.
+Side channel, exactly.
+
+It's not going to be an exam question, but it should be an exam question.
+Right, but unfortunately that is not the case.
+Almost always the don't fragment flag is set to true.
+So the question is, is this good enough?
+It seems like it's very unlikely that we're going to get this one packet that 
+is going to send with the don't fragment flag set.
+Okay.
+Well, but maybe we could make it so.
+Maybe we could force this to be a fragmented IP datagram,
+at least data that is sent between a client and a server with the don't 
+fragment flag negated.
+So that's the idea.
+So we're going to take three steps.
+The first one is we're going to downgrade the IP identifier assignment such 
+that we use the hash-based counters,
+so one of the 2,048 hash-based counters.
+And once we have that, and we have to do that through this don't fragment flag.
+Somehow this needs to be turned off in some way.
+Once we have that, we know that we're using a hash-based counter,
+and then we're going to look for a collision with other clients.
+So we have to find a client that has the same hash-based counter out of those 
+2,048 as the one that we are using.
+Okay.
+Once we have that, we can use that as a side channel somewhat similar to what 
+we did with the previous side channel.
+So we're going to impersonate the client, we're going to send spoof, synact 
+through the server,
+and then look and see if the IP identifier changes.
+
+Changes in a way that seems to be indicative of it having sent a packet 
+somewhere else,
+just like what we did in the idle scanning technique,
+where we also looked at the observed to see if it incremented by one or by two.
+We're going to do exactly the same trick, but now for a TCP-OPPA hijacking 
+attack.
+Okay.
+Once we have the forward number, we're also going to do the sequence number and 
+acknowledgement number
+in somewhat similar ways, looking at changes in this IP identifier.
+Okay.
+Step one, detecting victim clients and making sure that we downgrade the server 
+to use this hash-based counter.
+So Linux decides to use the don't fragment field based on the counter, based on 
+the don't fragment field,
+and the don't fragment flag is set based on something that we may observe from 
+the network.
+So normally it's set to true, but if we receive a packet from a router saying 
+that,
+look, we really need to fragment this packet to this client,
+so an ICMP error message is sent and it says,
+fragmentation needed, because we have a really small maximum transfer unit on 
+this link,
+then the server is going to change that.
+So Linux pretends to be a router between the server and the client and say that 
+it needs fragmentation.
+So we can send an ICMP error message in principle, but it will not be 
+automatically accepted.
+So we are going to spoof an ICMP error message pretending to be a router on the 
+way,
+and then pretend that we need fragmentation and hopefully it will reset the 
+don't fragment flag.
+But in order to do that, we need to have a valid ICMP message that the server 
+will accept.
+And the server does not check the source of the ICMP message, that's not part 
+of the protocol,
+but it does check to see if the contents are correct.
+And what you need to do is embed data of the offending packet,
+so the packet that was supposedly sent by the server to the client and then 
+triggered this ICMP error message,
+that packet has to be in there.
+So at least part of it, so in the original case it was I think 68 bytes or 28 
+bytes,
+and in later versions of the protocol it was even as much as possible, up to 
+576 bytes.
+
+But there was no packet that went there and that ran into fragmentation,
+so we have to somehow predict what would be a reasonable content for that ICMP.
+Well, the good news is that we can force an ICMP reply message.
+So an ICMP reply message is never validated by the receiver to see if it's 
+actually an actual reply to a real request that it has sent.
+So even though there was never a request sent, just like with ARP, we sent ARP 
+replies,
+even if there was never a request sent, it would still work fine.
+Same is true for ICMP.
+If you receive an echo reply, it does not check if the request was sent earlier.
+So that's good, so we can send an ICMP echo reply.
+An ICMP echo reply, we can easily spoof.
+We know what's going to be in there, and here we see the entire packet.
+It has the IP header, the ICMP header, some content that it contains,
+the addresses, the server address that you're targeting,
+and also the client address that you really want to see if there's a connection 
+between the server and that particular client.
+And then there's a lot of content of all zeros.
+And the ICMP message that we sent, the error message is, again,
+fragmentation is needed for this client on this link.
+So when it finds that, when the server finds that packet, it says,
+OK, apparently towards that client I do need to fragment my packet,
+because otherwise it's not going to get through, so the don't fragment flag 
+gets reset.
+Is that clear? So now we've downgraded it to use one of these hash-based 
+counters.
+OK, so we now have a hash-based IP ID counter.
+
+What we now want is a collision.
+We want to find if there's a client out there that uses the same counter as we 
+do.
+We can do that in multiple ways. Let's see if that's on this slide.
+No, it's not on this slide.
+But one way to do this is, of course, to use lots of IP addresses, right, for 
+me.
+And see if the hash-based counter is exactly the same as that particular IP 
+address
+that we want to attack. We'll see that in a minute.
+OK, so what we can do is we can probe for collisions between our IP address
+and some other fields and the clients that we want to attack,
+or a client that we want to attack.
+So it's either a particular client that we want to attack, or we don't care,
+any client that has a hash collision with us.
+What is the hash? So the hash is over this IP address of the destination,
+the IP address of the source, and a protocol, and some secret boot key, 
+obviously.
+But we're fine as long as there's any collision. We don't really care.
+Let's assume that we don't have a particular target in mind.
+We just want any IP address that we collect.
+So what our package will be using, so the counter that our package will be 
+using,
+are based on, again, the server IP, but a different source IP for us,
+so the attacker IP, and a different protocol.
+And somehow this has to magically land in the same bucket
+so that it uses the same IP ID trunk.
+OK, so what we can do as an attacker is simply send,
+or first of all downgrade this for a particular client.
+We want to try this client, see if that is a client that would collide with us.
+We downgrade the server so that it will reset the dumb fragment flyer,
+and therefore use a hash-based counter.
+That's what we do here.
+The next thing that we do is we send a packet there.
+The attacker now sends a SYN packet to the server,
+and if the server has a different counter,
+so another counter that is hash-based, it doesn't collide with us at all,
+it basically means that it's going to pick an IP identifier that is completely 
+unrelated to us,
+so that if we now later sample this IP identifier, it will be completely 
+different.
+So we can see that this is not a collision with our hash count.
+So it clearly picks a different IP identifier.
+Why do we know that?
+Well, for now we're assuming it increments by one,
+and if we see an increment by one, apparently no packet was sent using our 
+counter.
+So the server may have sent a reply, and it should have sent a reply, a SYNAC 
+reply,
+in response to our SYN packet, but apparently it was not using our IP 
+identifier.
+So our IP identifier is still implemented by one.
+No good.
+
+In the case that there is a shared counter, however,
+what we see is that we do the same thing, we degrade the server,
+and then we send a SYN packet which happens to use our same hash-based counter.
+We can sample that by seeing that now the IP identifier has incremented by two, 
+and so forth.
+And now we think at least this IP address seems to use the same hash packet as 
+we do.
+We really know that because there could be other IP addresses,
+so maybe you just happened to pick an IP address that also led to that same 
+hash,
+but it's not actually that connection that exists.
+But let's know that part.
+In reality, unfortunately, the counter does not increment by one.
+It doesn't increment linearly.
+It picks random values.
+So it's a random value in some uniform distribution between one and the number 
+of system ticks since the last packet transmission.
+
+So that's how it now picks the next IP identifier.
+And that's a little hard to guess for us.
+Trust what? How can we make this easier?
+Yes, exactly.
+We simply treat it in a really short amount of time so that it always 
+increments with exactly one.
+But then we're back to the old situation where the IP identifier is incremented 
+by one.
+Yes, exactly.
+Okay, so that's exactly what I say here.
+So if we send a bunch of packets in a relatively short amount of time, a few 
+milliseconds,
+it will always be an increment by one.
+Good.
+So what is the probability of a collision?
+Well, it's basically this formula.
+So p is the one over 2048.
+This is 2048 packets.
+One of them is going to be the same as yours.
+What is the probability of a collision?
+Well, it's one minus after k tries, so if you have k IP addresses to play with,
+the chance that they all will not be collisions is one minus p to the power of 
+k.
+So the probability of there being collisions one minus that.
+So that's what we're looking at.
+So that means that if we have a relatively modest number of IP addresses to 
+play with,
+we can target pretty much any IP address with very high probability.
+So an attacker that has, where are the numbers, with 2048 IP addresses
+can essentially target any IP address with over 60% probability.
+And getting 2,000 IP addresses is trivial nowadays.
+So you can find IP addresses anywhere.
+This random bottleneck, you get 100,000 or a million if you want,
+for relatively little money.
+Okay.
+Like I said, you don't have to do it, even if you only have one IP address.
+You can still target clients, but you can no longer pick the client.
+You can no longer pick the IP address that you want to attack.
+You will be forced to find those IP addresses that collide with your password.
+Now, again, this is going to be a side-channel attack.
+
+What if there's a lot of noise?
+Would there be a lot of other usage of the counters?
+Or is that not so much of a problem, believe me?
+Would there be a lot of other clients using this exact same hash bucket counter?
+Yeah, exactly.
+So it's a very unusual situation that you have the hash-based counter to begin 
+with.
+It's only those that have the dump fragment set.
+So it's relatively rare.
+So the noise is limited.
+All right.
+So if we want to detect connections, we need to infer the source IP address
+and the source port number, which is relatively simple.
+
+So what we can do is keep sending ICMP echo requests to the server.
+Why?
+That's to monitor the IP identifier progression to see if there are any jumps 
+in the IP ID counter.
+And then we send a SINAC, a spoof SINAC, with a guess for the source IP and the 
+port number.
+If the source port is incorrect, there will be a reset packet sent to the real 
+client with IP ID equals zero.
+Remember in the decision tree that we saw earlier, if it's a reset packet, it 
+will be IP ID zero.
+And therefore, it will not make any change to our counter.
+Great.
+If the source port is correct, however, a challenge F will be sent, just like 
+in the previous attack.
+And that means that one IP identifier will be consumed for the sending of that 
+challenge F.
+So we no longer count challenge X.
+We just use it as a way to increment the IP identifier, and then we notice that.
+So we then start probing with the ICMP echo request.
+We probe the server and see if the IP identifier has increased.
+If it's increased by two instead of one, we basically know that something must 
+have been sent.
+Okay. Is that practical?
+Well, the source port number that we have available, source port numbers that 
+we have available,
+range from zero to two to the power of 16.
+But in reality, only a small portion of that is in practical use, depending on 
+your operating system.
+And you can, again, use binary search to make this more practical.
+So what the researchers found was that they could do this in a few tens of 
+seconds.
+And you have the source port number.
+
+Next thing that you want to do is find the sequence number and the endorsement number.
+We're doing this roughly in the same way as we did previously.
+We infer acceptable sequence numbers, so sequence numbers that are in the 
+server's receive window.
+Then we locate the challenge number and detect the lower boundary.
+So we have things that are in the server's receive number.
+Then we find the lower boundary of the receive window, the exact sequence 
+number that we expect.
+And then we find acceptable acknowledgement number.
+
+So the exact same picture as what we had before. This is still how GCP works.
+How do we do this?
+Remember, whenever we receive a packet, it will do two things.
+It will check if the sequence number is valid.
+And the sequence number is valid if it's in the receive window.
+So it's in the receive next, so the next byte that the server expects to 
+receive.
+And that number plus the window size.
+And the next thing it will check is if the endorsement is in the acceptable 
+reimbursement window.
+It runs from the last part of the byte minus the maximum size window that it's 
+seen so far,
+up to the next byte that we want to send.
+That is all part of the acceptable.
+And if not, that is true, it will send a challenge act if it's in the challenge 
+act.
+So how do we infer acceptable sequence numbers?
+Let's see what we send with the time. I'm going to keep you guys forever.
+So again, we're going to send a continuous stream of ICMP packets to the server 
+to probe for the IP adapter.
+Same trick as what we did previously for the port number.
+And then we send spoofed reset packets with a guessed sequence number.
+If it's not in the server window, it will be discarded, so there's no counter 
+increase if it's in the challenge act window.
+Oh, there's a question. Oh yes, no, that's right.
+Oh yes, I need to reserve some time for the assignments.
+I think I'm almost done. Sorry, I completely forgot.
+So for the endorsement window, we're going to use the fact that if the server 
+received a data packet,
+the endorsement number is either in the challenge act window, it's in the 
+acceptable act range, or it's invalid.
+And if it's in the challenge act window, there will be a challenge act.
+And then again, you can observe this by seeing a hike in the IP identifier.
+Okay, so locating the challenge act window is, again, observing the IP 
+encounters to see if there's a hike in the account.
+If we have sequence numbers that are acceptable, the next step we want to do is 
+find the exact sequence number that is extracted on the other side.
+So now we only have something that is acceptable, but where does it actually 
+start? What is the right sequence number?
+And to cope with that, if we simply decrement the sequence number that we have 
+found that was apparently acceptable, decrement it a little bit at a time until 
+it's no longer an acceptable window.
+Until it's reaching the point where the server needs to send a duplicate act.
+A duplicate act will be sent if there's a packet that is dropping below the 
+window that the server expects.
+And the duplicate act has no rate limit. So that we see increment very, very 
+quickly.
+Then we know this is the sequence number that the other side expects. Is that 
+clear?
+
+Okay, we do exactly the same thing for the acceptable acknowledgement window.
+So, again, we have multiple probing acts to observe the IP identifier.
+And we keep sending act guesses for the act minus some number, so decrement 
+that until we reach the boundary.
+We do exactly the same.
+
+And then we're done. We have the sequence number, and we have the 
+acknowledgement number, and we have the forward number.
+
+It's a very similar attack as in the previous case, and what the authors in the 
+paper show is that they can do a connection reset within, what is it, 100 and 
+something seconds.
+So it's quite quick, it's a practical attack.
+They also showed that on a chat program that they have with their students, 
+they were able to inject ads, unwanted ads, so data injection worked, even 
+across the internet.
+And what they showed is that the time overhead is, like I said, a few tens of 
+seconds, a hundred seconds, maybe a little bit more.
+And the bandwidth that they required is very little. It's 50 kilobytes per 
+second. So it's definitely practical.
+Lessons learned. So first of all, all of this looked like a really simple 
+solution and a really simple problem that could easily be solved.
+And it turns out into this can of worms that becomes more messy with every fix 
+that is created.
+It's very hard to get these things right. We see that many of the security 
+measures actually lead to more security problems.
+And with that I don't want to use up more of the time.
+Next thing is your assignments and Max is going to introduce the next, the 
+first assignment, which is a TCD.
+And again, I apologise Max, I was so caught up in the story.
+Yes, exactly. Yeah, that's right.
+Hi everyone, my name is Max. I'm the attorney for this first assignment, which 
+is called
+Yes, so we will go over this in a bit shorter way because we're running out of 
+time.
+But there is a good video on Canvas that we uploaded that explains the whole 
+tech.
+We have a lot more detail on the web server.
+One of the things that we have is a small screen of the tech.
+The first one is an existing trust relationship between the X terminal and the 
+server.
+So two more systems that we're going to put back.
+And the second one is that the X terminal has a TCP implementation that is 
+vulnerable because it has predictable input sequence numbers.
+So if you know previous sequence numbers, you can predict the next sequence 
+number.
+And then the effect itself is fixed.

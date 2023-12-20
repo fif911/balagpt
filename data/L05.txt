@@ -1,0 +1,2197 @@
+--------------------------------------------------------------------------------
+
+Part 01
+
+--------------------------------------------------------------------------------
+
+I like to keep the class in practice, so I like to ask a lot of questions, and 
+it would be great if you volunteered, otherwise I'd have to cold call you, 
+might be a little awkward.
+In any case, I'm not trying to put you on the spot and make you feel like you 
+don't know something. Make an educated guess, because it tells me a lot about 
+your basics, your background, how you're thinking, and accordingly I can figure 
+out what I should do in my way of struggling.
+Feel free to interrupt me at any point in time.
+Now, first let me start the class with a question.
+How many of you read the paper that was covered in the last lecture?
+Start reading the papers, soon you'll get overwhelmed, right?
+This course is, yes?
+Could the paper be published and be found by us?
+No, no, no.
+I remember there being two papers in this recording.
+The second set of slides is just a copy of the first set of slides, again, with 
+the same paper.
+So I can find the second paper.
+Okay, so this is something, I'll fix it.
+So, again, there's something I want to mention, I think I put it in the slide 
+when I uploaded, you'll also see this.
+Regardless of whether we mention explicitly or not, all papers are manually 
+reading, right?
+Any paper that we reference in class, any article that we reference in the 
+slides, if there's a URL, it means that we will ask you questions based on the 
+material.
+But again, it won't be silly, right?
+I don't care whether you know, you know, what is the RFC number that was 
+discussed in the particular paper, if I couldn't carry this, you know, half the 
+time I wouldn't remember them.
+But what I do like to emphasize and what I do like to test is whether you 
+understood the high-level concepts.
+Now, start reading the papers.
+I will try to make sure, so the papers are all, all the papers that we refer to 
+are publicly relevant, in case they're not.
+Please do, you know, post a question on the, on Canvas, I'll find it and we'll 
+do it.
+I, I'll try my best to proactively pick up the papers that you have to, you 
+know, that I reference and put it on Canvas in the PDF form so it's easier for 
+you to, you know, avoid searching.
+I think that would be fun.
+Now, it's very sad that none of you read the, the paper, but let me ask you a 
+slightly different question.
+How many of you understood the difficulty or the differences between the 
+public-facing board or the private-facing board or the, do you understand?
+Yeah, I skipped out the paper too.
+
+Fantastic. Okay, so I'm, I'm so excited there's one person who skipped out the 
+papers.
+But I'm going to briefly review it because I always find that this is one of 
+those things that might be a little tricky.
+Okay. And again, don't think of it properly, right, let's keep this in practice.
+Okay. So first things first, what is a public board?
+Yes.
+Any IPs that are correct, please?
+Yeah. So, again, going back to the slides, a public-facing is if the client 
+invokes send to with a specific remote IP, the client board will accept package 
+from any IP address and it invokes using file.
+It's a loophole in the spec, yes.
+This send to and this connect, is that a word specific library or interface or 
+is it just for the idea?
+Okay, who can answer that question?
+There are POSIX functions?
+Yes.
+The other way to think about this, you know, standard way in which you interact 
+with, you know, community subjects.
+So, with the standard, I know these are POSIX functions, but in the Windows 
+landscape, do they also comply with these functions or are they, like, totally 
+different?
+The functions should, I mean, there are two ways to answer that question. The 
+functions are the same, even if it's OSIX.
+Whether they have the same bug or not in Windows is not clear.
+But what I would generally say is that for the most part, again, not against 
+Microsoft or anything, for the most part, we typically think about Linux or 
+previous installations because the servers that you find typically online 
+hosting services typically happen to be on these platforms.
+Nothing I can talk about.
+Every operating system or every platform has its fair share of features using 
+vulnerabilities.
+Okay. I won't let anyone tell you otherwise.
+
+Okay. So, public is this one. Private facing is, it's a bit more secure, right?
+So, the only ease, the high level bit that you have to keep in mind is, that's 
+why the green is there, I guess.
+Public facing means that there is an additional vulnerability in the sense that 
+you could spoof the response to come from any IP.
+In private facing, you can't do that, right?
+The socket will not accept the response if it's not coming from the IP address 
+that it's expecting to receive a response from.
+So far, so good? This you must know.
+So, in public one, this is very easy, right?
+So, all you have to do is you send a fragmentation unit code, right?
+And the great thing is that you could put whatever IP address you want, but you 
+still put your IP address. Why?
+Yes?
+Fantastic. Because it depends on the follow-up, right?
+
+Later on, you have a verification step to figure out, have I deceived the end 
+host into accepting my probe, right?
+If this was accepted, if this is accepted, it means that your guess of the port 
+number was right.
+And you need to be able to verify that in order to verify you do a ping to see 
+how do you accept the end field.
+And in order to accept, test this, you need to receive it and apply it to the 
+ping and this is why you inside your IP address.
+So, in some case, I mean, although the attack itself is really interesting, 
+right?
+It takes a look at, it exploits this vulnerability with how fragmentation 
+needed is request or process.
+It's easy in the sense that the IP address that you can put can be your own.
+So, it's easy.
+It's easy.
+
+Private, on the other hand, it's hard, right?
+Because the IP address that you have to provide has to match the actual 
+intended victim, which means that there's no way for you to guess what 
+happened, whether the end host accepted your fragmentation needed probe or not.
+And here is where the authors clever ideas show up, right?
+So, what they do is they figure out that all of these details, they kind of 
+link things in a hash table.
+Hash table is, I assume everyone knows what hash table is, right?
+And unless you have a universal hashing function, there will always be some 
+collisions, right?
+So, there will be some set of keys that will always map to a unique, sorry, 
+there will be some set of values that will map to a unique key, in which case 
+there is an overflow.
+This is exactly what they're trying to explore.
+Yes?
+Don't perfect hash tables exist or perfect hashing questions?
+What's your answer?
+No.
+I mean, they don't exist, but it's very costly to compute.
+It's very costly to compute.
+And you also have to keep in mind, this is not a very intuitive thing to think 
+about.
+You want the hash tables to be compact. Why?
+Because it's a kernel that you're putting this into?
+Not just a kernel. Any application, if you think about it, the hash tables, if 
+they are perfect, in the sense that if I'm given, if I give you the guarantee, 
+right?
+If every key will uniquely map to one particular location of the hash, it means 
+that your hash is as large as the size of the space that you're going to have.
+So, this is why, I don't know how the VUT takes algorithms, but if you take 
+close attention to hashing analysis in, you know, in some of the famous, you 
+know, algorithm books, they'll always say that look up in a hash's, you know, 
+constant time, but only amortized time.
+If you don't know what that means, in general, it means that over a long period 
+of time, the average cost of a lookup is constant, because that's an 
+abstraction that hash table provides you.
+There's a lot of cool things that go behind the scenes to make hashes perfect, 
+without which, you know, it's very dangerous.
+
+The language Perl, a long time ago, and probably some of you are not even born, 
+a lot of web applications were written using Perl.
+And a lot of behind the scenes intersections were implemented in Perl.
+And one of the worst things in Perl is, again, maybe things have changed, was 
+it used to be the case that the hashes were not perfect.
+Which means that if you know that behind the scenes, a server or web 
+application is using, written in Perl, and it's using this hash table, you can 
+actually send a series of requests knowing for sure that at some point the hash 
+table is going to overflow.
+So you can easily DDoS it.
+Python's hash table, for instance, it's similarly, you know, it's a remarkable 
+design, but it's easy to break.
+What I mean by easy to break is that I can give you a set of keys, okay, and 
+once you use your hash, or what is it called, dictionary in Python, once you 
+load the set of keys that I give you, any further lookup that I give you will 
+take much longer time than what will you anticipate.
+It will actually be linear in the size of the hash. It's a very cool trick.
+That's why when you actually take a look at, you know, secure applications or 
+cryptographic, you know, applications that are being built, and especially in a 
+language like Python, it's not a bad language.
+You have to be very careful about hashes that you use.
+Inbuilt hashes for most languages, you can't take them for granted.
+Anyway, that's beyond the topic of network security.
+In this case, what they figured out is, this is still hard, figuring out which 
+set of IPs hash to the same bucket.
+But the idea is that once you figure that out, what you could do is you send a 
+bunch of probe packets, all of which collide with the IP that, you know, the 
+client is, the resolver is expecting to get a response from.
+So it's sort of like an inversion of, you know, the previous chip.
+Previously, when you send this control packet to check whether your attack 
+succeeded, you were expected to get the response.
+Meaning you send a ping and the ping's response will actually tell you whether 
+you changed or not.
+Here, you're doing the opposite.
+Meaning, all of these plan packets are for your IP, right, or IPs that you 
+could control.
+And you could get a lot of these IPs if you think about Amazon, AWS, or GCP, 
+and so on.
+So you send a bunch of plan packets, each of which will collide with the IP 
+that you want it to collide with.
+And then what you do is you actually verify the thing.
+If this was really true, the hash bucket size, let's say if it is five, which 
+means that you need to find five IPs that you control, which collide with the 
+IP of the choice.
+You know, the resolvers or the authoritative names, everything.
+Because there are six IPs in total, including your five, one has to be evicted, 
+right?
+And if one of those are your IPs, then you can actually send these ping 
+requests from each of those IPs and then see, hey, did my MP change?
+If these ping packets for all of these five plan IPs, the five ones that you 
+planted, actually come back and then say the MP didn't change, it means that 
+you were evicted.
+Actually, they won't come back all with 1,300, at least one of them will be 
+less than 1,300 because the MP might have taken it out.
+But what it tells you is that there was an eviction that happened, which is 
+only true if your guess support number was right.
+Okay? That was a lot.
+Yes?
+So just to recap, before you sent the five plan packets, what's in the cache?
+I don't know.
+Something is in the cache. If you send the five plan packets, then your five 
+plan packets are in the cache.
+Yeah. They're not just in the cache, they're in a particular bucket.
+The bucket which also will actually host the IP address or the packet from the 
+intended authoritative name server will also reside.
+That's the key thing.
+So you're trying to guess the port number so that you could do the spoofing, 
+the DNS spoofing.
+In order to do that, you have to figure out what is the port number because if 
+you figure that out, then everything else becomes easier.
+Because otherwise, it's a 32-bit space that you have to crack.
+Once you figure out the port number, it comes to 16-bit, which you can once 
+again, you know the fix there.
+How do you check the port number?
+Well, if it's a private facing one, what you do is you say, ah, which means 
+that I can't actually send, I can't build this thing because the host will only 
+respond to the IP address it's expecting from.
+So what I'm going to do is I'm going to send five planned packets from IPs that 
+I control.
+The assumption here is that the hash bucket or the bucket size is six, which 
+means that it can only hold, actually this is five, which means it can only 
+hold five packets.
+So the bucket size is five, so you send five? Yes.
+With IPs that you control, is it the same IP you control or does it have to be 
+different?
+They have to be different IPs. Why is that?
+Because if it's the same, then you're not increasing the bucket size.
+Oh, right. It will only override the same IP.
+Imagine there is a bucket that can hold five items. You have put in five items, 
+which means there's a sixth item.
+If it succeeded in going to the same bucket, it has to evict one of the 
+previous ones.
+If it did evict one of the previous ones, since all the five previous ones are 
+in your control, you can check whether one of them got evicted.
+If it got evicted, this guess was right, which means you have guessed the port 
+number.
+Yes.
+So this assumes that we have five IPs available to us. How do we know that all 
+of these five different IPs end up in the same bucket?
+Excellent question. Getting five available IPs or more IPs, that's easier.
+Let's ignore that. How do you know for this? This is basically your classic, 
+how do you break a hash table?
+You can do a very, you know, basically build a table. This is exactly what the 
+authors did.
+When the authors did, this hash was, I think, very little bit, so it was easy 
+to break. Now it's 128 bit, so you can't break that.
+Great question.
+Yes.
+And just on practicality, that means these five IP addresses will be quite 
+different, right?
+Could be quite different.
+So that already makes it more impractical based on the fact that you need five 
+totally different IP addresses.
+Excellent. Excellent. So what could you do?
+Great question. What you're saying is, you know, these five could be any random 
+five. How can you control any random five?
+What you do is you always think about it in an opportunistic manner. Suppose 
+you have 500 IPs in your control, right?
+Who cares whether, you know, what these five collide with, right? What you 
+would try to see is, I have 500 in my hand.
+What do these 500 collide with?
+I'll take different sets of five from this 500, you know, given the amount of 
+time I have. I'll simply explore which addresses I could collide with.
+Suppose you stumble upon, you know, the fact that, you know, an AV number dot 
+NL's IP address, whatever it resolves to, collides with one of your partners.
+Would you really care? You'd be happy, right?
+So you could actually do a more opportunistic attack. You can also do something 
+else, which is just what the authors did.
+Since your hash table implementation is available, just, you know, source code 
+for the kernel is available, and the hash table is really small,
+you could enumerate exactly what's going to happen, right? Meaning which ones 
+will collide with what, for what particular hash seed.
+These hash tables are not too trivial. Get rid of them.
+And then you could say, okay, I see that if I have to go back, go after, I 
+don't know, New York Times dot com, I need these five or these six.
+And then you can figure out, you know, buckets that look like reasonably, you 
+know, give you a good chance of staging an attack. Does that make sense?
+I mean, for an attacker who can, who has the time and the means, these are all 
+easier.
+Okay, quick questions. Anything else?
+Where are you guessing the ports?
+Where are you guessing the ports?
+And where is it?
+Swords, destination, get.
+So when you send the lattice to see if it evicts, then you have to guess the 
+ports.
+And you can, to see if it's going to evict from the cache.
+This will only result in eviction if this guess was right. If your guess of a 
+port was right.
+And what was the port on the first one, on the first five brackets? I think it 
+should be the same one.
+If I go back right here, I don't remember the exact details, but you can look 
+up new details.
+Okay, so just wanted to clarify that.
+I have to choose the...
+Okay, we altered the, actually not altered, just a little bit sad.
+I think less than half of this class actually, of those registered, took this 
+quiz.
+Anyway, it's not a mandatory one, it's not graded.
+
+But I just wanted to quickly go through the results and maybe some of the 
+questions in the case of your head.
+But it was not clear.
+For those of you who did it, how do you think you did it?
+I'm pretty mad because there was a time limit of four and a half hours and I 
+unfortunately took it at the wrong moment.
+So, yeah.
+The questions that you saw, for those of you who took this background quiz, 
+will be sort of like representative of the kind of questions that you will see 
+in the exam.
+You will, anyway, have more chance to understand what the exam will be like, as 
+we really need more quizzes, which will be graded.
+Should be one that's going out soon.
+Anyway, this was the performance.
+Again, take it as a page of salt because some of you, it was really clear from 
+the amount of time you took to answer the questions.
+Maybe you're not serious about taking the background quiz or maybe you don't 
+have any concerns like the one that was mentioned.
+And of course, not everyone participated.
+The median was 60, which is not bad.
+So, half the class would have passed.
+The third quartile was very bad.
+It's 73.33, which means that this is something that I expected you to know for 
+us to teach network security.
+So, in that sense, it's a bit bad.
+If you are below the third quartile, all it means is that you will have to put 
+in a little bit of effort to understand some of the basics.
+It doesn't mean that you're from the coast.
+If you're below the median, you have to take care.
+You will have to prepare to spend a lot more time.
+While we can provide pointers on some of the background details that you need 
+to know, you will have to spend, you know, take the initiative to make sure 
+that you follow up.
+Okay?
+I'll quickly go through some of the questions that was most of the people that 
+got along.
+I'll keep it quick because I'm not sure how aggressive you are in these ones.
+There was a question about denial of service.
+The question was really long.
+This question is also ambiguous in the sense that there was no, it didn't say 
+whether it's right or wrong.
+However you implement it, there's only one answer.
+I'm not going to discuss the answers.
+I usually don't discuss answers in class.
+If you want to know more about your performance in any of the quizzes, exams, 
+you can always approach us.
+We can tell you why you are wrong.
+That's usually good.
+In this one, there was a bit of ambiguity, but nevertheless, it's basically 
+describing what a DAS attack is.
+It's trying to ask you which of these statements accurately describes, you 
+know, something about DAS.
+Yeah, a lot of people got this wrong, but I guess it's because of the phrasing 
+of the question.
+So, you know, hopefully those kinds of cycles will do the work.
+But the question format that you see is typically the way, you know, you would 
+see exam questions as well.
+Meaning as much as possible, whatever you need to know to answer the, you know, 
+to figure out the answer will be in the question itself.
+I don't expect you to realize things.
+For those of you who are curious, this is only trying to check when an 
+amplification attack is more likely.
+And if you paid attention to TCP, you know, this question should be very easy.
+This is a bit more problematic.
+So this one is asking about basic details about TCP.
+What's the difference between an NTU and an MSS?
+Didn't get a guess.
+NTU you should know, because it will not be discovered in the last lecture.
+This includes the Ethernet data type.
+Which includes what?
+The MSS doesn't include it and the NTU does.
+Yeah, that's it.
+MSS is usually, you could think of it as a larger state or you could send, you 
+know, TCP datagram or TCP segment.
+Whereas an NTU is all the way below it.
+How are sequence numbers, what do sequence numbers really track?
+Yes?
+Yes, amount of data in what units?
+Yes, that's the only thing that you need to know to answer this question.
+Because, you know, there are two requests being sent on the same TCP connection.
+These things don't really matter, right?
+As long as I tell you it's one connection, you know, that's all that you should 
+keep in mind.
+There will be lots of extra information that the question tries to provide, but 
+that's only to test whether you understand what it means by, if you understand 
+the true notion of connection.
+So there are two requests going back to back, if you go through the packets, it 
+doesn't really matter.
+RTD and the connection is not relevant at all.
+In the transition time, not relevant.
+The TCP data, this one right here is not relevant, I hope you see that.
+The TCP data for the first request is 3200 bytes.
+And again, not relevant.
+What will be the sequence number for the first segment of the same request, the 
+first segment of the first request, and the sequence number 100?
+What do you have to do?
+When you start with 100, you send 3200 bytes.
+So what will be the next one?
+Just one added to that.
+Whose option, if you pay attention to it, they're not random, right?
+They actually, for instance, if you count that 14 bytes is included in the 
+sequence number, there is an option that will correspond to that.
+And similarly, 341 is something else, one of these is bogus.
+Oh, actually one of the things I can test is whether you change the sequence 
+number of packets into bytes.
+So, when you approach these questions, there are two ways you can attend them.
+One, don't look at the options.
+Build from your foundations, your fundamentals.
+Make sure that you understand what the question is saying, and then compute the 
+answer, or think about the answer, and then look at the options.
+Or you could do, you know, considering satisfaction, right?
+Decide on the options and then check which one is least likely.
+Eliminate them and then look at the ones that are most likely and then check 
+them.
+Any questions?
+Good, these are the basics.
+Bottlenecks, this is, hopefully there won't be, I don't think there will be a 
+path that involves this, but you should know one thing.
+For a given flow, when I say flow, it means that, you know, flow function, flow 
+destination, IP destination, port and protocol.
+Meaning, there is an ascender that's trying to send data to a receiver on a 
+particular protocol.
+This is a flow.
+Given a particular flow, whatever be the network path, how many bottlenecks can 
+the flow have?
+One.
+One.
+Because the analogy that you have to keep in mind is that you have to keep in 
+mind pipes of different diameters.
+These correspond to capacities.
+No matter how fast you push, you know, water through the pipe, there will be 
+one point at which it will need to run.
+Simple proof.
+In networking, it's called the packet conservation principle.
+You know, the source cannot send data at any rate higher than the smallest one 
+on the packet.
+Which means what?
+No matter what are the details that I give you, there is only one bottleneck.
+Nothing else matters.
+And, again, the options are trying to test whether you understand that there is 
+only one bottleneck.
+And you also have to keep in mind that the queue that gets filled is at the 
+bottleneck.
+Right.
+Meaning, when you are crossing, let's say, from A to B and B to C, if B to C is 
+a smaller link, the queue will be at B.
+Now, let's see.
+It should be obvious.
+Okay.
+None of these questions require, you know, you need to have a calculator, you 
+need to have a trackpad.
+So if you feel that you are reaching for one, trust me, you're getting it wrong.
+No matter how many numbers you see in these questions.
+Because, again, I'm not interested in your ability to do multiple things and 
+that each and every thing is like that.
+I trust you.
+Okay.
+Ah, this is a typo.
+This is actually talking about, it's not a random question, it is important.
+There is a particular attack that depends on this knowledge of, you know, how 
+conditionally it falls.
+But this one has a typo.
+So take a look at this question and tell me what the typo is.
+Hey, how many of you think that the question was right?
+Probably.
+You thought it was right?
+Okay, maybe I should have shown you the options and then you will realize that 
+it's not right.
+I mean, the question itself doesn't have a, the issue is actually in the 
+options that I gave you.
+So the typo is here.
+The whole presenter has a thousand point kilobytes of data.
+It should be bytes.
+K was the typo.
+Um, yeah.
+Yeah, I was also like that.
+The calculations are not working.
+Yeah.
+So suppose I tell you, you know, how much data the sender has.
+There were some really good calculations.
+One of you actually approached me as well.
+That's why I'm giving you this question.
+Given the amount of data,
+how do you calculate the number of round trips the sender will take in order to 
+send the data?
+Yes.
+Um, yeah.
+So, I mean, of course, you can assume that it's 1500 bytes.
+So first of all, given the amount of data, we'll split it by, you know, the 
+number of packets.
+So you figure out the packets and then what the number will be.
+Data divided by?
+Go ahead.
+So you know how many packets the sender has to send?
+So if you divide that by the capacity or by the bandwidth that it drives,
+you know, to put, you know, your credit health and everything,
+the sender is TCP sender.
+Again, this is basic, right?
+A TCP sender typically,
+you can do some things, but typically what it tries to do is it sends a window 
+up in there.
+And that window is your bandwidth of the link, the bottleneck bandwidth,
+times the delay, or actually RDP.
+There's an actual descent.
+But you can't take the BDP and then just divide the signs of data by BDP one.
+No.
+No.
+Yes.
+Yes.
+Yes.
+Yes.
+So the sender usually starts with, you know, the window evolves, right?
+So typically, you know, in the 1980s or late 1990s,
+typically the sender would start with a window of one.
+It'll send one packet, and then it'll wait, get the acknowledgement,
+and then what does it do?
+Double that.
+And then it doubles it.
+Doubles it and keeps going until you hit this little stack threshold.
+Again, this you should know.
+Now, but given this, what do you do?
+You see, now you can divide the total amount of data that you can send,
+simply divided by BDP doesn't work.
+But again, this is, I don't know when you do this,
+but then, you know, I studied in India,
+so this is eighth or ninth grade math, right?
+So there's something called the geometric progression, right?
+So you have a series of numbers,
+each of which is getting multiplied by a constant number.
+So how do you sum the series?
+This is basic math.
+Yes.
+No.
+No, no, it can't be true.
+What you're saying is this one, right?
+My handwriting is not that good.
+What is that summation of?
+It's the sum of a set of consecutive numbers starting with one, two, whatever.
+What is that series?
+It's a linear algebraic series, right?
+That's not a geometric one.
+Okay.
+The geometric one goes like this, right?
+So A times Rn minus one divided by R minus one.
+I did my high school and undergrad not longer than you guys.
+But this is something you can look it up, right?
+This is something you should know, okay?
+And again, there's a subtle thing.
+This R, it depends whether it's less than one or greater than one.
+Then in any case, if I tell you that something doubles,
+and I give you a value and I ask you how long till the doubling process
+reaches that value, what do you do?
+Forget the geometric progression.
+What do you do?
+Something is doubling.
+One, two, three, four, five, six.
+Yes.
+That's the base of that number.
+There's something similar here, right?
+So you're given a starting value, so you could start from here
+or you think about log and then you object it and you get a top.
+Anyways, so some of you did confuse the answer
+and I got a couple of emails saying, hey, is my thing right?
+Why is it wrong?
+Even if you were to do this thing, I would ask you a question like this.
+But it would be easier if even if I give you a question like this,
+pay attention to the numbers.
+The numbers would be such that it's easier to take a log
+and it would be easier to take a, you know, multiply or divide.
+That's the huge new habit.
+But does it make sense yet?
+Can you basically take a look at the number of segments
+that we can think?
+You'll say log back segment to the base 10 here because that's 10
+and then you see how many cycles it goes.
+And each one of those cycles would be each one of those windows
+where the numbers are defined.
+And then you can add one to the number of cycles that you have.
+Yes.
+I'm sorry?
+I didn't think I was going to put a question on that one.
+Mallory, you do not, it looks like it does not fall over.
+It looks like it does not fall over.
+You're still starting to see the double.
+What is not true is you don't start from one.
+You start from another thousand.
+It's very good that you've gotten to make another picture.
+Those things only come in after the numbers.
+They come out of the outside.
+The name itself is a misnomer, but it's still there.
+It comes all the way.
+Okay, that's about it.
+Any questions?
+Great.
+Okay.
+If you have any questions about these backgrounds in here
+or if you're still struggling to understand some of these,
+write me an email or, you know, you can put up an appointment
+and I can tell you what's more important than the problem,
+but I can tell you what you need to do.
+Okay.
+Now let's move on.
+Let me try and see how much I can cover this lecture.
+Okay.
+
+So we talked about in the last lecture,
+we looked at cash poisoning attacks.
+We looked at two, which are three lines.
+And now, you know, the idea will be we'll review
+a couple of code imports, a few solutions,
+and we'll see how they work.
+And if there is an attack against a study of three solutions,
+I'll also take a look at the other review.
+How many of you know what is DNSSEC?
+Good.
+Yes.
+Do you want me to define it?
+Yes.
+I don't know the specifics of it.
+I know that it's a way of cryptographically verifying
+the domain of the response from a DNS server.
+Yeah.
+In short, it actually doesn't,
+it only checks the authenticity of the response.
+Right?
+So DNSSEC, the mechanism that we'll review,
+it's probably to simply answer one question,
+which is, how do you know for sure the entity
+that is responding to your query is indeed the right one?
+Okay?
+And it does so, as you mentioned,
+you know, using a very simple, you know,
+public key infrastructure scheme.
+Oh, yeah, you will see that.
+Ah.
+So I wanted to put this so that you don't take the paper.
+So all papers that we discussed in class and slides
+are mandatory, regardless of whether we tell you or not.
+Okay, so DNSSEC review, by this time you should know
+there's a browser, there's a stop.
+The stop doesn't do anything usually, usually.
+And the stop basically calls a request to a local resolver.
+This is usually, if you're connected to Wi-Fi,
+for instance, at the view, you know,
+this is your view provided name server,
+you've got resolvers.
+If you're at home, then this is your ISP's resolvers.
+We'll come back to this later.
+And this does all the heavy work for us.
+Until this point, it's a recursive query,
+and this is iterated style.
+Okay.
+Now, we can simplify it like this, right?
+You know, for all purposes,
+kind of captures what's happening behind the scenes.
+And this is obvious,
+to note that anyone can tamper with these messages
+because these are, there's no encryption,
+there's nothing, right?
+Anyone can actually, and any on-path attacker
+could tamper with your request.
+So this is a threat model, right?
+What could you do to safeguard yourself
+from anyone tampering your messages in flight?
+And this is trivial, right?
+So, what we could do is, you know,
+we could implement, or use what is called a DNS set.
+And as someone mentioned, it uses basically
+a bunch of keys to encrypt, actually not encrypt,
+to sign the keys, to sign the files.
+And let's see how it works.
+Typically, the way it works is that
+your authoritative name server,
+I'm simplifying the picture,
+so let's just look at the authoritative name server.
+It has a bunch of keys, okay?
+This is asymmetric cryptography,
+so you have a public key and a private key.
+Private is usually here in the grid,
+the public one is green.
+Another way to think about it is that
+everyone knows about the public,
+the private is only known to be a target name server.
+DNS set starts by the client initiating it,
+which means that, this is again something
+you might want to pay attention to.
+Whenever we discuss a security protocol,
+it all depends on who initiates the user protocol, right?
+In this case, it's a client,
+and client base is usually pretty large, right?
+Because if you want to make sure that everyone
+is using DNS set, which means that
+you have to fix all operating systems,
+all stub software, stub implementations of libraries,
+that's something you can do.
+And the way it usually starts as a client
+actually sets a particular bit in your DNS query,
+it's called the do bit, right?
+It's basically saying, it stands for DNS okay.
+It's basically the client indicating
+to the authoritative saying, I am DNS sick of error.
+So then what happens?
+So then the authoritative, what it does is
+it signs the records, right?
+The record is basically, whatever you ask for,
+it could be like a lookup or a quad a lookup.
+And whatever the response is trying to say,
+it tries to sign that response.
+It's only signing, not encrypting.
+It's signing the response with its private key,
+and along with the typical response
+that says which is the A record,
+it attaches something called as the RRC.
+It stands for resource record signature, okay?
+What does it give you?
+Well, you can take a look at the public key
+and then try to verify whether the signature is right.
+And if the signature is right, it means that oh, okay,
+this is the key that was used to sign the response.
+Naturally the question is,
+how do you verify the signature, right?
+So it requires the public key,
+how do you get the public key, right?
+DNS is such an overloaded system.
+So today, the way to look at DNS
+is just like a key value store, right?
+Typically, the keys that we request are host names
+and the value that you get is IP address,
+but you can put anything in it.
+And there's a lot of crap on it.
+There's a lot of protocols built on DNS,
+so when you look up a particular name,
+you shouldn't be surprised given the amount of data it has.
+So how do you verify the signature?
+How do you verify the signature?
+How do you know, for instance,
+what is the public key of this authoritative name server?
+There's a lot of mechanisms.
+The simple thing to do it is,
+it's a key value store,
+so why don't we create another key value there?
+The key is basically DNS key,
+so basically you can go to the authoritative name server
+and then say, I need your DNS key
+and it'll give you the public key.
+So far so good.
+So it's in some sense an inbound mechanism, right?
+You're using the same protocol
+to actually get you the public key.
+Okay, it tells you that this is my public key.
+How do you verify the identity of that particular server?
+This is like, so if this was all you had to do,
+this doesn't still prevent anyone
+from propping up an authoritative name server,
+getting a public key private key,
+and then claiming, hey, you asked for, I don't know,
+vu.nl, here's the answer and I've signed it
+and you can look up my public key.
+This is easy to do.
+So how do you verify the identity of this one?
+How do you know for sure that this key
+is the one that needs to be used for that particular name?
+Does the public key belong to the authoritative name server?
+How do you figure that out?
+Well, you can do the same process, right?
+I mean, if there is a private key that can tell you,
+hey, I signed this and you can use my public key,
+then you can go one level up and then say,
+hey, is this authoritative name server
+allowed to use this public key?
+Right?
+Is this authoritative name server allowed
+to use this public key?
+And someone will say yes, and then you can keep going on.
+This is called the chain of trust.
+You'll see it in detail.
+And this chain of trust is, again,
+trying to exploit the DNS system, right?
+DNS is hierarchical, right?
+So if this was the authoritative name server for vu.nl,
+this authoritative in the DNS hierarchy
+comes in a .nl, which comes in the root.
+Each one can actually tell you
+what the public key or what is the certified public key
+for the level below.
+Does that make sense?
+Right?
+What do you do in the root?
+Yes?
+You ship it with your operating system?
+Yeah, all.
+That's a very good question.
+Very good answer, yes.
+Put it in hardware?
+This is, you know, where,
+this is what I call trust anchors, right?
+At some point, all of these walking the chain,
+you know, kind of verification has to stop, right?
+You need at some point, you know, to say that,
+oh, this is the one that I trust.
+And he's right.
+Usually the way it happens is that you ship these
+public keys of the root with your operating system.
+You know, we don't see this in the web PKI, you know, lectures.
+This holds true for even, for instance,
+whenever you visit a website and you see the website is,
+you know, has, you know, it's using HTTPS,
+there's a key behind, there's a cell behind,
+you do the same walk.
+And once again, walk ten minutes at the root,
+how do you know which root to trust?
+Your operating system ships with a ton of roots,
+you know, by default.
+What is even worse is different browsers actually ship
+with their own bundles of roots.
+On Linux, I think there is a centralized store,
+but on Mac, I think Safari comes with its own,
+Chrome comes with its own, Firefox comes with its own.
+Then you can ask, are they even in sync or not?
+Anyway.
+I have a question.
+There's a main server for the root, right?
+Mm-hmm.
+So when you're talking .nl,
+that's also like an authoritative name server?
+For the .nl.
+And what about for the root domain?
+There is a root name server.
+There's a server like outside of my machine, right?
+So somewhere.
+Yeah, okay, so what is it?
+I will check under my machine.
+Root keys?
+You can't check the root keys.
+You have to take a Chris value.
+Or you have to accept that.
+Yeah, there is no one about root to tell you
+the root is valid.
+Yes?
+I know in some, like, consortiums,
+the root keys, I'm not sure I trust like this,
+are sourced to specific, like, organizations
+or different physical places.
+Yeah.
+Does DNS have anything like that?
+Or is it just sort of we all have agreed
+to publish this to you while you use it?
+The last part I didn't understand.
+Is basically, like, does the authoritative name,
+does the root name server's key have, like,
+a providence associated with it?
+Okay.
+There's, yeah, but there is a,
+you'll see that there's not one key,
+there are two keys, and the root names
+server's private keys are typically not even
+stored on the server, right?
+I mean, it's very secure.
+Because that private key usually you don't need.
+So there's a lot of stuff.
+So there's a cabal of people who meet
+every once in a year to figure out when
+they have to change these keys and so on
+and how to do the thing.
+That's the whole switch.
+Okay.
+So maybe I'll take two more minutes
+and then you can take a break.
+Yes?
+Oh, I think it's just a reminder
+that you can watch the whole, you know,
+sec group piece I think, ceremony on YouTube
+and it's actually really cool.
+Like, walk into a safe and stuff that's,
+like, it's a super, super scripted thing, yeah.
+It's, like, insanely scripted.
+It's actually kind of fun to watch.
+Yeah.
+Great.
+You should share that with the rest of the students.
+I didn't even know there was a ceremony.
+Yeah.
+You can see over and over in different kinds
+of public key infrastructure systems,
+in short, PKI systems, which is, again,
+a, you know, a very technical, you know,
+huge way of saying it uses, like,
+asymmetric keys and there's a chain of trust.
+That's it.
+Okay.
+How do you establish a chain of trust here?
+So what you do is you take the public key
+of a given domain and you take a hash of that key
+and then put the hash in your bin.
+Okay.
+How can you retrieve the hash?
+Well, once again, it's DNS.
+So put a record to it.
+This is called the DS, right?
+It's, again, overloaded, you know,
+once you know how one step works,
+every step you can just build from the foundations.
+This is a record.
+That is a record called DNS key.
+You can query that using DIG.
+It won't be meaningful because it looks like gibberish
+and you can still query it, right?
+These are all very easy to test.
+The DS also you could query.
+It's a very, very sign of the rise
+and I keep getting confused.
+One of these organizations,
+if you actually check for DNSSEC validation,
+there's actually a website
+where you can actually put your domain name
+and actually check whether the DNSSEC chain
+of trust with that domain name
+is actually valid or not.
+Oh, my God.
+I think I lost my contact.
+I see double.
+Quick.
+It's not doing great.
+I can still see these.
+Okay.
+You upload the DNS records.
+By the way, there is a,
+today there is a protocol
+for actually automated this,
+meaning if today, let's say you sign up
+for your own domain
+and you want it to be DNSSEC aware
+or DNSSEC supported,
+what you do is you upload
+your public key in the person
+who is allowing you to register your domain
+and they'll do this process.
+Five years ago or six years ago,
+this process was not there.
+You have to manually do it
+and you have to do it through a separate channel.
+This was not the protocol.
+And guess what?
+Whenever you have manual process like this,
+no one does.
+Which means that it doesn't really matter.
+You can tell it all you want,
+but it means nothing
+because if the DST is not uploaded to your parent,
+the checkup trust won't work,
+which means that DNSSEC or not,
+it doesn't really matter.
+But it gets much worse than that.
+You don't want to talk about it.
+But anyway, resolvers can actually do this.
+They're all, again, it's all built in DNS.
+DNS key, you know, you hash it
+and you push back as a DST in this one.
+You take this DNS key
+and then push it to the parent and so on.
+It stops the read.
+So this is where they can actually pull these records
+and actually check it.
+And this all happens in a matter of milliseconds.
+They're really, really fast.
+How do you verify the root?
+So if I ask you in the exam,
+you know, some complicated question
+and I ask you to verify the root,
+it doesn't really matter.
+The root is always taking a face value
+but there's no verification possible.
+Okay, I'll stop here.
+But I'll continue from there.
+Maybe you'll take a short break for five minutes
+
+--------------------------------------------------------------------------------
+
+Part 02
+
+--------------------------------------------------------------------------------
+
+and we'll sign in together.
+Keep that in mind.
+RRSIGs are basically signature
+for all the records of a given type.
+Okay?
+But distinction is important.
+So if you have a couple of MX records
+which you will have in case you're operating
+an SMTP server,
+like you want to have one of your,
+you're operating an ETA for a domain.
+You want to say, ah, I'm a main server
+so you'll have an MX record.
+And there's a separate RRSIG for this.
+These two RRSIGs are different.
+And zone signing key is what you use
+for these RRSIGs.
+And there's a key signing key.
+As the name implies, it's a key
+that is used to sign the key, right?
+Another key.
+Which key doesn't sign is zone signing key
+and you'll see why.
+Because what you do is, you know,
+you might have a bunch of DNS keys
+for a given zone, right?
+You know, we use our developer
+to sign a key.
+For each one of them, it will have a key.
+And you want to sign all those.
+When I said that the hash of the key
+is stored with a pair,
+it's actually the key signing key that is used.
+Now what's the advantage of using
+this kind of bifurcated architecture?
+It's that the zone signing key
+could be weak, right?
+Not essentially weak, but it could be weak.
+What I mean by that is,
+you could use a cheap key
+as an easily derivable, easily computable key.
+And then you could use them to generate your RSA.
+And you could keep changing them.
+You know, every key generated a new key.
+But why would you do that?
+Why can't you just generate one key
+and whatever else you have?
+More and more encrypted sign signatures that you see,
+the more data or inputs that you have,
+the guess that you have, right?
+I'll tell you why.
+You have to guess the key, right?
+Ultimately, all encryption is just a guessing game, right?
+The longer it takes to guess,
+you know, the better it is, right?
+By the time you know the attacker
+or any adversary who guesses the key,
+the key has lost its value.
+Okay?
+Now, if you separate it this way,
+the zone signing key could change,
+could change frequently.
+And asymmetric keys are also costly to generate.
+So what you could do is,
+the key keys, you know, change them every often.
+So that's good.
+But you don't really have one key.
+Every time you change, you'll have to change the hierarchy,
+right?
+Because you have to go to your parents,
+they're saying, why can't you change?
+The parent has to do something else.
+Yes.
+The resolver has to verify these RRCs.
+In order to verify these RRCs,
+you have to go get the DNS key.
+How do you press the DNS key?
+Then you'll get the public counterpart
+where you trust the key signing key to go up,
+and you can then slap a review.
+But the advantage is that you could change this faster,
+you could change this slower,
+this could be, you know, this is not frequently used,
+this is frequently used,
+this is what you would see in every single response.
+This is only the way from these RRCs.
+And the process repeats.
+Like I said, once you know what happens at one level,
+you repeat all the way until the loop,
+and the loop nothing happens.
+So you have to go up.
+They do these two.
+KSKs, as they're called,
+KSKs are much more powerful than VFCs.
+That means the standard dictates that they should be powerful.
+Here's why.
+Some VFCs are much more powerful than VFCs.
+That means the standard dictates that they should be powerful.
+So these VFCs are stronger than VFCs.
+So now you can, you know,
+try to get at the entire process,
+especially with the do-it-step.
+And you think about, you know,
+the part of the server with response signatures,
+and they might not split.
+I have a question about the previous slide there.
+The VFC that you published,
+the public one,
+is that a type of record itself?
+Yes.
+It's a record.
+Yes.
+It's a record.
+It's a record.
+The PS is the record.
+Okay.
+The PS is the record.
+So that would also be signed by zone time.
+Yes, yes.
+Everything you sign is coming from the VFC.
+All right.
+And then you sign that zone?
+Yes.
+So the zone time is what you use to sign
+the actual resource records you're returning
+to get your RRC.
+So how do you trust the RRCs?
+Well, you take the bunch of RRCs
+and you sign the RRC.
+How do you trust the key sign?
+You go on the RRC.
+So in every level there are two steps.
+There's a VFC and a KFC.
+How do you trust the KFC?
+You have to go on the RRC.
+And then you can walk to the entire process, right?
+So the resolution comes.
+If I say the record with the two-bit cell.
+Now, why did I say that the authoritative
+data might not respond to the solution?
+You should be waiting for the RRC here.
+So you send a request to the two-bit cell.
+Yes.
+Yes.
+Yeah, that's true.
+I mean, at this point I hope they have.
+Long back I did a study again and I said
+you've seen what was broken.
+It's always the same, like, every part
+of the broken kit.
+It doesn't get the 14th step?
+Certainly, but much more simpler than that.
+I think it's a good idea.
+I think it's a good idea.
+It's a good idea.
+It's a good idea.
+I think it's a good idea.
+It's a good idea.
+It's a good idea.
+If you are an on-pad attacker, what would you do?
+You could take the move to the, yes.
+Essentially you want to be a little bit silent.
+Now you might wonder why would you do that?
+Right?
+Of course you're an attacker, that makes sense.
+But you know the side state of affairs is the over.
+Who operates the over?
+Right.
+What incentives does an ISP have to be
+able to afford?
+So what do you think they'll do?
+Why carry it, you know, they'll do it
+so they're very happy to be able to do this
+and along.
+Keep in mind, your staff resolvers
+don't do anything, right?
+Your staff resolvers simply rely on
+the recursive resolvers, typically provided
+magnanimously by your ISP, right?
+You may come back to that in a minute.
+But you know what I mean?
+You know what I mean?
+You know what I mean?
+You really come back to what I mean.
+And then, you know, they have no incentive.
+For a long time, what they used to do
+is simply resolvers.
+It brings the other, you know, brings back
+a question.
+Suppose you do get the R6.
+Do you think that's the validation?
+Yes.
+Is it resolvable?
+Which resolver?
+Local?
+Yes, it's global, not the stuff.
+It sounds big.
+You can hit it in front of you.
+Roy may have a few things in that question.
+You can hit the spot.
+You can hit the spot.
+There's nothing that's preventing you
+from running a sophisticated resolver on the R16.
+Typically, you don't.
+Why bother?
+Well, anyway.
+Well, you've got to do it.
+It's great about, you know,
+the quality in terms of the R6.
+If it does come with the R6,
+you get the DNS key, right?
+You know, you verify
+that this R6 is using the DNS key.
+When you get this DNS key,
+you will get another R6.
+How do you verify this one?
+From the parent zone.
+How do you know which parent,
+I mean, basically, you know the parent zone
+from the hierarchy.
+So how do you know what to query?
+Well, you query for the BS record.
+And how do you know, you know,
+if this BS record will come with an R6,
+it will come with an R6.
+I usually have a demo,
+but I'm not sure if it's still there.
+But you could try and see
+there's a tool that allows you
+to verify from your command line
+how this works.
+That's my topic.
+Okay, let me buzz through this quick.
+DNS second practice.
+Simple question, right?
+This is a protocol.
+It's supposed to be something meaningful,
+something really important.
+The question is how to visualize it.
+Where is it at one?
+And how does it all look like?
+And there should be no surprise.
+There should be no surprise.
+There should be no surprise.
+There should be no surprise.
+There should be no surprise.
+And there should be no surprise.
+I mean, if anything you learn from this course
+is that any protocol that you see,
+any security protocol,
+regardless of how great the benefits are,
+they're broken beyond your wild imagination.
+Sometimes the reasons are obvious,
+sometimes the reasons are not so.
+So what did we do?
+These are lots of, you know,
+these simple measurement projects
+that you could do as part of your master thesis.
+I mean, you know,
+depending on what you're looking for.
+So what we did in this paper was a following, right?
+So we looked at 100, for example,
+these domains, where you get the domains.
+We can go to the authoritative name servers
+of dot com, dot org, dot net,
+and you could ask them,
+could you give me a zone file?
+What is a zone file?
+It's just a list of domain names
+that the authority group is responsible for answering.
+Yes.
+Do they get this easily, or?
+Ah, it is public and full.
+I said, what happened?
+You have to request it.
+It's a pseudo manual process.
+There's a simple protocol by which,
+you used to have a simple protocol
+by which you could request
+an authoritative name server
+to dump it by a zone file.
+Can you guess why it was not?
+A manual server.
+Yes.
+The zone files are really long,
+so you don't want this to be an automated version.
+So nowadays, when you request it,
+ask people what kind of questions,
+ask the right user.
+We can also ask the question
+how reliable is that process?
+Can you?
+What we did was,
+we actually fetched the zone files every day,
+roughly a year or so, I think.
+Why would you fetch it every day?
+Pretty much free.
+What would you do?
+The question is on files.
+Yes.
+People can add their own names to them.
+Yes.
+It's called churn.
+The domains that are registered
+and re-registered
+are so, you know, changed so much.
+Again, it depends on which domain
+you're talking about.
+If it's .com, the churn is so large.
+Let me grasp it.
+Oh, you think it's just a domain.
+It's a domain.
+Let me grasp it.
+Who registers a domain?
+Who registers it so frequently?
+You could search this online.
+One, you know, anything that comes
+from his family.
+And so there's a lot of research
+that has asked a very simple question,
+very simple measurement study.
+Simply look at which domains change and why.
+Why do you register it on the register,
+and so on and so forth,
+and figure out who's doing that.
+And then you figure out, oh, what happens?
+Sometimes it's not so obvious.
+Anyway.
+What do we do?
+Take the DNS key.
+This is basically going to be
+the first domain with a DNS key bracket, right?
+If you don't have a DNS key bracket,
+it doesn't matter what you advertise.
+No validation known as possible.
+This is going to be a .com, .net,
+or keep in mind that we text this every day, right?
+There's some occasional grips in the way,
+so, you know, just turn the phone on.
+Anyway, this is the first in page.
+It's not a fraction.
+Just throw something in among you.
+So let's end with 2017.
+We also did some follow-up.
+If this doesn't worry you, I don't know what will.
+It's just like less than one person's domains
+that you're using, that we are using,
+that are not, you know,
+they claim that they have DNS set,
+but this is what it looked like then.
+I don't know what the experience was like.
+And then you say, okay, fine.
+That's okay.
+The people who deployed, you know,
+what does the R-R say?
+You know, this is basically saying missing S-O-A-R.
+So S-O-A-R is a standard policy.
+It's another view.
+So this is basically saying the first thing
+that's the main thing is missing R-R-S.
+It means that even though they have the DNS key
+deployed, they're likely to claim DNSX support.
+They actually can't eliminate the R-R-S properties
+if they're broken.
+Yeah, this one is a DNS missing key,
+a missing DNS key, this one is missing S-O-A-R.
+Each one is broken.
+If you're wondering why there's a huge blip here,
+that's because,
+this is one of the things that you have to keep in mind.
+Anyone can do measurements.
+For networking, there's a bunch of rules that you can know.
+It's very easy to do measurements at scale.
+It's easier to analyze.
+But understanding some of the odd things
+that you observe in the data, that's really hard.
+So it takes a long time to figure out
+why this is what's happening.
+And there's a simple explanation that there was
+a single entity that was registering a lot of the names.
+And so when that entity did a mistake or fixed it,
+you will see a key change in the graph.
+The more interesting point of this,
+what we can do with it, actually raises.
+And something we should keep in mind is that,
+if I show you any graph showing how something was broken
+or how something was working,
+and I show you a huge blip, that should raise an alarm.
+Why?
+Because we all think of the internet
+as a decentralized and distributed infrastructure.
+And yet, something as crucial as DNS
+seems to rely on a very few number of players.
+And it's true of the internet.
+The DNS, they're always, you know,
+explained it as a hierarchical distributed database.
+And we can only ask the question,
+how distributed it is, is it?
+And then it's not actually.
+The internet.
+Missing DS records, right?
+So this is, at a given zone, everything is fine and bandy,
+but then the DS records is missing,
+which means that the first couple of checks will pass,
+but you can't walk the chain of trust.
+And then there's this percentage of domains
+missing DS records, great.
+There was 30% off, and a third of the domains
+were missing DS records.
+This is why I said, the time when we did it,
+the automated protocol to update your DS record
+was not in place.
+But nowadays, there is a protocol
+that automatically uses to be adjusted.
+So this is broken chain of trust.
+Popular registrars, DNS sec policy.
+When I say DNS sec policy, what they did was that
+the DS uploads the data,
+so when you actually say, I want my domain to be DNS sec,
+and then you create an extra one,
+you're supposed to upload the DS to the bed.
+And this was a policy.
+Some of them said you could do it online
+and you have to email.
+And if you wonder how many of them do DS validation,
+none of them did.
+What I mean by that is,
+since the process was very manual,
+when you upload the DS record,
+you could make a mistake by the way.
+You copied these mistakes.
+And when you do this, they won't even check.
+All of them have the privacy,
+and so they're making a policy,
+and then the mistake won't be there.
+They just happen to take a lot of crappy data.
+But again, this still happens, right?
+Anyway.
+Why are DS records missing?
+I'm gonna skip this and then take a look at this.
+This is obvious.
+There's a lot of,
+registrations are done by few and very few organizations,
+so mistakes of the few cascading people out there.
+Then you could ask, okay, fine.
+The ones that are doing a good job,
+how strong are the keys?
+Sometimes you wonder why are you even looking at the NSF?
+But anyway.
+ZSK is not that bad.
+This is sort of obvious,
+because you expect KSK to be much stronger,
+so these lines should be smaller than DSKs.
+ZSKs change very quickly to KSK as well.
+What does KSK change?
+Zone sign and key sign basically.
+The key sign actually means
+to sign the RRC processor,
+so you have to do the same kind of thing.
+So this is sort of obvious,
+because you expect KSK to be much stronger,
+so these lines should be smaller than DSKs.
+ZSKs change very quickly to KSK as well.
+What does KSK change?
+Zone sign and key sign basically.
+Auto is always there.
+This info circuit is unfortunately not available.
+When we did this,
+there was this company called Vinny Mati.
+What they did was,
+they had a software that ran in volunteers mode
+that you could make,
+I don't know what you would say to them,
+for running the software,
+but the idea was that you could,
+you know, we had measurements,
+people at least said that what I do
+is you could issue measurements
+from a bunch of different users around the world.
+Can we use this framework
+and can we do better things?
+And what we could do is,
+we could say look,
+I want to verify,
+I want to do a look up,
+let's say of www.nufang.com.
+I want to set the do-bit.
+I want to see whether I'm getting a response.
+Let's drop it in value.
+But for most things online,
+you really can't check whether
+by giving it a bad key sign,
+what can anyone do to actually do that?
+by giving it a bad piece, and what we did was
+we actually looked up domains that we had control over.
+We operated on an authoritative name server,
+which is quite the study, and what we did was,
+depending on the domain you query,
+we would give you a bad search, or a bad key,
+or a good one, and we would try to see
+what the resolvers were doing, okay?
+In this local resolver, if you pick your nodes,
+the users in different ISPs, like, you know,
+how many nodes they own, and so on,
+you would actually check what the resolvers
+in those ISPs are doing, right?
+And we could actually, because we control a key,
+we could actually send a bad response, or a good response,
+and if you do receive a response,
+it means that your ISPs is always doing the same thing.
+So that's okay.
+And we did this in a network that we think is origin.
+A lot of my paper that we have is in vertical account.
+So vertical is not always a good, anyway.
+So how many resolvers except in the other response, right?
+So, because we can control the process.
+This is what we found.
+We knew that the resolvers paid for about 15 seconds.
+The thing that doesn't really matter
+to what level anyone deployed,
+the resolver isn't going to be able to be broken.
+And it was not just small networks.
+And on the competitive level,
+he was one of the largest networks.
+I think it's probably...
+Don, you must go ahead.
+But these are really large networks,
+and support for the necessary support.
+We'll stop when I see you go, and you're on to the next one.
+Any questions?
+Yes.
+If you mess up one of the stuff in the resolvers,
+the resolver is actually doing something.
+That's why you have one key.
+If you do a greenness, you are safe.
+You approach it a long way.
+Then you're trying to...
+Do you call us in on it?
+No, no, no.
+When you say clients,
+if you're thinking about people like you and me,
+I'll stop, there's always going to be,
+if you can see the greenness of the resolvers at the back.
+With a good script, then there's always going to be.
+Yeah, I'm definitely happy to hear from you.
+Very good questions.
+I also had experience trying to do this,
+and it's not that it's a good process.
+I like how optimistic you are to try and change them.
+Oh, no, I'm not.
+What are you successful at?
+No, we always try to reach out to them.
+In some cases, they actually told us
+why the process was broken.
+Some of them don't care.
+It depends on the network you're approaching.
+In networks, you typically talk of tier one, tier three.
+Tier one is typically one of the top.
+They wouldn't care.
+Do you have any gathering of how this has changed
+over the years?
+Good question.
+No, if you're interested, let me know.
+I think it's a shutdown.
+I'm going to pause the slides.
+There's a tool on Mac I think I have to install something
+through Homebrew or Horts.
+But in the next, I think it comes just by default
+and you can check it.
+It's called Dell.
+You can use this.
+I think I should change this example.
+Fluxec.net, no crypto, cephalop, no conciliator.
+And then you check the Akamai, the Google.
+I think there's some things that you
+have to do in order to.
+I think these are the root keys.
+For some reason, it didn't have them on the machine.
+I think it's still broken.
+Ah, that's better.
+I'll applaud it in the beginning.
+You can one-foot the examples yourself.
+I think the Mac implementation of Dell was broken,
+so I had to install something else with the running tools.
+I think even today, Fluxec.net doesn't have a DNS support.
+The last time, I would say, it's still broken.
+You can do this on your terminal.
+There's an A record for this one.
+There's an R. And if you dig NSLookup,
+all these tools are really, really nice.
+They take a bunch of options and tell you
+what to use in the entire process.
+In this case, I can do an R trace.
+It means that you trace the resolution,
+and it tells you what it is doing.
+It's fetching the A, the DNS, and so on.
+You could do this also online.
+You could search for DNS validation in Dell,
+but maybe in a ZT.
+Is the last fetch after call, is that the root fetch?
+The dot slash DNS?
+I think this is the DNS.
+Yeah, it could be.
+I think it is, yes.
+Maybe you can play with them.
+There's nothing I can see there.
+Okay.
+Cover this.
+Let's see.
+Let's just know what we are working on.
+The DNS set.
+You also learn about the resolution process.
+Keep in mind, there is a single query.
+You typically ask for an A record for a given domain.
+The response usually is a bundle.
+How are you exactly based on what you are getting?
+What you have to do, when you say this,
+the RR sync is basically a signature
+for a bunch of records,
+not for a single record.
+You ask for a single record.
+You ask for a given domain name.
+For instance, you ask for akhanae.com
+or through sync.net.
+If you get an RR sync for a bundle,
+how do you know the RR sync
+even covers your domain?
+Just check if your domain is in the bundle.
+How?
+By getting all of the entire bundle.
+That could be.
+But it's much simpler than that.
+You get all of these iterates.
+Does that make sense?
+It's a subtle thing to keep in mind
+that I
+in a past instance
+I asked a question about it
+and soon as I confused
+I thought we could exclude it.
+RR sync is always a bundle
+but you shouldn't think about it
+because if you don't know the entire bundle
+it's hard to verify whether the signature is valid.
+You can't do that much.
+You can't do
+that much.
+But it's much simpler than creating
+all of the records
+because usually you're creating with tons of records
+and the RR sync is just a company image.
+So it's not any good.
+So this is what you're going to get up to.
+nyc.net
+nyc.net
+This is what you're saying.
+This is also called an RR set.
+Resource record set.
+A set could actually have just one record
+but maybe it would have more than one.
+And the RR sync is basically
+a signature
+of the entire set.
+Now let me ask you
+about DNS basics.
+Suppose I do this query again.
+So this one is saying
+nyc.net.fastly.net
+fastly is a CDN.
+But anyway
+this one is the domain is getting
+mapped to a number of IP addresses
+and here it's 4.
+Let's do the query again.
+Would you say the same thing?
+Why are we saying 4 instead of 1?
+Basically CDN
+are ensuring that
+this might go down that path.
+So much more simple answer would be
+4 answers yes.
+If 1 is banned then you can do the rest.
+It's redundancy.
+So now let's think about it.
+Just think about the answer.
+Before they tell you that the next time you fail
+even if these are the only
+4 answers you will get
+you will not give them the same order.
+Why would that be?
+Yes, excellent answer.
+This is a cheap load balancing.
+So if I have
+4 servers
+that are all posting the content
+for the domain that you are asking for
+I know for sure
+how long is a 4 server active
+and I give you the answer
+you're trying to pick a person.
+So what's the easiest way I can load balance?
+Any time you ask me the answer
+I can give you the answer.
+So what's the easiest way I can load balance?
+Any time you ask me the answer
+I'll randomize it.
+So you'll load balance.
+What is another way in which you can
+load balance?
+It's true.
+Something that's in here.
+What is this value?
+I don't know what it is.
+Time to do it.
+I can use ETL to control those.
+Someone else.
+So
+there's one thing that I wanted to
+clarify.
+So last time when Helper was mentioning
+ETLs, he said usually they're very long.
+It's not true.
+ETLs are usually very small.
+What's the advantage of setting ETL to
+a really large value
+and where does it vanish?
+It's very large
+it will likely get
+to its destination
+but it might be very far out.
+No. This ETL is different from the
+ETL we got.
+It's very long
+it has the
+it can get
+it can get comfortable
+maybe. Excellent.
+So first of all, this ETL is not like
+your ID ETL. This ETL is basically
+saying how long the project
+should remain in the cache.
+It's typically in the setting.
+So sometimes
+if you keep seeing
+you should not be surprised.
+You'll see the value 300.
+Very difficult.
+86,400.
+One bit, yes.
+Now, could you
+answer it yet?
+It's typically
+likely to get 86,400
+and what's the range you'd like to get
+300?
+Yes?
+For Helper
+you get one of them?
+And for Helper
+you add what sort of ETL?
+Not necessarily. It could happen
+but that's not a good answer.
+The ones that are accessed
+very frequently but at the same time?
+Yes. So this is what you were thinking.
+Which ones are accessed very
+frequently?
+Excellent answer, but which ones?
+No.
+No.
+Only talking about the links, the pages don't matter.
+What about the hierarchy?
+The root.
+Right?
+The root you typically don't
+access that often, right?
+They don't change that much.
+They usually have very long ETL.
+The lower you go, you'll see
+shorter and shorter ETLs.
+Why does ETL matter?
+Because, as someone said,
+the amount, the ETL that I give you
+basically determines how long
+an entry will remain in cache.
+If you want to guard yourself
+against a cache quality impact
+it will be good.
+If you want to change your
+server's load balance
+you keep the ETL sharp.
+Because you're forcing the client
+to do the work again. And then you could once again
+optimize.
+So one of the largest things
+in the world, Akamai, actually does
+load balance based on ETL.
+You can see it in our literature.
+Again, simple things, basic things
+that we can build into all that just have to pay
+attention to the ETLs.
+Cool.
+Let's see.
+Can I come with one more?
+All right.
+Any questions?
+Well, obviously the network
+is awesome. The network is good.
+Obviously you have to put a bunch of John in.
+So we saw DNS.
+It's plain old DNS.
+I forgot what the acronym is.
+It's still called plain old DNS.
+No encryption.
+No
+check for authenticity.
+Nothing.
+Then we saw a DNS set.
+There's a bunch more.
+Showing the picture just so that
+it's in your mind.
+It's something you can't do.
+This should be obvious.
+Now these are secure.
+Anyone who can observe these back
+which, you know,
+pick your favorite ISP.
+You can do it.
+You can do it.
+You can do it.
+You can do it.
+You can do it.
+You can do it.
+You know, pick your favorite ISP.
+You can observe.
+You can observe.
+You can observe.
+Even if, you know,
+the government doesn't put up any
+specific instances, you know,
+first you are on an ISP,
+you can handle it a lot.
+And you maintain the loss
+for a while.
+Another question is, you know,
+what can you learn?
+If you figure out the, you know,
+the lookups that you have made,
+I can easily build a profile
+of what you're trying to do.
+Because typically you're not going to look up
+for if it's something that you're not
+interested in, right?
+If you resolve nyc.com,
+if you resolve nyc.com,
+obviously you're trying to find something
+that you're not interested in.
+I mean, you could say you were testing
+whatever the definition was,
+but that's not the kind of work, right?
+And then you could sell the data.
+You know, here's a profile of the user
+and this is where the user is working.
+And this is like a fun, tested business.
+It works very well.
+A lot of ISPs have been caught
+doing this.
+Another question is what can you do about it, right?
+So I'm going to
+walk you through a bunch of tricks.
+So,
+now let's get into some more specific, right?
+So you're a PMS,
+whenever you send a query,
+there's a field called healing, called cleaning.
+It's, you know, a complicated way of saying
+what is the domain you're trying to look up, right?
+And this is how it works, right?
+So you pass it with stuff, stuff doesn't do anything,
+stuff goes to the local resolver design,
+trying to resolve nyc.com.
+And there's a resolve word.
+And of course you know this iterative process,
+but observe that it's actually screening at the top of its voice
+to everyone out on the internet saying,
+I'm resolving the domain, I'm resolving the internet, right?
+It goes to the root and it says,
+can you tell me the resolution for nyc.com?
+And then it goes,
+and it goes to .com and it says,
+can you tell me, you know, the resolution for nyc.com?
+And then it finally goes to netflix.com,
+and then it gets a resolution for www.nyc.com.
+But it's really weird.
+If I change this particular domain name from www.netflix.com
+to something random .com,
+it will still be there, .com, right?
+So observe that this particular string
+has no value for the root, and yet,
+the resolver is actually trying to
+reveal that information to everyone.
+So could you do that?
+And this is the first trick, right?
+If you need minimization,
+I took a long time to figure it out.
+This is wrong.
+And we said, okay, what's the simple thing?
+To tell it is minimization, right?
+So at the very least, you don't have to tell the root,
+you know, what's the second level of the name.
+You just tell the root the top, you know,
+the top level of the name.
+Tell the top level of the name the second level of the name,
+and tell the second level of the name the actual supplement.
+So this is, you know, you look at a domain name,
+this is your PLB, this is your SLD,
+and that's your supplement.
+Okay?
+And that's how your name minimizes it.
+It's only trying to rewind the amount of information
+that a name server could gather, right?
+You're trying to rewind, you know,
+only on a neutral basis.
+Okay?
+And then you could say the specific,
+you're basically asking for awareness,
+and, you know, what do you think?
+You're trying to get them to still figure out,
+hey, you're watching, you know,
+I can't see what you're trying to look out
+until I get the results.
+Or any attacker on the path can do it.
+Could you change that?
+You could, right?
+Again, why are they investigating you?
+There's no rockets on you.
+You could encrypt all those boxes.
+What's difficult about that?
+Is it expensive?
+Something more?
+Like, you know, like, you know,
+you're asking for, like,
+they're able to actually do the system itself,
+and they're able to, like, decrypt, right?
+Yeah, but I also think you're right.
+You're right.
+If this part is unencrypted,
+it means that you're relying on your ISP
+to encrypt all these boxes.
+So I'm not doing anything.
+But you could also encrypt this part,
+but it still doesn't help.
+It's not that easy.
+Expense cost is one.
+By the way, this is what DNS over DLS,
+or there is DNS over PMS.
+They all try to do it.
+They try to encrypt all these things.
+These are all...
+There are standards governing how these things work.
+I'm not going to go over them.
+It's not important to you.
+For example, you just should know how they work.
+There are high levels of encryption.
+The reason why they're really difficult,
+we can cover this one,
+given the role it can be played.
+The reason why they're difficult
+is because now you require all these influence
+to support DLS.
+That's just a question of cost.
+It's just a question of incentivizing them.
+Obviously, it doesn't matter, right?
+So what is the incentive
+for anyone to implement any change
+that you're asking them to do?
+And how do they benefit?
+There is no clear benefit.
+Either the benefit...
+The benefit has to be two ways, right?
+One, you provide them a clear monthly incentive.
+You tell someone,
+or you could do the other one,
+which is if you don't implement it,
+I'm going to shame you publicly.
+That all works.
+These are all things that work.
+So I'm going to cover the last one,
+which is an area that we didn't do.
+So what you could do is something like the following.
+If the threat model that you have in mind
+is that we can't press a local resolver,
+why?
+Because a local resolver does a lot of things for you.
+But if it is operated by an entity that you don't trust in,
+the local resolver can figure out
+what's your IP address,
+whatever you're trying to look up,
+and build a profile.
+It's pretty easy, okay?
+Even with the minimization, right?
+Q&A minimization doesn't take a lot.
+Local resolvent is the one billion minimization.
+So if we can ignore the root and the center,
+the question is what we do here.
+What we could do is we could replace the local resolver
+by one, the CDN products, okay?
+CDN is another acronym that stands for
+Content Delivery Network.
+If you think of this as a company
+that manages a bunch of cash
+that is distributed all around the region,
+then the business of reducing the latency
+for web transactions,
+anything that you do online,
+whether it's a business lookup,
+whether it's a feedback,
+whether it's a video stream,
+then the business of trying to deliver content
+as quickly as possible.
+80% to 85% of the content that you consume online
+are delivered by CDNs,
+whether you like it or not.
+This is how it works.
+This is how we do it.
+It's also the most efficient and economical way to do this.
+Given that is how it works,
+then the natural question is
+why can't CDNs operate?
+What we can do is
+we can do this from the start.
+I'm going to establish it in a few minutes.
+And then, let's say again we'll do the resolution.
+Now, this looks like it.
+So there's a TNS over HTTP,
+inside HTTP, the number HTTP.
+And this is why we call it TNS over HTTP.
+That's because the TNS over HTTP
+is nothing but their HTTPs.
+They're just simply tunneling your DNS over HTTPs,
+provide HTTPs, all those things.
+Why HTTP?
+Because DNS, I think it's much simpler than that.
+It's a question of economics.
+CDNs have an infrastructure that is optimized
+for 80% of the content.
+And they're simply leveraging it back to their HTTPs
+for several months.
+How do HTTP transactions come after DNS?
+So how do you establish a connection procedure
+before you run DNS?
+What do you do?
+Use the language you know of?
+In other words?
+Hard-coded, right?
+So, another way of saying it is
+take it to your browser.
+By the way, DNS over HTTPs was an initiative
+as a lot of companies are now behind it.
+But it was popularized a lot by Mozilla
+and Cloudflare.
+So if you use today Firefox,
+DNS over HTTPs is taken.
+The resolver that Firefox will try to use
+is called as a trusted recursive resolver.
+It's a recursive resolver.
+Instead of your ISP as a recursive resolver,
+Firefox will use a trusted recursive resolver.
+You trust it enough to do that.
+How does it know which trusted recursive resolver
+it can use?
+There's a pattern of it.
+You go to an out common conflict and you can see that.
+You can change it.
+Anyone can operate with the error
+and anyone with any one cause.
+And the idea is that you know where this server is.
+You establish an HTTP disk connection,
+send your DNS query over the HTTP disk connection,
+which means anyone on the path cannot observe anything.
+And then from this point on, it does the resolution.
+Now you might ask, why is it a CDN?
+It's not a CDN, though, does it mean?
+Anyway, why HTTP data should be out here?
+Does it mean it's not a CDN?
+There's no clear answer to this.
+I worked a lot with CDNs.
+That's unmediated by it.
+But one thing to observe is that most of your content
+comes from CDN.
+Your bank transactions,
+typically the majority of your online transactions,
+the server that you have to work is actually CDN.
+So that argument could be, well, I did it.
+My content from them, why not trust them?
+Have we run out of tricks?
+Well, the basic thing is this, right?
+So how can we prevent the link of anything
+between channels and disks?
+This is a fundamental problem.
+You have a client that's making queries.
+If you can figure out how to decouple them, you're good.
+You're good.
+Here is one thing you can do.
+This is the strongest security thing you can ever achieve.
+Just take two minutes.
+What's the strongest security you can achieve?
+This is called information theory of security,
+which is basically saying, suppose I walk into this class,
+I'm looking to specifically figure out the details
+of one particular security thing,
+but I don't want to reveal who is that.
+What could I do?
+Ask everyone.
+Basically, dump the entire database.
+Because then, what you have revealed
+to the person on the other side is
+that you're interested in one record out of all of them.
+And that's the best guarantee you can get.
+This is really hard to do in DNS and practice
+because these databases are really large.
+And if I have to download the entire database, you could.
+But for every single query, most of the time,
+you're just spending on downloading databases.
+You're not really going to be used.
+So what could you do?
+I mean, at the boot level, you could still do that
+because a few thousand TLBs, Data Sizes, Managers.
+What I mean is, from the boot,
+if you look at the number of top-level domains,
+you could still do that.
+You could still do dump the entire database.
+They don't change that often.
+You could still pull that trick.
+In entries, it can be cached for a long time.
+That works.
+But if you go to the TLD and ask it, that's really hard.
+.com itself has like 140 to 160 million domains
+on any given day.
+And the churn is also very large.
+It quickly goes up the scale.
+You can't cache high-gen entries.
+It's not a good word.
+It is a very simple but very powerful statistical technique.
+It just builds on what we just said.
+Instead of asking for one record,
+if I ask for records of everyone in the class,
+I don't really need information.
+But if that is not feasible,
+what I'll do is I'll try to hide my single query
+with a bunch of queries that are useless.
+So for instance, instead of fetching one domain,
+I could fetch K domains.
+So for instance, if I really want to resolve Netflix.com,
+what I would do is I'll actually fetch a number of other domains
+which have got nothing to do with my query.
+I'll discard all the answers.
+I spend a little bit of performance penalty
+because I'm requesting additional information,
+but I'm certain that now the TLD does not know what I asked for.
+Meaning it knows that one of these records is my intended query,
+but it doesn't know which one.
+This is called k-anonymity,
+meaning you're anonymizing your query with k of the records.
+It's quite nice.
+For a small performance penalty, you get some advantages.
+You got to be careful though
+because if you don't pick your K domains properly,
+this is dead simple to break.
+One way to think about it is that
+the record that you're trying to fetch
+should be in statistical terms what we try to say is,
+as long as the actual record that you're trying to fetch
+is equally likely compared to everything else,
+then you're good.
+What I mean to say is suppose of these K records that I pick,
+if you didn't know anything about me and you asked me,
+what is the likelihood that I would go to any of these websites?
+And if the answer is they're all equally likely,
+then you have actually achieved K domain.
+If not, for instance, if each of these domains,
+let's say entered in .cn,
+which means there are some Chinese websites,
+and you know, for instance, given that I come from India,
+I have no reason.
+Probably I can't read any of the Cantonese or Mandarin,
+which means that the K domains that I picked,
+if all of them except for one end in .cn,
+that's a dead giveaway.
+That's one simple example to show that
+you can't just pick any K domains.
+You have to be careful.
+All right.
+That's good enough for now.
+I've already done it over time.
+But we'll resume one more technique in DNS,
+and then we'll switch topics.

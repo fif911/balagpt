@@ -1,0 +1,1307 @@
+--------------------------------------------------------------------------------
+
+Part 01
+
+--------------------------------------------------------------------------------
+
+So talking about some advanced effects with side channels to gas the sequence 
+numbers,
+the ports, the acknowledgement numbers, so we close that part now and we move 
+on to the
+next major topic which is about DNS, so the domain name system, the system that 
+we use
+to translate symbolic names into IP addresses and occasionally vysers and what 
+we want to
+do is poison one of our domain name servers, so a server is poisoned when it 
+has an entry
+that maps a symbolic name to the wrong IP address, so maybe this is the right 
+IP address
+for vusac.map and we want it to map to some arbitrary attacker control IP 
+address. Why is
+that good for the attacker? Well it means that if somebody in that organization 
+looks up the
+domain name of vusac, it will get an IP address towards the attacker's website 
+which perhaps
+contains all sorts of malicious stuff. So that's the reason why we want to 
+poison the cache.
+And just as a reminder to all of you...
+Right, so just as a reminder, DNS is a domain name system that uses a 
+distributed database to map
+these symbolic names into IP addresses and it has a few moving pieces. There is 
+first of all the
+stuff, so whenever you type in vusac.map in your browser, you first talk to the 
+stuff. What is
+the stuff? Where does that live? Anyone? In your own system, right? So this is 
+just your, it could
+be a library connected to your browser and the stuff talks to the local 
+resolver which lives
+where? ISP, right? So at the ISP. And this is what is known as a recursive 
+resolver, right? So it will
+find out, you ask it to resolve vusac.net and it will do the whole thing. It 
+will go and talk to
+anybody that's needed to talk to to find out what the IP address of vusac.net 
+is. And that includes
+communication with the root name servers and or the top-level domain name 
+servers and finally
+some authoritative name servers. It will do that for you and it will simply 
+return the mapping to
+you so that you now know vusac.net is whatever IP address. So it maintains that 
+in a cache, right?
+So the next time you go and look for that IP at the root of that domain name, 
+it will serve it not
+by talking to the root name server, the top-level domain name server, top-level 
+domain name server,
+for instance, the .nl domain or the .com domain and so on. And it will not talk 
+to the authoritative
+name server for the domain that you're interested in. And that's really good, 
+right? So you have a
+cache and all of the requests coming from that same ISP talking to the same 
+local resolver will
+be using that mapping. That's also very good for the attacker. So once you 
+poison that, it means the
+attacker is able to steer all of those requests from all of those clients to 
+the attacker's IP address.
+
+Is there any agreed upon policy on how long ISPs keep their cache or refresh 
+their cache?
+It's actually in the records, right? So there's actually a field that says this 
+is how long this
+record is going to be valid for. But it's a very long time. Okay, so what we 
+want to do, as mentioned,
+is replace or make sure that it doesn't contain the legitimate IP address, but 
+rather the attacker's IP address.
+That's the A. And to do that, we want to ensure that, oh, this is the goal. To 
+do that, we need to fake
+some replies from name search. So again, just let me, otherwise it's fast. So 
+we want to make sure that it
+doesn't go to the legitimate website, but rather goes to the attacker's 
+website, right? So we have to
+somehow spoof a response of a name server, right? So and what is the response 
+that we want to spoof?
+What is the most interesting target for the attacker? Is it the response that 
+comes from the
+root name server, from the top-level domain name server, from the local 
+resolver, or from the
+authoritative name server? What would be an interesting target for the 
+authoritative name server, right?
+Because then you poison this for the entire organization, for the entire ISP. 
+
+And that's
+where actually the final mapping comes from, after all. So that's what you want 
+to just do.
+So the authoritative name server replies with the legitimate IP address. And 
+now we want to think
+about how can we spoof this? How can we, as an attacker, provide a reply that 
+contains a different
+mapping, a malicious mapping? So we have to somehow provide a reply just like 
+the authoritative name
+server is providing. Everything the same. And the only thing that is different 
+is that there's a
+different IP address. At least initially that's what we're going to do. Now, to 
+do that, we need to
+create a legitimate DNS reply. And a legitimate DNS reply has to match a real 
+DNS request. So we want
+to send over this link, this link, a reply just like the authoritative name 
+server is sending in
+reply to a request that went to the authoritative name server. What does that 
+look like? Well, if we sketch the the request, and going from the lowest layers
+to the highest layers in reverse
+order. So it starts with IP. Well, clearly, it has to match the fields that are 
+relevant here,
+it has to be sent to the right IP address, for instance, whether or not it has 
+to also have the
+right source address, something that will, will talk about. But it also has to, 
+at the transport
+layer, match the port numbers, right? So the UDP port that is used by the 
+server is well known. It's
+port 53, right? That is the port where the name server answers. That's where 
+the name server listens
+to. Okay, but the source port should also match. So there's also a source port. 
+And then so the
+addresses, and then there's one other thing that the request contains is a 
+query ID or a transaction
+ID. Both names are used for this field. 16 bit number, and it matches replies 
+to requests. So if
+a reply comes in, the server is going to look and say, ah, you know, the local 
+resolver is going to
+look and say, ah, this is the reply to this request, which has the same 
+transaction ID. So that has to
+match also when we send the reply. Now, some of these things are really easy to 
+find the IP addresses,
+for instance, we know the IP address of the local name server, because we can 
+look it up, we can look
+up the sort of the authoritative name server, because we can look it up. We 
+also know the IP address of
+the local resolver, because it's our local resolver, after all, if we're the 
+attacker. So we can find out
+the authoritative name server by simply querying. So we can do a query to find 
+the name server for a
+particular domain, or the start authority record for a particular domain. So 
+using Anas look up, or
+D, you can either find the name server for a particular domain, I think that's 
+all data, the next
+slide, or the start authority for a particular domain, you'll find that it is, 
+you know, we use
+Gandhi as our hosting provider for vusact.net. So you should really know how to 
+do this, you should
+know how to do a dig, and then the type that you're after is the start of 
+authority, so SOA,
+and then vusact.net, it will give you the start of authority record for 
+vusact.net. There are
+different types of records that you can request from the domain name system, 
+right, there's the
+
+A record, which is what? IPV4 address for a particular domain name, so you give 
+a symbolic name and it gives you the IPV4 address
+
+then what is AAA? IPv6, right
+
+so then there is the NS record, which is name server
+
+MX?, right, mail.
+
+So there's a whole bunch of records that you can obtain from the domain name
+system that correspond to something that you're 
+interested in,
+vusact.net in this particular case. So dig or anas look up will provide this 
+information.
+As I showed here, dig, des, type is start of authority, for vusact.net you get 
+this response
+which contains the information that you're looking at. Alternatively, you can 
+look for,
+as I mentioned, the name server of this domain, so you look for type anas and 
+then you've got
+the domain name server. So in other words, we can easily find the IP addresses 
+for these domains,
+so once we have the symbolic names for the domain name servers, we can look 
+those up and we find the
+IP addresses for the domain name server. So we can easily find the IP address 
+of the authoritative
+name server that we need to use in our spoofed message, right? Good. And the 
+other IP address
+is of course the IP address that we want to attack the victim of the spoofing 
+message.
+So that's what we're going to do. So the destination is going to be that source 
+address
+and the source is going to be whatever we found out to be the name, the 
+authoritative name server
+for vusact.net. What about UDP? As I mentioned, one of them is easy. The 
+destination port of the
+name server, the authoritative name server, is port number 53. So we can now 
+set that as a source port
+in our reply. That's easy. However, what about the source port? That is 
+unknown. So that's one
+thing that is 16 bits of uncertainty, 16 bits of entropy potential depending on 
+what year we're
+talking about because in the past it was easier. So 16 bits of entropy that we 
+somehow need to guess.
+And then there is the remainder which contained this transaction ID or this 
+query ID which we
+also have to match the requester's query ID. So that's also something that we 
+don't know.
+Remember we're assuming that we're not on path. It's an off path attacker. We 
+don't see the
+tracker. So we have to somehow find out what these numbers are. Yes, but if 
+we're
+assuming that we're not on path, how would we know that the victim is even 
+listening
+for DNS response at all? How would you do this?
+Doss them and then they maybe after a while have to like refresh their caches 
+and get some names.
+So maybe, right? So what is the response?
+So Doss them and make sure that you overrun the caches of the DNS. But you 
+don't know when it's going to be listening for a reply from that name.
+Doss them long enough so that they
+have to. But why would they go and look up fusact.net? Because you send the 
+request. That is the
+answer, right? The assumption is that you are in the same ISP so you can send 
+or alternatively
+you're able to have a spoof message pretending to be in that same ISP. So you 
+send the request to
+the local resolver asking for a mapping of fusact.net. So then it will be 
+listening for that reply.
+
+Yeah. Okay, good.
+So was there another question? No, I was just wondering like,
+if we're the ones that's setting the request, then would we also know the
+port as well? Well, it depends if the port... No, we don't, right? Because this 
+is a request
+sent from the local resolver to the names here. Okay, so here we actually see 
+the real mapping
+and that's what we want to also make sure matches so the DNS question should 
+also
+correspond to the... so the DNS reply should correspond to whatever was asked. 
+Okay, good.
+So only if we have that, we can send this spoof to reply pretending to be the 
+authoritative
+nameserver and and poison the cache of a local result.
+So in other words, the only things that are uncertain here are the source port 
+number
+and because we send the request ourselves, we know what the request was asking 
+for.
+So the only things that are uncertain are the source port number, UDP source 
+port number
+of the local resolver that we can use as the destination port for our message 
+and the query ID.
+So 32 bits of entropy in principle. Correct? So that's what we're going to have 
+to struggle
+with and we're going to look at some, you know, different methods to find those 
+numbers.
+Okay, so let's start with that.
+And the first technique that I would like to discuss is known as a birthday 
+attack
+and it's a technique that we'll discuss also in the context of more advanced 
+versions of this.
+It's a very basic technique that in many security situations is relevant for 
+for an attack.
+Okay, and it's all... okay, let me take a step out. So first of all, in the old 
+days,
+the port number was a fixed port. So let's assume we're back in the old days 
+for a minute and say
+that this is no longer a problem, right? So we no longer have to guess the 
+source port number.
+So the only thing that remains is the query ID. So 16 bits query ID.
+So that's what we need to guess still. The problem is that the query ID, if you 
+go back
+far enough, it wasn't even completely random. It would be incremented by one, 
+every query that
+was being sent. But that was fixed and it was randomized. So we have a 16-bit 
+random number
+that we somehow have to match. Cannot see it, so we have to guess it. How do 
+you guess the 16-bit
+query number? Well, one way to do it is simply send lots of replies with lots 
+of different
+query IDs. And if you send two to the power of 16 of those replies, one of them 
+will match,
+right? So you can brute force that. That will take a long time. It's also not 
+something that
+you would like to do. However, you can make use of this technique based on the 
+birthday paradox.
+Okay? And it's a well-known fact. It's based on a well-known fact that if you 
+have a room
+with a certain number of people, say, you know, even way fewer than here, the 
+probability of two
+of you having the same birthday is really quite high. It only takes 23 people 
+to have a probability
+of two people having the same birthday being 50% or higher. So it's a birthday 
+paradox. It's just
+because, you know, you don't match one person's birthday against a group of 
+people, but anybody
+against anybody, right? So it has to be only any match is okay. That is 
+basically what we're
+banking on. Just out of curiosity, how many people have never heard of the 
+birthday paradox before?
+Okay. Does it make sense, though, that you're matching everything, everybody 
+against everybody
+rather than one person against everybody, and that increases the probability of 
+there being a match?
+So that is, it's strictly speaking, not paradox, but it's a birthday phenomenon.
+
+So let's see how we can use this in DNS. If we were to simply try and send lots 
+of replies with,
+you know, guesses for query IDs, the probability of success would be, however 
+many replies we send,
+divided by 2 to the power 16, roughly, right? Because the first 1,024 board 
+numbers don't
+count, but let's say 2 to the power 16, right? That's the probability if we 
+were to do normal,
+naive reply, okay? But what if we do not just send, I don't know, and I say 100 
+replies,
+but we also send 100 requests with different query IDs, right? So then we send 
+100 replies.
+Well, then we match those 100 replies to 100 requests, and the probability of 
+there being a
+match between any of those is much higher. It's just exactly the birthday 
+paradox, right? We're
+matching everything against everything, and hope that there is at least one 
+pair that matches.
+So that is what we're going to do, and the probability of success, you know, if 
+you want
+to know the math behind it, is that. Okay. So, again, yep. Why would the local 
+resource send
+all the queries? Yeah, there is no good reason, but the implementations did 
+that in those times.
+So you would think that, why doesn't it simply remember that it already has 
+sent the request
+with the same thing? Well, it has to somehow have some recollection of what it 
+has sent before.
+It didn't, right? So we just receive them and forward the request, if it didn't 
+have a mapping
+already. I might have missed that at all. We know the authority names are about 
+to respond before us.
+That's somehow, we have to be quick enough. That's right. Hold that thought. 
+We're going to come
+back to that later, when there's a much more elaborate attack that we need, we 
+need much
+more time to pull out. This is not that bad, right? Because we send 100 
+requests, we can send
+almost immediately 100 requests, right? Whereas the authoritative name server 
+needs to be contacted,
+so it has to be, it has to travel across the internet, right, and back, and, 
+you know,
+maybe it will also do all the things. So, in this case, it's not so bad.
+So, this is exactly what we're going to do. We're going to send many packets to 
+the victim
+name server, all asking for the same domain. We're going to use the fact that 
+the implementation
+sends out as many requests to the authoritative name server. We send that many 
+replies, spoofed
+replies with guesses for query IDs, right? You could do this in the past. It's 
+no longer as easy
+today as we shall see, okay? And eventually, of course, there will be hopefully 
+a match,
+and that means that we have a legitimate reply for the request that was sent, 
+and we've poisoned
+the cache, so that when the client then starts doing a lookup for that domain, 
+it will go to
+our website instead of the the real website. Okay, is that clear, Berta? So,
+how would a role answer be handled? Or just disregard it? Don't happen to have 
+the wrong
+query ID. So, if you have, you mean if there's a non-match, it will be thrown 
+on the floor,
+right? So, this is not something that the server can accept. But if it has the 
+right query ID,
+then it's good to go. As long as you find one that matches, it's all good.
+If you have sent 100 requests and you have one success, but 99 fails, that means
+the authoritative name server gives 99 correct replies. How likely is it that
+you are the one that stays in the cache? Because you are a one against 99. 
+Right, but you have
+a TTR time to live, right? So, that is how long you're going to stay in the 
+cache. All the other
+replies that are coming in are not to any requests that the name server would 
+take into account.
+So, there is already a certain time that this entry will be in the cache. Okay, 
+so because
+your 99 requests are dropped and your one success. Yeah, in those days, right? 
+So, this is early
+implementations of DNS. Yeah, but we'll talk about, you know, what happened 
+afterwards.
+So, what happens if the victim name server already has a cache result? Yeah, 
+that sucks.
+You're going to have to wait for it to remove. I just wanted to add a few cents 
+to what you said.
+When you think about cache, you shouldn't think about, you know, you're trying 
+to, I think,
+increase from the cache because these are software caches and there's no reason 
+why they can't be
+really large. So, that's why I was talking about the TTLs, right? If your 
+question is,
+what if a wrong response means that I cannot attack that particular domain for 
+a long time,
+that's valid, but you tell about it. All right, so how much faster will this go 
+with the birthday
+attack compared to a normal naive reply? Well, this is what you would have to 
+do to
+get this. This is how many packets you need to send to get this success 
+probability,
+right? So, if you do this with a birthday attack, even with just a few hundred 
+packets,
+a few hundred, you already go well above 50 percent. Whereas, if you were to do 
+this with
+just naive replying to one particular request, it would take you thousands of 
+requests. So,
+real time-safe. So, just to clarify, does this, because at the very top of the 
+border gets sent,
+does this asymptotically approach 100 percent or does it actually hit a 
+definitive 100 percent
+after the, like, a thousand? Not after a thousand. It will event, when will it 
+hit 100 percent?
+Yes, exactly. When you have all of them. Exactly. Okay, good. Now, what is the 
+response to this,
+what would you have to do is simply randomize the port number and then it's no 
+longer as easy.
+
+So,
+we're going to, you know, hold that thought. We're going to first assume that 
+the port number
+is still not randomized, but we're going to do something more clever with this 
+attack. So,
+assuming we have this kind of system where the port number is still fixed, so 
+we don't have to
+worry about the port number, what can we do with the attack that is even better 
+than what we've
+shown so far. Okay? And that is what is known as the Kaminsky attack. So, the 
+Kaminsky attack
+was named after Dan Kaminsky, who was a brilliant hacker, passed away two years 
+ago, 2021, really
+young at a young age. So, he was surely missed by the community, but he 
+escalated this kind of attack
+to something much better, as we shall see. It didn't just poison a single IP, a 
+single domain
+name for one IP address. It would take over an entire zone, right? So, you 
+know, vusact.net,
+or AVNAMRO, or, you know, whatever your domain was. Pretty severe. And it 
+created a huge uproar
+in the days when this was discovered. So, that's already 15 years ago, 2008. 
+Then, we could still
+do this. We still had this assumption that the source port number was not a 
+problem anymore.
+That changed later. Okay? So, again, we have this constellation. We're going to 
+remove some of this
+because it's not interesting for us. We're only going to focus on the part of 
+the rights and
+mainly on this part here, right? So, the local resolver and the authoritative 
+name server.
+And what we've said is that we want to guess the source port number, and we 
+want to guess
+the query ID. Back in 2008, when this attack was presented, in many 
+implementations of the
+national, all of them, the source port number was fixed. Okay? Also, there was 
+quite a few
+implementations where the query ID was incremented by one with every query that 
+was sent. But we're
+going to assume that this is not the case with the domain name server that 
+we're attacking now. So,
+let's ignore this assumption. It's no longer true anyway. It wasn't true for 
+all the servers in
+those days. So, let's assume that this is not true. And we want to launch, 
+still, an off-path attack
+against one of these servers.
+And we're going to do the same thing, except that the damage that we do is much 
+more severe because
+we poison the cast in such a way that the entire domain of the victim is going 
+to be
+controlled by the attacker. So, not just, you know, a particular domain in AVNM 
+row or
+vu.nl or whatever. But any domain name, any domain name that you do a look up 
+for
+at vu.nl will be pointed to an attacker-controlled IP marriage.
+
+Okay. So, the attacker issues the query. We still do the same thing. We're 
+going to race
+against the authoritative name server, meaning that we want to be faster than 
+your authoritative
+name server in providing this mapping and poison the cache. And we're assuming 
+that the port number
+is no longer an issue. So, we need to query the, we need to find the right 
+query ID.
+So, how do we do this? Well, we can use the birthday attack again. So, we don't 
+have to do
+a single request and then, you know, try and find some appropriate replies for 
+that. We do a many
+to many attacks. So, Dan Kaminsky came up with an interesting variant of that 
+birthday attack ID.
+Okay. So, if we get it correct, the entry will be cached. And the way Dan, yes?
+I'm curious, was the fixed port, was that actually specified in the spec or was 
+that
+just an implementation detail? I think that's probably an implementation issue. 
+It's probably
+not specified in the spec. That's what I suspect. Because it's underneath the 
+DNS
+itself, right? So, it's a transport layer rather than DNS. So,
+there's no need for it to be specified there. So, I think it's probably an 
+implementation.
+Okay. So, what Kaminsky did was launch many requests for slight variations of 
+the
+of the domain. Because if we
+lose the race and there is a domain mapping coming from the legitimate server, 
+it will
+ruin everything for us, right? So, there will be an entry in our name server 
+for that domain.
+So, what he would do instead is he would ask for bogus names under that domain,
+right? So, he would not ask for v.nl or, you know, CS.v.nl in the legitimate 
+domain. Instead,
+he would ask for, you know, random string at v.nl and send lots of requests of 
+that sort.
+Other than that, he would still launch a birthday event. So, he would launch,
+besides all of these requests with the random names, .v.nl, he would also 
+provide lots and lots
+of responses, spoofed responses with different guesses for the query ID. And as 
+long as the
+query ID matches, the response of this seems to be legitimate. Okay. So, that's 
+good because we,
+again, no longer have to do this in the naive way. We get our speed up because 
+of the birthday
+attack. It's going sublinear now in the size of the 16 bits field. Okay. And 
+what the
+devastating part of the attack was that we take over the zone. What does that 
+mean?
+It didn't poison a particular name, CS.v.nl, but it would try to poison the 
+cache with an entry for
+the name server of v.nl so that all subsequent requests for anything under the 
+v.nl domain
+would take the attacker's control, the attacker control IP address. So, that is 
+the thing that
+he was trying to do. Yeah. But is that because the implementation for the name 
+server says that,
+oh, if you have these many caches, entries in the cache that go to something 
+.v.nl, then
+it's going to be this specific address every time? No, no, no, no. That had 
+nothing. We'll get to
+how we did it in a minute. So, this was merely to make sure that whatever was 
+already provided by
+the name server would not mess up any of the requests that he sent, for 
+instance. That's one
+of the things that was clever about that. Is there a question? No, I'm just 
+scratching. Okay.
+Yeah. Do the target name server just ignore these random things because it 
+doesn't recognize this
+domain? What would the authoritative name server send back? Any DNS experts? 
+What would you send
+back? I think the thing right there, the NX domain. Oh, is it on the slide? All 
+right, that makes it
+easy. Yes, it would send back. It doesn't exist. Yeah, not existing. I have a 
+question about,
+so, what I'm understanding is he sends multiple bogus requests. Then he also 
+does the birthday
+attack. So, for most of these requests, you receive an NX domain response back. 
+These NX domains
+also have a certain TTL issue, right? Because that's the problem with the 
+negative caching
+thing sometimes. So, does that still limit your, like, how many requests you 
+can make for the
+birthday attack part? I'm not really understanding how. Not really, no, no, no, 
+no. Why would that be
+Well, I would expect you to do bogus.food.nl and then it will send back an NX 
+domain and you would
+cache it for a certain TTL still. Right, but for bogus.food.nl, which you're 
+not interested in
+anyway, right? So, then you just go on for the next thing? Yeah. Oh, okay. So, 
+in that sense,
+it's doing a birthday attack just by, okay. All right. All right. What was I 
+going to say?
+
+Yeah. So, the one thing that we're not sure of is how we got the the NS record 
+to be in the cache,
+right? So, it was all clear the birthday attack helped us poison a value for a 
+particular domain.
+But the question is, you know, how does that how does that lead to a zone 
+take-off?
+So, well, there, so, yep. Just wanted to clarify. So, in the, in the slide, the 
+random sub-domains
+that you see, you know, those are just a proxy for you to make a new guess 
+against equity IDs.
+So, I hope you see that. That's actually a good point. Also, to the other thing 
+that you guarantee
+now is that, in the past, some implementations would, regardless of views 
+asking for the same
+thing, all the time, it would still make a new request. Now, you're 
+guaranteeing that it will
+make that. Yeah. Yeah. That's a good point. Yes. But, the thing that in the 
+birthday attack,
+with everybody explaining, you're trying to maximize guesses on both sides, 
+right? So,
+instead of just trying to guess one particular item, you're trying to guess n 
+items. And the
+n items that you're guessing here are the query IDs. Each of those query IDs 
+are in those dummy
+requests. So, those requests themselves don't matter what you get. Because what 
+happens is that,
+well, you get a reply back for dummy domain with a, with a bogus mapping, 
+perhaps.
+And that, that has a guess for the query ID. But, there's something else that 
+you can do if you're
+asking for a domain. And that is some additional information that, that you can 
+provide to help
+further lookups, right? So, if you're asking for an authoritative mapping from 
+bogus name
+to some, some address, that's not what we're interested in. This is the 
+irrelevant part.
+But, what we're interested in is additional information that the server, the 
+name server,
+can provide to the, the local result. Such as what? Well, for instance, it can 
+help you with
+doing, you know, further lookups for the, for the name server of that domain. 
+And to do that,
+it can give you a so-called glue record. And the glue record indicates that for 
+voodoo canal,
+the name server is this one, evil.ns.nl. And moreover, you don't even have to 
+look it up,
+I'll give you the IP address of evil.ns, evil.ns.nl, right? And now, this will 
+be taken if you're,
+if you have the query ID right, if it matches the query ID, it will be taken 
+and added to the cache
+of the local resolver, okay? So, now we have a name server mapping in our, in 
+our cache so that
+subsequent requests will be sent to our name server, okay? So, for all of the, 
+the subsequent
+communication, this authoritative name server, what the server can do, the name 
+server, is provide
+additional information. So, you know, this is what these name server would 
+normally provide,
+right? So, assuming this was a real domain name, right? So, voodoo canal, if it 
+existed, it would
+provide you an A record, which means a mapping to an IP address. What we're 
+saying is, we're going
+to ignore that part. That is not what the attacker crisis took. If we did that, 
+right, we would simply
+have, and we had a matching query ID that would be an entry in the, in the 
+cache of the cache,
+that, you know, this domain name is mapped onto that IP address. So, that's 
+only one domain name,
+right? So, one, I don't know, CS, we're not interested in that. So, we're also, 
+in the attacker's
+spoof messages, we're not, we don't care, right? So, then we have to provide 
+something there, but
+we don't care about that. What we're interested in is the additional 
+information that a name
+server can provide to help future lookups. So, that the future lookups don't 
+have to go to the
+top level domain name server anymore, right? So, instead of, you know, if you 
+ask for something
+else, say, I don't know, faculty of sciences dot voodoo canal, right? Normally, 
+you would have to
+go to the top level domain name server that would give you the address of the 
+domain name server of
+voodoo canal, the authoritative name server, and then you would go there. If 
+you're unlucky, you
+might have to go to the root name server even. You don't want to do that. So, 
+to help you avoid those,
+you know, repeated transactions with these servers, it will tell you, you know, 
+in the future,
+this is the, the authoritative name server for this domain. You can ask the, 
+the authoritative
+name server directly. Yes. So, basically, with our request, we are also sending 
+voodoo canal,
+and s is evil. Yes, exactly. And then, in the case that the id matches, then 
+the local resolution...
+Yes, these voodoo records will simply be taken. We are sending them. Yeah, 
+exactly.
+Is there, from the perspective of the name server, is there a
+priority for glue records versus actual records for voodoo canal? Will it like,
+prefer one over the other? No, it will probably just update. It has to take 
+both, right? Because
+one is an answer to the query, the other one, as Heather mentioned, it's a 
+glue. For further
+queries, you could use that. You have to accept both. But if you're asking, 
+will it accept the
+view record if the primary one fails, the answer is no. Okay. So, we're just 
+getting
+both voodoo canal, right? In the glue, does it have to be voodoo canal? Can we 
+just, a Google voodoo canal?
+Good question. No, it has to be, so that's part of the standard. It has to be 
+matching the domain.
+Yeah. Yeah, you cannot make it, unfortunately. Why should it be even more 
+interesting? I would say you
+should try. I'm pretty sure that there will be an implementation that's broken. 
+
+But that's a good
+question. It's, it's called bail checking. So, you're actually checking whether 
+the domains or
+the top-level domains or the domain itself, the second-level domain, they match.
+Yeah. Please check. So, it's part of the standard. What was it called? 
+Bay-D-Wit. Bay-D-Wit. Bay-D-Wit.
+All right. Any other questions? No? So, this is the Kaminsky attack. It's kind 
+of cool. It got the
+internet in a bit of a panic in 2008. So, people were rushed in to, to fix this 
+before
+Dan Kaminsky was allowed to talk about this. So, it was a much-anticipated 
+format. I think Black Hat
+at the time. And that's all I have for Kaminsky. I mean, where do we stand, 
+speaking of time?
+Yeah. All right. So, let's have a quick break. 15 minutes, and then we continue 
+with a slightly
+boring box.
+--------------------------------------------------------------------------------
+
+Part 02
+
+--------------------------------------------------------------------------------
+
+And side channels, they are used in all sorts of situations security-wise or 
+also in different fields.
+You can go to any security conference nowadays and see that side channels are 
+used to leak secrets from the kernel of your operating system,
+and the light vibration leaks audio. There's a lot of things that we use side 
+channels for.
+I want to go through all of these papers. I want to zoom in on what we're 
+trying to do.
+So we're still trying to do the cast poisoning attack, and we're going to focus 
+only on getting the port number.
+Because once we have the port number, we go back to the previous syntax.
+And we're going to introduce an extra element, a forwarder. It's not super 
+important, but essentially it's also there in practical situations.
+A forwarder will simply forward the DNS requests from the laptop in your home 
+to the local resolver, and it could be, for instance, your access port in your 
+house.
+We're introducing this because it's also vulnerable.
+So we can launch the attack either against the forwarder, or we can launch it 
+against the local resolver.
+So both of these are potential targets.
+And like I said, both the source port and the query ID are randomized, and we 
+want to target the port number.
+And to do that, we use a technique that's described in a paper that was 
+published in 2020 at the CCS conference, and for the details, you should really 
+read the paper.
+It's important. You might get questioned on this in your exam.
+And the assumption is that we have an off-path attacker again, so someone 
+cannot see the port numbers.
+So you have to somehow guess or something.
+And to do this, the attacker uses a side channel, and the side channel is made 
+possible by a number of things.
+So on the one hand, there is a design flaw in UDP.
+I think it's a legitimate design flaw. It's something that I can see no proper 
+use for.
+And then there's also, it's being helped by a number of things, such as the 
+ICMP messages, error messages, that are being sent back,
+and where there is limits on the number of messages that are being sent back.
+Unlike what we saw earlier with the challenge, so we're going to see something 
+very like that in this attack.
+So in implementations, the number of ICMP error messages is limited to, say, 50 
+per second.
+Why would it even be limited?
+Why would you limit the number of ICMP error messages?
+Yeah, exactly. So you want to limit anything that can be used in some way to 
+launch a lot of traffic in a particular direction.
+Likewise, and that's also something that we're going to use, the name servers 
+had a response limit.
+So the number of replies from a name server is also limited.
+Why is that? Exactly the same, right?
+And there it's even more important because many of the major denial of service 
+attacks that we've seen in recent years are so-called amplification attacks.
+And we're going to talk about denial of service attacks in later lectures.
+But the amplification attacks basically send a small request and the server 
+answers with a big reply.
+So if you send a small request to a name server, it's UDP.
+It doesn't require all this complex spoofing that we needed to do for TCP.
+It's a UDP packet. You get a really small request.
+And potentially, depending on what DNS record you're asking for, the reply 
+could be very big.
+So if you spoof the source IP address of your request, the reply will be sent 
+to some poor victim who will be overloaded with a lot of traffic.
+Even though you only send a small amount of traffic.
+So you want to limit the number of replies. So that's what we have to do.
+Now, what is this design flaw in UDP? Well, to fully understand that, you need 
+to look at the RFC.
+But let me just highlight the important thing.
+And one of the problems is related to the fact that applications with UDP can 
+receive packets from more than one IP source address on a single UDP source.
+Right? Does that surprise anyone? Is that good or bad?
+In general, if you think about this, is this good or bad?
+But why? If you have a server, a UDP server, it should also be able to receive 
+packets from many IP addresses.
+So that part is good, right? The bad part is that it also pertains to clients.
+So even a client sending a request to a server may get a reply from somebody 
+else.
+Which is weird. This is something that there's no good reason why this should 
+happen.
+If you send a request, you should receive the reply from whatever party you 
+send the request to.
+That's one problem.
+And moreover, the standard says that applications must implement checks at the 
+application layer.
+So the application layer should implement checks to see if anything is a mix.
+So I receive a reply from someone and I never send that party a request.
+That should be implemented as the application layer.
+Or the application layer should request the operating system to filter out 
+these things.
+And most of the implementations did not do any of this.
+So they did not ask the operating system to filter out anything.
+So those are the two things.
+So let's assume we're attacking again our local resolver.
+And what we've shown on the slide is the software that runs on top of that.
+So there's an operating system and then there's an application.
+So the application is the...
+All right. Again, receive the operating system and then we see our application.
+Our bind server, perhaps the name server software that's running on top of that.
+And now we have an attacker that still wants to poison the entries in the local 
+result.
+And what the attacker is going to do is send a UDP packet to the client.
+Spoof UDP packet.
+And doesn't know what the port number is.
+Has no idea what the port number is of the request that is being sent out by 
+the local resolver.
+So we assume that the local resolver is making a request.
+We send a reply.
+We don't know what the port number is that should be used.
+And the operating system says, well, it's not that one. Sorry.
+And sends back an ICMP error message.
+Good. So that is useful information.
+
+Now the attacker knows that nobody was listening on that port number.
+There was no client listening on that port number.
+But if we keep trying and we send the UDP packet that happens to have the right 
+port number,
+it's accepted by the operating system and it's passed on to the application 
+layer.
+Now the application layer may not like that very much because it's not 
+something that it has requested.
+So at that layer it will be noticed.
+But it didn't ask the operating system to filter this.
+So no ICMP error message is sent back to the attacker.
+This may just be a difference in implementation of what this was done now.
+But most network cards nowadays, I think these actually built into the meeting 
+at this point.
+So that response time you still have to get passed all the way up to the rest 
+of the operating system.
+But then they can't actually generate the ICMP response without knowing the 
+cause.
+That's right.
+It makes you right.
+Okay, so now we have a way of at least probing to see if we have the right port 
+number.
+So what we can do is...
+There's another thing that I mentioned earlier.
+The number of ICMP error messages that we are allowed to send is limited for 
+good reasons, security reasons.
+So we have 50 ICMP error messages that we can send per second.
+So if we receive one ICMP error message because of a probe that we did, there 
+will be 49 left.
+So what we can do is send a whole bunch of these probes with a guessed port 
+number.
+And if they're all wrong, the number of ICMP error messages that are left will 
+be exhausted.
+So we will exhaust our quota of ICMP error messages that we're allowed to send.
+So we're sending 50 packets.
+The attacker sends 50 packets and just tries a bunch of port numbers with those 
+packets.
+And if none of the ports match, we will receive 50 ICMP error messages.
+Moreover, what we can do is send just to make sure that it is indeed exhausting
+the 50 ICMP error messages that the local resolver is allowed to send.
+And that it is indeed 50 messages that is allowed to send.
+We can probe. We can verify it by sending one that really should not be 
+reachable.
+So what we can do is send one request to a port number that we know for sure to 
+be closed.
+So nobody should be listening on port number one.
+So we know this is closed.
+And if we have exhausted the number of ICMP messages that the error messages 
+that the local resolver is allowed to send,
+we will not receive an ICMP error message.
+Then we know we've exhausted that set that is allowed to send.
+Great. Now, if one of these messages, one of these spoofed and gas messages 
+probes has the right port number,
+we'll receive only 49 ICMP error messages.
+So then we know one of the 50 packets that we sent had the right UDP port 
+number.
+And we can verify that again by sending a verification message to the port 
+number that we know to be closed.
+And now we should see an ICMP error message again.
+It means that we did indeed in that set have one UDP packet with the right port 
+number.
+
+So here we have, again, a global counter that was used as a side channel.
+It's an ICMP global rate limit that allows us to determine whether or not we've 
+guessed the port number correctly.
+Isn't it only revealed that you've guessed a open port, a open UDP port, not 
+necessarily the right one for that DNS lookup?
+Like if there's another application that has a UDP port open.
+It's just a very valid one, right? So you're absolutely right.
+So you still have to do all the rest of it.
+You just know that at that point you only know that there is a request 
+outstanding from the local resolver to a named server without port number.
+You can make this very likely to match though.
+How?
+You send the request again, right? So that is probably the last thing that has 
+been sent.
+So you're right. And then you can verify it by doing it again.
+All right. The other problem is the problem that one of you alluded to, that it 
+takes a long time.
+
+Somebody gets the credit that, you know, we need to do this before the server 
+replies.
+And this is a lot of stuff. Now we have to send lots of, you know, trains of 
+packages.
+So 50 at a time and then, you know, it wasn't in there. So another 50 and 
+another 50, all of that takes a long time.
+And by that time, the name server will have replied already.
+So the attack window is way too short to pull this off.
+So what can we do? What would you do?
+I think they just mentioned that the name server also has a rate limit.
+Yes. So how can we make use of that?
+Rate limit is hit and cannot respond. So what do we do?
+Yeah, we span the name server. We make sure that the name server is super busy.
+And then, you know, it will be too busy to reply quickly to this request that 
+is outstanding. Exactly.
+So this is also something that we're going to see in many other attacks.
+So I'm not sure if you guys are going to take or currently taking or will take 
+hardware security.
+But in hardware security, we use a lot of side channels.
+One of the things that's always a problem there is that, you know, the side 
+channels exist,
+but there is a window in which they have to be carried out.
+And if the window is really short, it's impossible to actually perform the 
+attack.
+So one of the techniques that you're going to learn there is to extend the 
+window.
+Make sure that the window is open much longer, right?
+If something has to be done before a variable is read, the value of a variable 
+is read,
+make sure that that variable is not in the cache, for instance, right?
+
+So in terms of operating systems and hardware architecture, that's the way in 
+which we extend the window.
+In this case, it is just overloading the legitimate authoritative name server 
+with requests,
+such that it is too busy at that point to respond quickly to the request by the 
+local result.
+Yes, so we make sure that the response rate limit that is there, again, for 
+very good reasons,
+because we don't want this name server to participate in denial of service 
+attacks, is used to our advantage.
+So we mute the name server.
+Here we see the attacker sending a log, and this could be a legitimate request, 
+right?
+So it doesn't have to be anything that's spoofed, it's just a legitimate 
+request.
+Now, the question is, surely these things will time out, right?
+If it takes a long time for the server to respond, these devices should time 
+out, except that they don't, right?
+So the paper describes experiments where these devices remain waiting for 
+minutes before they time out,
+which is incredible, and that's a long time. You can do a lot of stuff in 
+minutes.
+
+Okay, great. So they do this, and then they are able to guess the source port 
+number that was used in the local resolver and reply.
+And we're back to that. How long does that take, and how successful is that?
+Well, they tried this out with a bunch of configurations, including realistic 
+name servers, right?
+So there's a name server, production name server, that serves 70 million 
+queries per day.
+Not a huge amount, but it is realistic. And the success rates are staggering, 
+right?
+So if you look at these, these are a lot of experiments with different kinds of 
+configurations.
+The baseline is a regular name server, and what we showed is that, you know, if 
+we do this with a baseline name server in daytime,
+so that's the D, the probability of success is still 20 out of 20 attempts, 
+right?
+And if they do it at night, it's also 20 out of 20 attempts, even though it's 
+even faster than the daytime attack.
+And they do this whilst muting the real authoritative name server up to 80%. So 
+it's not that it's completely offline,
+it's not like Kaminsky is doing a DDoS attack on the authoritative name server.
+It's muted considerably, but not too much. And then they try to reduce the mute 
+level of that name server to, I don't know, say 66%, 67%.
+And still it's 20 out of 20 attempts that were successful. If they drop to 50%, 
+we actually lose some of the attempts that we tried.
+But it's definitely quite a robust attack. Any questions about this?
+How come it works if you're not muting the name server with 100% because then 
+the name server has the chance to respond with a legitimate?
+But it's still slow, right? You're still slowing down the name server.
+Yeah, apparently they were fast enough in nine out of 20 cases if it was 
+reduced to 50%.
+
+Yeah, so they also had a, I forgot what was in the paper, but they had an 
+alternative configuration of the name server, but I don't remember that.
+This is a challenge for you to reach out.
+So did I understand correctly that we can only send 50 at least UDP packets per 
+second, or can we send more?
+No, we can send as many UDP packets as we want.
+But we just don't know when...
+Oh, you're talking about the response rate of the server. So the response rate 
+of the server is higher than 50.
+No, I was actually talking about the client.
+Yeah, so the ICMP packets is only 50%.
+There's like 60,000 plus ports to scan, so how can you do that in about 8,000 
+seconds?
+Yeah, it takes a while, right? So it's not 50,000, right? So there's fewer 
+ports that are really used by an operating system, so you can limit it that way 
+to some extent.
+You do it 50 at a time, yeah, you have to still be somewhat lucky.
+And you have minutes, right? So minutes is a long time.
+One question I had about the ICMP errors. So is the 50 the rate limit that they 
+implement, is that the side channel error, or are you already getting back just 
+the ICMP error when it is not opened and otherwise you get nothing back?
+It helps the side channel.
+It's just like a verification check. Okay, thank you.
+By the way, keep in mind that optimized networks, we talk about milliseconds, 
+right? DNS usually doesn't take a second. It's often 10s of milliseconds, 
+otherwise you would not even go to a website, right?
+Not all of us get like 10 milliseconds or 20 milliseconds response, but 
+typically it's around 20 to 30 milliseconds. So a second is already large.
+
+Yeah.
+All right.
+Okay.
+Quickly, a rattle of one more attack.
+We've covered all the attack of UDP.
+So.
+Yes.
+As of 2022, that is actually true.
+2021, I think, right?
+I think so. Yeah.
+So this was, this was an attack, if I remember correctly, the previous one in 
+2020. Yeah. Then this one is in 2021.
+
+Because, you know, things evolved and some, some of the problems got fixed.
+But now the attackers or the researchers are on to something. Again, this is 
+something that I also alluded to last time.
+Once attackers know about a certain way of launching an attack, they'll look 
+for new tricks to still make this possible in an or more than variant.
+And, you know, despite countermeasures, despite mitigation.
+So that's what we're going to do. We're going to guess the source port number. 
+And now we're doing this with a side channel based on slightly different 
+resources.
+Okay.
+And it has to do with interactions between ICMP, UDP and the, and the 
+applications.
+So we're in the ICMP protocol. It's an internet layer. And ICMP, as we've seen, 
+is a diagnosis. It's, you know, it's used for error messages, diagnostics, 
+trying to figure out that something is wrong in the message.
+So in the message order, something is alive in the network. So pings will help 
+you tell that something is up and then replied.
+So echo and echo replies are the bread and butter of a network administrator.
+But there are also error messages. For instance, a pack, an IP packet comes 
+into your network at the router.
+And the router determines the time to live up that packet. And then at some 
+point when that time reaches zero, so it has no longer any holes left that it 
+can be can travel.
+It will also be dropped with an ICMP time exceeded error message being sent to 
+the source.
+That's, for instance, used in traceroot. So in traceroot you progressively send 
+UDP packets with progressively longer time to live messages.
+Time to live feeds. So the first will only travel to the first halt. The second 
+one will only travel to the second halt. And so on. And every time you get the 
+ICMP error, you know, which routers are on the way to the destination.
+Another ICMP message is sent when the destination is unreachable. For instance, 
+it might be unreachable because fragmentations need it. And, you know, there 
+was a don't fragment set, a don't fragment flag set.
+We also discussed this last time. Well, we're going to look at that again. But 
+now in the context of the ICMP.
+If we get one of these error messages, such as the one where the don't fragment 
+flag is set and it needs to fragment the packet because it's too long.
+
+We've already seen this last time. We need to include the legitimate message in 
+the ICMP error that is sent in response to them.
+So that's what we looked at in the context of TCP also. We're going to again 
+have to do that here also.
+Here's our configuration again. We still want to attack the local resolver.
+And if we receive a UDP reply, right, so with a guess for the port number, and 
+it's all good, right, it has the right destination address.
+It has the right destination port, which is the source port of the original 
+request. All is good. It goes up to the application.
+But the application may then discover that it doesn't, it was not waiting for a 
+reply message from that IP address.
+So then something's bad. And if you don't receive an ICMP error message, great, 
+you know that the port number is correct.
+So that's good. Now what we want to do is scan the ports using ICMP. We know 
+how to scan ports in other ways.
+So we already saw TCP based scanning, for instance, by setting up connections, 
+or by sending only SYN packets and then waiting for the SYNAC and sending a 
+reset.
+You see that, so that's the half open scan. We've also seen the idle scan where 
+we use some third party to help us in the scanning.
+So we've seen all sorts of scanning techniques. We can also scan with UDP, 
+right, so with UDP, we might, for instance, set a packet to the server on the 
+right port and then, you know, nothing happens.
+It just goes up to the application layer and then, you know, maybe bad things 
+happen there. But if we send it to the wrong port, we receive an ICMP error 
+message, right, so the port is closed.
+
+What we want to do now is scan with ICMP. And with ICMP, you know, if the port 
+number is correct, it's fine, so it will continue. If it's not correct, nothing 
+happens, nothing seems to happen anymore.
+So how do we distinguish between those two cases?
+Okay, so what we're going to look at is the error message that fragmentation is 
+needed, but the don't fragment flag is set.
+That is the ICMP error message that we want to provide.
+And as mentioned, the original packet that offended this rule that violated the 
+fragmentation that was needed rule because the don't fragment flag was set will 
+have to be included in that packet.
+This could be sent by anybody. We don't have any restrictions. We cannot have 
+any restrictions as a sender.
+Sorry, as we receive the ICMP error message, we send out the original packet. 
+We may get that ICMP error message from anybody, right. We don't know which 
+router along the path might send that.
+So that's by design. We may receive such an error message from anybody.
+All we know is that some router along the path found that the packet was too 
+large.
+So the source IP address can be any value. But the embedded UDP packet should 
+still be a valid UDP packet.
+Once we have that, though, we know that from now on we should send smaller 
+packets.
+So we change the MTU for the maximum transfer unit for this client. So for that 
+destination to the smaller value that was indicated in the ICMP error message.
+The ICMP error message will tell us what the maximum transfer unit can be. And 
+that's what we're going to note in our tables. We're going to keep track of 
+this.
+Next time we send this message to this name server, we'll use a smaller MTU. 
+Clear?
+And we keep track of that in a cache or in a table if you want. So it's 
+official name in LX. It is the next top exception cache.
+
+So we basically keep track of this IP address. We need to use a smaller MTU.
+Okay, so now let's have a look at the UDP ports that exist. We have two types 
+of UDP ports, even if we look at the client.
+So if we send a request, we have two types of UDP ports that we may have to 
+deal with. One of them is known as a public facing client port or ephemeral 
+port.
+So these are the ephemeral port numbers that you use as a source port number 
+when you send a request to the authoritative name server.
+So those are the port numbers that we're talking about, ephemeral ports. Now if 
+they're public facing, it basically means that we use the send to system call 
+to send the UDP packet.
+The implication is that for these ports, we will accept packets from any IP 
+address.
+Whenever we do, the receive from the packet that we receive could come from any 
+IP address. So that's in that sense public. Public facing ephemeral port.
+That kind of implies that we probably also have private facing ephemeral port 
+and the answer is yes, that's true. Whenever we send the unity packet using 
+connect, so we will connect, then we will reject all packets except the packets 
+that are from the IP address that we connected to.
+So it's a little stricter and that's what you would hope all of the 
+implementations would use, but not all of them did that, maybe fixed now.
+This is both for ephemeral ports, right?
+Yep, we're still talking about ephemeral ports. So public facing and private 
+facing ephemeral ports.
+Does the spec mandate that both of these have to exist or is this just like the 
+private ports are kind of a nicely offered by some of our operating systems?
+It's still a little bit of a UDP flaw, right, that you're allowed to receive 
+replies to anything that many IP addresses are in response to a send to. But 
+yeah, it's allowed for the system.
+Okay, so the spec just doesn't accept it for anything, but this is just a nice 
+idea.
+It's a design.
+Okay, so some servers actually do use the private facing ports and others use 
+public facing ports.
+
+Now, if we have a public facing port, how can we determine now, or at least in 
+2021, what do you write port numbers? Can we infer this somehow?
+So what the authors of the paper did was infer this by sending an ICMP error 
+message, as a reply, an ICMP error message to the victim, right?
+And the destination of that packet was obviously the destination of the victim.
+And it said that there was fragmentation needed and that the fragmentation for 
+the address should be 1200 as max, right? So it's a relatively small package, 
+so it needs to be flat.
+And so the message size there, the source address is going to be the address of 
+the victim, right?
+That's what the embedded UDP message will contain, right? That it was in 
+response to a message sent by the victim and the destination was supposedly the 
+attacker.
+That needs to be a proper ICMP error message, so we make it an embedded packet 
+in there that actually is okay. It uses RFP address, so it's all good, right?
+And we have a guess for the source port number.
+Good. Now, if this was successful, if we had the port number correct, if our 
+guess was correct, this victim will have adjusted the RTU.
+
+So we no longer, we can no longer see any ICMP error messages coming back, so 
+there's no direct signals anymore in previous attacks. We cannot do it.
+But we do know if we were correct with our guess for the port number here, this 
+message was received and processed.
+So now it must have used the MTU that we provide. So the next time we send a 
+message there, for instance, a normal ping message that is longer than the MTU 
+that we sent, right?
+So 1300 bytes, we're going to see a message coming back, a reply, an ICMP reply 
+message, with a much smaller length, so it's 1152, why is it 1152?
+Yeah, well not the IP header, but the IP header.
+So we actually can verify that this was a correct guess.
+If the port was closed, we're going to try this and we verify it and we simply 
+see the same number of bytes on my back.
+So then we know that it was not a successful guess.
+One question about the first arrow going from the off-pad attacker to the 
+victim bar?
+Yes, it has the destination is the victim, so this is an IP header, I think, 
+the one on the left, and then it has source is victim, destination is attacker, 
+that is in the ICMP packet?
+Yeah, that is the embedded packet.
+And does it need to be destination is attacker or could it be anything?
+Why not the real name server, for instance?
+Because it doesn't care, that's the thing.
+It's a pointless phasing, ephemeral port.
+Yes, it can be anything.
+Thank you.
+So the reason why it takes the MTU size into account in the case that it's open 
+is because there is an established connection and it respects that?
+Well, an established connection and outstanding request, yes, correct.
+And is there a case in which the kernel or the NIC could implement even for not 
+outstanding connections, it still respects the MTU size to basically make this 
+not feasible?
+That's risky, right?
+Why would you accept me?
+The path MTU, the ICMP header you're getting is in response to something you 
+sent.
+Why would anyone in the internet tell you what you're supposed to send without 
+even using anything?
+That's a risk.
+Okay, so what we verify is that this number is indeed a match for the MTU that 
+we sent.
+We changed the MTU for the name server.
+And then, you know, we're back to square one, we know the port number, and we 
+can go and do the commencement attack again, slow down the name server so that 
+we actually have time to do this.
+The other thing that we, so the other situation where we have a private-facing 
+ephemeral port is a little trickier.
+So here, it doesn't make up just any body replying to the port number, we have 
+to have the right IP address.
+So here, and I'm just going to go over this in very broad strokes because 
+there's a lot that needs to be done behind the scenes.
+
+Here we make use of the fact that the fragmentation needed to host exception 
+cache.
+Something like that.
+Yeah, ease exception.
+I thought it was next hop.
+Next hop, yeah, that's right.
+So, fragmentation needed next hop exception cache.
+It's a mouthful.
+Has a limited number of entries that it keeps for a particular set of IP 
+addresses.
+So what it uses is, again, something similar to what we saw in the TCP attack.
+It has 2048 different hash buckets, and they all have a limited number of these 
+entries for the fragmentation next hop exception cache.
+And what we're going to do is make sure that there is a collision for a 
+particular hash bucket again.
+And to do that is a little tricky, so we have to send a number of these entries 
+that all map onto the same hash block.
+Now, the question is, how do we find a collision?
+That is, to do that requires a number of packets that we send that are not 
+necessarily related to the name server that we're trying to spoof.
+So we're trying to first get any five or six entries that are in there, 
+depending on IPv4 or IPv6, the number of entries that is there changes.
+So as long as we get any set that maps to the same bucket, we know that these 
+are the same.
+And then we fill them up and make sure that all five entries are attacker 
+controlled, so at least are set by the attacker.
+And one of them is something that the attacker can communicate with, so that 
+the attacker really has as its IP address.
+So then, when we now do this for the authoritative name server that we're 
+trying to attack, it will evict one of these entries from the first entry, 
+indeed, from this limited set of entries.
+And that means that our IP address is no longer in this exception cache.
+So this local resolver no longer remembers that we wanted special MTU 
+treatment, and it will start using the normal MTU size again.
+So if we now probe this, you can see we send 1300 bytes, and where we 
+previously got only 1152 bytes back in the first part of this message, we now 
+get 1300 bytes again.
+So we clearly have been evicted from this cache.
+Now how do we do this exactly in mapping all of those five or six entries onto 
+the same bucket?
+Or indeed, how we brute force how we use that information to brute force the 
+secret key that is used in the hash, because that's what the authors do.
+I recommend you to read the paper. They actually gloss over this themselves, 
+because it's not all that interesting. It's just a brute force attack that they 
+use.
+I just wanted to tell you that these private-facing ephemeral ports exist, and 
+that we need to use a different trick, namely an exhaustion of the entries that 
+we have in a particular hash pocket of the exception cache for this.
+It's not something that we're going to quiz you on in the exam. This is not the 
+key part.
+So the public-facing part, you should know about. That's definitely something 
+that we expect you to understand fully. This is only up to this point.
+Any questions?
+Nothing?
+Okay, so this part, like I said, it is a little bit. We gloss over it a little 
+bit. The other part should be clear. Is that true? Yes, the public-facing part 
+should be clear.
+All right, good. Then we're done for this week.
+Oh, and next week we're going to discuss the quiz before you leave a couple of 
+things, right?
+So the material that we cover are all based on peer review papers published at 
+top venues, right?
+We cover the intuition, the high-level idea, what makes the attack work, what 
+makes the solution work.
+So it can't stress us enough. It's your responsibility to go read the paper and 
+then make sure that you understand all the specifics.
+Obviously, Heather and I are not interested in understanding, oh, you know, 
+what is exactly the value of the, you know, the number of the size of an FNAG, 
+you know, overflow packet.
+That's not usually what we like to question you on.
+It'll be similar to, you know, your background quiz, right?
+So you'll test whether you're able to build on the insights that we provided in 
+the slides.
+So you can rest assured, in the final exam, every single question you can trace 
+back to a particular slide or a set of slides that we, you know, showed in the 
+class.
+But the answer won't be something that you can look up in a slide, so be 
+careful about that, okay?
+Now, we gave you a background quiz, and that already gives you a face to the 
+kind of questions that you can expect.
+The exam will need to have happen, right?
+I will review some of the questions that most of you got from in the background 
+quiz.
+I'll also show you, you know, what the overall class performance was and what 
+it means for each one of you, okay?
+Thank you.
+All right, though.

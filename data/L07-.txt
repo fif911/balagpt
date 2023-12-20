@@ -1,0 +1,1846 @@
+[00:00.000 --> 00:11.200]  So the quiz is a slightly easier version of the exam.
+[00:11.200 --> 00:19.360]  So as I look at your performance and I'll calibrate the final exam.
+[00:19.360 --> 00:26.200]  But I think so far when I looked at the performance, I'm not sure how many of you have taken the
+[00:26.200 --> 00:27.200]  quiz.
+[00:27.200 --> 00:28.200]  I don't know the numbers.
+[00:28.400 --> 00:31.400]  I think you have a fairly high number if you scored 90% in a battle.
+[00:31.400 --> 00:32.400]  It's really good.
+[00:32.400 --> 00:38.400]  So I don't want to give out too many questions, but do pay attention.
+[00:38.400 --> 00:43.400]  I'm not going to discuss the answers for the questions, but if you have any doubts about
+[00:43.400 --> 00:46.400]  things, you can always approach me a bit.
+[00:46.400 --> 00:50.400]  But I think more or less the quiz will follow the same pattern.
+[00:50.400 --> 00:51.400]  Three, easy.
+[00:51.400 --> 00:52.400]  Maybe two, intermediate.
+[00:52.400 --> 00:53.400]  One, advanced.
+[00:53.600 --> 01:00.600]  Do pay attention to these quizzes.
+[01:00.600 --> 01:04.600]  Do take them seriously.
+[01:04.600 --> 01:10.600]  One of you asked, oh, am I allowed to keep my notes open?
+[01:10.600 --> 01:13.600]  Even if we were to stipulate some things, there's no way for us to check.
+[01:13.600 --> 01:16.600]  So do whatever you want to.
+[01:16.600 --> 01:19.600]  But just be truthful to yourself.
+[01:19.800 --> 01:29.800]  If you can't pass these quizzes, fairly certain you will not be able to pass the final exam.
+[01:29.800 --> 01:31.800]  And you have to pass each and every quiz.
+[01:31.800 --> 01:33.800]  I think there's a cut off.
+[01:33.800 --> 01:35.800]  So keep that in mind.
+[01:35.800 --> 01:42.800]  No exceptions to that rule.
+[01:43.000 --> 01:50.000]  So we started a new topic last week.
+[01:50.000 --> 01:58.000]  We started discussing what web PKI is, what are the different certificates are, where
+[01:58.000 --> 02:00.000]  do they come in picture.
+[02:00.000 --> 02:02.000]  But of course it was just the basics.
+[02:02.000 --> 02:06.000]  So the fact that you should know that there's a certificate behind the scenes when you go
+[02:06.000 --> 02:09.000]  access a content behind HTTPS.
+[02:09.200 --> 02:13.200]  And you should know a little bit about the process by which you get the certificates.
+[02:13.200 --> 02:18.200]  Now we'll get into how they're validated.
+[02:18.200 --> 02:23.200]  We'll look at some ways we can check whether the certificate is still valid.
+[02:23.200 --> 02:25.200]  If not, what do we do about it.
+[02:28.200 --> 02:35.200]  Most of, again, what you were saying, this holds true for most of the security protocols.
+[02:35.200 --> 02:37.200]  There's not much rocket science here.
+[02:37.400 --> 02:42.400]  If you know one technique with small variations here and there, you could pretty much guess
+[02:42.400 --> 02:45.400]  what some other area would look like.
+[02:45.400 --> 02:48.400]  You'll have to verify whether a certificate is valid or not.
+
+[02:48.400 --> 02:51.400]  So obviously there is a chain of...
+[03:07.400 --> 03:11.400]  So we briefly saw a screen shot where you saw that there's a chain of hierarchies.
+[03:11.400 --> 03:16.400]  Obviously in order to validate what you do is you have to...
+[03:16.400 --> 03:19.400]  The server certificate is all the way at the bottom.
+[03:19.400 --> 03:23.400]  It's been issued by a certificate authority.
+[03:23.400 --> 03:26.400]  In short, we call them as CAs.
+[03:26.400 --> 03:33.400]  But typically the root CA, there could be a number of CAs for delegation purposes.
+[03:33.600 --> 03:37.600]  And by the same logic, you could also have intermediate CAs.
+[03:37.600 --> 03:41.600]  You could have a hierarchy of structures.
+[03:41.600 --> 03:43.600]  This is more for a convenience.
+[03:43.600 --> 03:48.600]  So you don't want a single CA at one particular location or jurisdiction
+[03:48.600 --> 03:51.600]  being in charge of rolling out all sets.
+[03:51.600 --> 03:56.600]  So you fan out the responsibilities to other CAs.
+[03:56.800 --> 04:04.800]  Keep in mind that there's a lot of legal constraints here.
+[04:04.800 --> 04:10.800]  So for instance, let's say for whatever reason you want to revoke a particular certificate
+[04:10.800 --> 04:13.800]  or stop a website from using a given certificate.
+[04:13.800 --> 04:20.800]  You do want to ensure that the cert was actually issued by a CA in that particular geography
+[04:20.800 --> 04:24.800]  who has jurisdiction or power to revoke such things.
+[04:25.000 --> 04:29.000]  There's a little bit of politics or geography that comes into the picture here.
+[04:29.000 --> 04:33.000]  But anyway, if you see this hierarchy, this is mostly for convenience.
+[04:33.000 --> 04:39.000]  There is no reason why a CA to serve a certificate can't be just one particular name.
+[04:39.000 --> 04:42.000]  So this is just convenience.
+[04:42.000 --> 04:47.000]  A client could be a web browser, typically.
+[04:47.000 --> 04:49.000]  What does a client need to do here?
+[04:49.000 --> 04:52.000]  The current behavior would be you validate this entire chain.
+[04:52.200 --> 04:57.200]  So the way you validate it is opposite to this particular hierarchy.
+[04:57.200 --> 05:01.200]  So you start with a deep or server set that has a public key.
+[05:01.200 --> 05:04.200]  There is an issuer signature.
+[05:04.200 --> 05:11.200]  You basically verify that issuer signature corresponds to the public key of the intermediate cert in this case.
+[05:11.200 --> 05:15.200]  This will have another signature and so on and so forth.
+[05:15.200 --> 05:19.200]  The last one at the root cert, everything stops.
+[05:19.400 --> 05:21.400]  So you take the root cert at face value.
+[05:21.400 --> 05:23.400]  So that's why the auto stops there.
+[05:25.400 --> 05:29.400]  Do you even have to verify the root public key with its own signature?
+[05:33.400 --> 05:34.400]  No.
+[05:35.400 --> 05:37.400]  You don't do anything with the root.
+[05:37.400 --> 05:39.400]  The moment you see a root, it stops there.
+[05:39.400 --> 05:41.400]  This is more like a sanity check.
+[05:41.400 --> 05:45.400]  I'm not sure if clients or any browsers would do it.
+[05:45.400 --> 05:47.400]  But anyway, let's not even get to that.
+[05:47.600 --> 05:49.600]  How do browsers even walk this chain?
+[05:50.600 --> 05:52.600]  So that's another question you have to ask.
+[05:54.600 --> 06:00.600]  In DNS, we have a similar chain and the resolver's job was actually to walk.
+[06:00.600 --> 06:03.600]  There's a subtle difference in browsers.
+[06:03.600 --> 06:07.600]  So browsers are actually provided this entire chain.
+[06:07.600 --> 06:13.600]  When you go to a website, browsers are typically provided with this entire chain.
+[06:13.800 --> 06:18.800]  The browsers don't do this walking the chain when you actually go to a website.
+[06:18.800 --> 06:20.800]  It's a slight difference.
+[06:23.800 --> 06:26.800]  What do you do for checking certificates?
+[06:26.800 --> 06:27.800]  There are two things.
+[06:27.800 --> 06:30.800]  You want to check whether something is revoked or something is expired.
+[06:30.800 --> 06:32.800]  One is easier than the other.
+[06:32.800 --> 06:33.800]  It should be obvious.
+[06:33.800 --> 06:35.800]  Which one is easier?
+[06:35.800 --> 06:36.800]  Exploration.
+[06:36.800 --> 06:38.800]  Yeah, exploration.
+[06:39.000 --> 06:40.000]  Sorry.
+[06:42.000 --> 06:44.000]  Because it just involves you checking the dates.
+[06:48.000 --> 06:50.000]  Validating a chain of trust.
+[06:52.000 --> 06:55.000]  Yeah, so there are, you know, browsers these days are very smart.
+[06:55.000 --> 06:58.000]  So the checks that we will see right now, they're very basic.
+[06:58.000 --> 07:00.000]  You hope that your browser does it.
+[07:00.000 --> 07:03.000]  There's a site, I think the link should be obvious.
+[07:03.000 --> 07:05.000]  So there's a, I don't know if the site is still up.
+[07:05.000 --> 07:08.000]  It used to be called badssl.com.
+[07:08.200 --> 07:11.200]  And the nice thing about the site is that they generate different certificates
+[07:11.200 --> 07:14.200]  which are broken in all sorts of ways.
+[07:14.200 --> 07:23.200]  And one way to check, assure yourself, is to actually, whatever browser that you use regularly,
+[07:23.200 --> 07:28.200]  use the browser to go to this website and then try to see what it does for different URLs.
+[07:28.200 --> 07:34.200]  Each URL is named in a way that clearly tells you what is broken about it.
+[07:34.200 --> 07:36.200]  You could do this test.
+[07:36.400 --> 07:41.400]  So most of what you see is expected and correct behavior and I hope that's what you see.
+[07:42.400 --> 07:46.400]  When we did this study on how browsers actually do this checking,
+[07:46.400 --> 07:49.400]  this was I think like six, seven years ago.
+[07:51.400 --> 07:55.400]  Most of what you expect browsers not to do, mobile browsers do.
+[07:56.400 --> 08:02.400]  Because on mobile phones, lots of vendors including Apple and Google,
+[08:02.600 --> 08:07.600]  they decided that look, what matters more is performance.
+[08:07.600 --> 08:11.600]  So I would rather load a site faster than do all these checks.
+[08:11.600 --> 08:14.600]  Not joking. This is seriously what they decided.
+[08:14.600 --> 08:18.600]  But I think things have changed right now because as we have more and more
+[08:18.600 --> 08:23.600]  sensitive transactions or valuable transactions happening from our mobile phones,
+[08:23.600 --> 08:25.600]  things have changed.
+[08:27.600 --> 08:31.600]  If the root is untrusted, as in the root search is not in the root store,
+[08:31.800 --> 08:35.800]  this typically shouldn't happen. If it happens, just walk away from the site.
+[08:35.800 --> 08:37.800]  You don't want to use the site.
+[08:38.800 --> 08:43.800]  Occasionally you do see these things happen because some CA does something notorious
+[08:43.800 --> 08:46.800]  and they get revoked from the project.
+[08:52.800 --> 08:56.800]  There was a famous one in the Netherlands called the Digi Notar.
+[08:57.800 --> 08:59.800]  You can look up history on it.
+[09:00.000 --> 09:03.000]  Digi Notar was a certificate authority. They were compromised.
+[09:04.000 --> 09:10.000]  When I say compromised, what happened was someone had access to the private keys of the CA.
+[09:10.000 --> 09:13.000]  Once you have that, then you can create all sorts of havoc.
+[09:14.000 --> 09:19.000]  You can issue, for instance, certificates for whoever the clients of that particular CA are.
+[09:19.000 --> 09:23.000]  For instance, if Google actually acquired their server search from Digi Notar,
+[09:23.000 --> 09:28.000]  what you could do is you could issue your own certificate claiming that this is Google and so on
+[09:28.200 --> 09:31.200]  and use that certificate to render whatever content you want.
+[09:31.200 --> 09:34.200]  Your browsers won't be able to say that you're different.
+[09:34.200 --> 09:36.200]  This is exactly what happened.
+[09:37.200 --> 09:42.200]  I think there was a user from somewhere in Iran who actually found out there was something suspicious
+[09:42.200 --> 09:46.200]  about Gmail and then reported it and one thing led to another
+[09:46.200 --> 09:49.200]  and they found a massive issue with Digi Notar.
+[09:50.200 --> 09:52.200]  I think the CA was taken over by the Dutch government
+[09:52.200 --> 09:57.200]  but I think eventually they shut it down because things went out of control.
+[09:57.400 --> 09:59.400]  You're smiling. Do you know more than I know?
+[09:59.400 --> 10:00.400]  No, it's just funny.
+[10:02.400 --> 10:03.400]  Very sad.
+[10:04.400 --> 10:09.400]  Anyway, if you have an untrusted root, it will tell you clearly.
+[10:10.400 --> 10:15.400]  I think these days they actually give you a little more information.
+[10:15.400 --> 10:19.400]  But anyway, this is not something you want to do.
+[10:20.400 --> 10:25.400]  Self-sign sets, once again, you hope that you don't see this at all on the internet.
+[10:25.600 --> 10:30.600]  It usually happens only when you're running your own web server on your laptop for testing purposes.
+[10:30.600 --> 10:36.600]  There was an incident actually, although one time, I forgot it was Facebook or some other company,
+[10:36.600 --> 10:40.600]  a famous content provider when they launched a new service
+[10:40.600 --> 10:45.600]  and fortunately all the self-sign certificates that are using the testing environment got released in public.
+[10:46.600 --> 10:49.600]  But again, what does this mean today, modern browsers?
+[10:49.600 --> 10:54.600]  They'll actually spit this out, meaning they'll just simply say I'm not going to go to the site.
+[10:54.800 --> 10:56.800]  Chrome is very, very restrictive about it these days.
+[11:00.800 --> 11:02.800]  Expedition check, that's very easy.
+[11:02.800 --> 11:07.800]  In general, you can think about the lifetime of a set in two ways.
+[11:07.800 --> 11:14.800]  One is the duration for which the certificate is actually active.
+[11:18.800 --> 11:21.800]  Typically, there's something called a fresh timeline and a live timeline.
+[11:22.000 --> 11:25.000]  What these things tend to align perfectly,
+[11:25.000 --> 11:29.000]  this is basically saying the certificate is issued at time t0,
+[11:29.000 --> 11:31.000]  it is valid up to some time tn.
+[11:32.000 --> 11:41.000]  You expect that the time during which the certificate was actively used in the internet is a subset of this.
+[11:42.000 --> 11:46.000]  Typically, there's a bit of a gap because by the time the certificate is issued to you
+[11:46.000 --> 11:49.000]  and when it gets deployed, there might be a slight delay.
+[11:49.200 --> 11:52.200]  That's why the live timeline is a little aligned to the right.
+[11:53.200 --> 11:55.200]  There's also a bit of a gap at the end
+[11:55.200 --> 11:59.200]  because you don't want to wait until the last second before a certificate expires.
+[11:59.200 --> 12:02.200]  You want to roll back or you want to replace it a little bit more.
+[12:02.200 --> 12:05.200]  This is ideally what you want to see.
+[12:10.200 --> 12:13.200]  This is great. If this happens, everything is fine and dandy.
+[12:14.200 --> 12:15.200]  What about this one?
+[12:15.400 --> 12:16.400]  Not good.
+[12:17.400 --> 12:20.400]  Yeah, because you're using the certificate beyond its expired date.
+[12:20.400 --> 12:21.400]  This is bad.
+[12:22.400 --> 12:26.400]  There is an example for this in the bad SSL site that I told you.
+[12:26.400 --> 12:30.400]  If you go there, it will tell you that the connection is not private and so forth.
+[12:30.400 --> 12:32.400]  There are lots of other ways in which it could be broken.
+[12:32.400 --> 12:34.400]  For instance, a chain could be broken somewhere in the middle.
+[12:34.400 --> 12:36.400]  It will generate a different error.
+[12:39.400 --> 12:42.400]  If a certificate has been revoked, it will generate a different error.
+[12:42.600 --> 12:45.600]  What does it mean when you're using it after it has expired?
+[12:46.600 --> 12:48.600]  It means that all bets are off.
+[12:48.600 --> 12:53.600]  Somebody else could be hosting the website instead of Google itself for instance?
+[12:53.600 --> 12:54.600]  Yeah, could be.
+[12:56.600 --> 12:59.600]  Although most educational institutions, if you pay attention,
+[13:02.600 --> 13:07.600]  many educational institutions unfortunately are quite slow to upgrade their process.
+[13:07.800 --> 13:11.800]  There are two institutions, especially in the Netherlands,
+[13:11.800 --> 13:15.800]  which didn't update their certificates for a period of six months.
+[13:15.800 --> 13:17.800]  You can figure this out online.
+[13:18.800 --> 13:19.800]  But these things happen.
+[13:20.800 --> 13:22.800]  Why do these things happen?
+[13:25.800 --> 13:28.800]  Because you have to pay people to keep these things up.
+[13:28.800 --> 13:29.800]  Yeah, it's a manual process.
+[13:30.800 --> 13:33.800]  Bottom line is whenever you have a manual process, these things tend to happen.
+[13:33.800 --> 13:36.800]  Keep in mind this was the only reason why Let's Encrypt started.
+[13:37.000 --> 13:41.000]  They said, look, at the very basic, you need to have DB sets.
+[13:41.000 --> 13:46.000]  There's no reason whatsoever today that you should be serving content over HTTP.
+[13:47.000 --> 13:51.000]  If you see content over HTTP, I think the Chrome cannery, for instance,
+[13:51.000 --> 13:54.000]  it wouldn't allow you even to load content over HTTP.
+[13:54.000 --> 13:55.000]  It will say, are you sure?
+[13:55.000 --> 13:57.000]  Do you really want to read this?
+[13:58.000 --> 14:01.000]  There's no reason, but saying that is one thing,
+[14:01.000 --> 14:04.000]  but allowing people to enable user certificates is another thing.
+[14:04.000 --> 14:06.000]  Let's Encrypt basically started with that.
+[14:06.200 --> 14:09.200]  Basically, they said, look, the reason why certs are not being used
+[14:09.200 --> 14:12.200]  is because people are lazy or this process is error-prone.
+[14:12.200 --> 14:13.200]  Let's automate it.
+[14:14.200 --> 14:16.200]  For Let's Encrypt-enabled sites,
+[14:16.200 --> 14:21.200]  typically the software agent will take care of automatically renewing it.
+[14:21.200 --> 14:24.200]  I think by default, you're given DB sets for two years, and they'll renew.
+[14:27.200 --> 14:29.200]  Exploration check is very simple.
+
+[14:29.200 --> 14:33.200]  You take a look at the date, and then you try and see whether...
+[14:33.400 --> 14:35.400]  I should check this. I forgot.
+[14:36.400 --> 14:39.400]  Take a look at the date, and then try to compare it against the current timestamp.
+[14:42.400 --> 14:43.400]  Yes?
+[14:43.400 --> 14:47.400]  Is there any limit on how long a cert can be valid,
+[14:47.400 --> 14:50.400]  or is it dependent on how sensitive a website is?
+[14:50.400 --> 14:51.400]  Excellent question.
+[14:51.400 --> 14:52.400]  What do you think?
+[14:52.400 --> 14:53.400]  You ask the question.
+[14:53.400 --> 14:54.400]  Somebody else has to answer.
+[14:54.400 --> 14:55.400]  Take a guess.
+[14:56.400 --> 14:59.400]  The CA won't issue longer than a certain period?
+[14:59.400 --> 15:02.400]  That is one thing that could happen.
+[15:02.600 --> 15:04.600]  If you didn't hear the answer,
+[15:04.600 --> 15:06.600]  the answer was the CA could mandate a period.
+[15:06.600 --> 15:08.600]  Why would they do it?
+[15:10.600 --> 15:15.600]  They don't want their CA to be bound to some kind of security scandal?
+[15:15.600 --> 15:17.600]  Excellent answer. Liability.
+[15:19.600 --> 15:21.600]  How do you decide this period now?
+[15:21.600 --> 15:23.600]  There is an alternate answer to that one,
+[15:23.600 --> 15:25.600]  but how do you decide the timeframe?
+[15:33.400 --> 15:37.400]  Maybe it's based on their own certificates that they used to...
+[15:37.400 --> 15:39.400]  What are these sites carrying?
+[15:41.400 --> 15:43.400]  Public keys, right?
+[15:43.400 --> 15:47.400]  What sort of technology do you use to generate the public key, private key pair?
+[15:47.400 --> 15:48.400]  Yes?
+[15:48.400 --> 15:55.400]  Maybe they select the time based on how hard the...
+[15:55.400 --> 15:56.400]  Exactly.
+[15:56.400 --> 15:58.400]  How do you know how hard it is to break the key?
+[15:58.400 --> 16:00.400]  Which algorithm it used to make.
+[16:01.400 --> 16:03.400]  There is a conference, RSA for instance,
+[16:03.400 --> 16:06.400]  named after the three pioneering cryptographers.
+[16:06.400 --> 16:09.400]  They have this conference every year
+
+[16:09.400 --> 16:15.400]  where they try to encourage people to break the latest and greatest algorithm.
+[16:15.400 --> 16:18.400]  Basically the key bit length keeps changing.
+[16:18.400 --> 16:21.400]  They issue recommendations on what is really good.
+[16:21.400 --> 16:25.400]  In the US, the National Institute of Standards and Technology, NIST,
+[16:25.400 --> 16:29.400]  issues an advisory every year
+[16:29.400 --> 16:31.400]  saying what's the bit length that you have to use.
+[16:31.400 --> 16:36.400]  Same way for ZSK, KSK also, they actually issue these things.
+[16:36.400 --> 16:41.400]  Pretty much any critical infrastructure these days
+[16:41.400 --> 16:45.400]  does their best job to abide by these advisories.
+[16:45.400 --> 16:48.400]  CA basically want to hedge against those things.
+[16:48.400 --> 16:50.400]  Whatever is the...
+[16:50.400 --> 16:53.400]  For instance, today, the standard is you use 4,096 bits.
+[16:53.400 --> 16:55.400]  I think it's something like that.
+[16:55.400 --> 16:59.400]  Then what you do is the expected duration for breaking that.
+[16:59.400 --> 17:00.400]  Let's say it's a couple of years.
+[17:00.400 --> 17:03.400]  CA's time frame would be less than that.
+[17:03.400 --> 17:07.400]  Are CA's allowed to significantly deviate from this?
+[17:07.400 --> 17:09.400]  Is there one CA that's like,
+[17:09.400 --> 17:13.400]  oh, we offer more secure certificates
+[17:13.400 --> 17:16.400]  and we refresh them every two days or whatever?
+[17:16.400 --> 17:18.400]  That's a very good question.
+[17:18.400 --> 17:19.400]  Two answers I can give you.
+[17:19.400 --> 17:20.400]  Things are changing.
+[17:20.400 --> 17:23.400]  Actually, things have been changing for a while.
+[17:23.400 --> 17:28.400]  Nowadays, CA's are pretty much standard in their expiry dates
+[17:28.400 --> 17:30.400]  or the strength that they provide and all that.
+[17:30.400 --> 17:34.400]  We'll come to that in just a while.
+[17:34.400 --> 17:38.400]  But in general, CA's don't deviate much.
+[17:38.400 --> 17:42.400]  It's also because of economics.
+[17:42.400 --> 17:44.400]  It's easier and simpler to do this process
+[17:44.400 --> 17:50.400]  and you don't have much incentive to offer more value added services there.
+[17:50.400 --> 17:55.400]  You have, okay.
+[17:55.400 --> 17:59.400]  Revocation checks are easier.
+[17:59.400 --> 18:00.400]  No, I'm sorry.
+[18:00.400 --> 18:03.400]  Revocation checks are slightly different in the sense that
+[18:03.400 --> 18:09.400]  the time frame for a cert could actually get shorted by a process.
+[18:09.400 --> 18:12.400]  Typically, you revoke because you suspect something's gone wrong.
+[18:12.400 --> 18:15.400]  The certificate should no longer be used.
+[18:15.400 --> 18:17.400]  There is a process for revoking it.
+[18:17.400 --> 18:23.400]  When you revoke, the idea is that the alive time frame for a cert
+[18:23.400 --> 18:26.400]  actually stops by the time you actually revoke the cert.
+[18:26.400 --> 18:30.400]  Revocation cuts short the lifetime of a cert
+[18:30.400 --> 18:34.400]  and your expectation is that the actual use of the cert
+[18:34.400 --> 18:36.400]  abides by the new fresh period.
+[18:36.400 --> 18:38.400]  It's a little harder to control
+[18:38.400 --> 18:42.400]  because it depends on how you actually figure out whether something is revoked or not.
+[18:42.400 --> 18:45.400]  It's okay because it's not like a time stamp.
+[18:45.400 --> 18:48.400]  There must be a process by which someone tells you
+[18:48.400 --> 18:52.400]  whether something is still active or revoked.
+[18:52.400 --> 18:59.400]  This is really bad for obvious reasons.
+[18:59.400 --> 19:02.400]  At least, Safari, when I did check this,
+[19:02.400 --> 19:06.400]  it actually tells you when a certificate was revoked.
+[19:06.400 --> 19:09.400]  If a connection is not secure,
+[19:09.400 --> 19:11.400]  it actually does tell you why it is not secure,
+[19:11.400 --> 19:17.400]  in which case, in this case, it tells you the cert was revoked.
+[19:17.400 --> 19:20.400]  A question as hard as a browser determines the certificate is revoked.
+[19:20.400 --> 19:23.400]  What do you think it will do?
+[19:23.400 --> 19:27.400]  It's probably in the chain one level or another level.
+[19:27.400 --> 19:37.400]  Chains actually tell you whether the cert that you obtained
+[19:37.400 --> 19:40.400]  is from a legitimate authority.
+[19:40.400 --> 19:42.400]  Revocations are slightly different.
+[19:42.400 --> 19:44.400]  Let's keep this in mind.
+[19:44.400 --> 19:47.400]  You can look at a cert by itself
+[19:47.400 --> 19:50.400]  that tells you whether the certificate is expired or not.
+[19:50.400 --> 19:53.400]  That's just looking at the time stamp.
+[19:53.400 --> 19:56.400]  Then the next question is, is this chain even a legitimate one?
+[19:56.400 --> 19:58.400]  How do I know it's a legitimate one?
+[19:58.400 --> 20:01.400]  I know who the root CAs are.
+[20:01.400 --> 20:06.400]  The certificate either was issued directly by one of the root sets that I know,
+[20:06.400 --> 20:10.400]  when I say I know the browser knows or the operating system knows,
+[20:10.400 --> 20:12.400]  or it has to be one of the intermediate CAs,
+[20:12.400 --> 20:15.400]  which in turn has been approved by the CA.
+[20:15.400 --> 20:18.400]  That's the chain of trust.
+[20:18.400 --> 20:21.400]  Revocation, on the other hand, says, look, everything is fine.
+[20:21.400 --> 20:23.400]  Certificate is not expired.
+[20:23.400 --> 20:25.400]  Certificate does have a valid chain of trust,
+[20:25.400 --> 20:30.400]  but I want to know if the certificate is still considered active or valid.
+[20:30.400 --> 20:34.400]  That's slightly different.
+[20:34.400 --> 20:36.400]  How does the browser do it?
+[20:36.400 --> 20:38.400]  How do you think it will do it?
+[20:38.400 --> 20:40.400]  Revocation lists.
+[20:40.400 --> 20:42.400]  Where do you get that?
+[20:42.400 --> 20:46.400]  You have to contact some external entity to get a list.
+[20:46.400 --> 20:48.400]  How do you know who to contact?
+[20:48.400 --> 20:50.400]  How do you trust that person?
+[20:50.400 --> 20:52.400]  I guess also certificates.
+[20:52.400 --> 20:54.400]  Also certificates?
+[20:54.400 --> 20:56.400]  I would say you ask the authority.
+[20:56.400 --> 20:58.400]  How do you ask the authority?
+[20:58.400 --> 21:01.400]  How do you know who to ask?
+[21:01.400 --> 21:03.400]  Does it say in the cert?
+[21:03.400 --> 21:05.400]  It says in the cert.
+[21:05.400 --> 21:07.400]  Why do you want the mechanism?
+[21:07.400 --> 21:09.400]  This is called an in-band mechanism and an out-of-band mechanism.
+[21:09.400 --> 21:11.400]  In-band mechanism basically says,
+[21:11.400 --> 21:13.400]  the protocol, whatever you're using,
+[21:13.400 --> 21:15.400]  or the means,
+[21:15.400 --> 21:21.400]  the whole idea here is that we use certs to encrypt or secure our communication.
+[21:21.400 --> 21:23.400]  Wouldn't it be nice if that cert already tells you,
+[21:23.400 --> 21:27.400]  hey, by the way, if you're worried about the validity or whether I'm worried or not,
+[21:27.400 --> 21:29.400]  here is a URL that you can check.
+[21:29.400 --> 21:32.400]  By providing that URL as part of the cert itself,
+[21:32.400 --> 21:34.400]  you ensure that no one can pamper that.
+[21:50.400 --> 21:54.400]  This process is once again changing, but let's see how it works.
+[21:54.400 --> 21:56.400]  Again, chain of certs.
+[21:56.400 --> 21:58.400]  You already know this picture.
+[21:58.400 --> 22:00.400]  We talked about replication.
+[22:01.400 --> 22:03.400]  Let's peek into the cert.
+[22:03.400 --> 22:08.400]  If you take a look at the cert, again, the interface might change depending on what browsers you use.
+[22:08.400 --> 22:12.400]  But if you scroll down all the details, you will find something like this.
+[22:12.400 --> 22:16.400]  This is one of the most widely used,
+[22:16.400 --> 22:24.400]  or unfortunately the most predominant way in which revocation information is broadcasted.
+[22:25.400 --> 22:30.400]  Every cert will tell you, hey, what is the...
+[22:33.400 --> 22:35.400]  These are called extensions.
+[22:35.400 --> 22:37.400]  You can think of it as attributes set in a cert.
+[22:37.400 --> 22:39.400]  One of the attributes basically tells you,
+[22:39.400 --> 22:43.400]  if you want to know if I'm valid or not, you can go check this list.
+[22:45.400 --> 22:49.400]  Now, having said this,
+[22:49.400 --> 22:53.400]  if I ask you what is the CRL value,
+[22:53.400 --> 22:57.400]  or what does a certificate revocation list URL for a root cert look like,
+[22:57.400 --> 22:59.400]  what would be your answer?
+[23:04.400 --> 23:06.400]  Now that you understand what a CRL is,
+[23:06.400 --> 23:12.400]  it's a URL that tells you a list of certs that have been revoked.
+[23:12.400 --> 23:14.400]  We haven't gotten into details, but having said that,
+[23:14.400 --> 23:17.400]  if I ask you what will be the value of this URL,
+[23:17.400 --> 23:19.400]  and what will this URL look like for a root cert,
+[23:19.400 --> 23:21.400]  what's the answer?
+[23:23.400 --> 23:25.400]  A list of public keys.
+[23:25.400 --> 23:27.400]  Okay. What else?
+[23:27.400 --> 23:29.400]  Could it be itself?
+[23:30.400 --> 23:32.400]  Does that help?
+[23:32.400 --> 23:35.400]  No, because I don't know if you trust yourself.
+[23:35.400 --> 23:38.400]  Have you a list of CAs?
+[23:38.400 --> 23:42.400]  That's very interesting, but it will not have anything.
+[23:44.400 --> 23:46.400]  Why would it have anything?
+[23:46.400 --> 23:48.400]  I'm sorry?
+[23:50.400 --> 23:53.400]  Yes. The root sets are actually hard coded.
+[23:53.400 --> 23:55.400]  They're baked into your browser, baked into your operating system.
+[23:55.400 --> 23:58.400]  So how does it matter?
+[23:58.400 --> 24:01.400]  Whatever list you have, certificate revocation list,
+[24:01.400 --> 24:04.400]  if the root set has been revoked,
+[24:04.400 --> 24:09.400]  the only thing you can do is wipe your browser,
+[24:09.400 --> 24:11.400]  or wipe your operating system, and install a new one.
+[24:11.400 --> 24:13.400]  That's the only thing you can do.
+[24:14.400 --> 24:15.400]  Yes.
+[24:15.400 --> 24:17.400]  Browsers are doing this, right?
+[24:17.400 --> 24:19.400]  If a CA gets compromised or something, they do...
+[24:19.400 --> 24:22.400]  CAs do get compromised, so what do you do?
+[24:22.400 --> 24:26.400]  Browsers issue security updates, key security updates,
+[24:26.400 --> 24:29.400]  and then pray to God that every user updates.
+[24:29.400 --> 24:32.400]  Do root CAs often get removed,
+[24:32.400 --> 24:36.400]  in the sense that if I have a laptop that's 10 years old,
+[24:36.400 --> 24:39.400]  and let's say that I have an operating system,
+[24:39.400 --> 24:42.400]  will the browser still work?
+[24:43.400 --> 24:45.400]  We'll get to this question, but in short,
+[24:45.400 --> 24:48.400]  root CAs, again, we all should pray that root CAs
+[24:48.400 --> 24:50.400]  don't get revoked every now and then,
+[24:50.400 --> 24:55.400]  don't get removed from certain data stores, so to speak.
+[24:55.400 --> 24:57.400]  But it does happen.
+[24:57.400 --> 24:59.400]  I think in the last five, six years,
+[24:59.400 --> 25:04.400]  I think two root CAs, notorious ones,
+[25:04.400 --> 25:08.400]  have been booted out.
+[25:08.400 --> 25:11.400]  But these things are usually very public, right?
+[25:11.400 --> 25:16.400]  Most of you, observing that you're all attending network security,
+[25:16.400 --> 25:20.400]  I assume you read at least a couple of technical websites,
+[25:20.400 --> 25:22.400]  like RS-Technica or WIRED,
+[25:22.400 --> 25:27.400]  you will hear if a root CA has been removed.
+[25:27.400 --> 25:32.400]  This is one of the reasons why you need to install security updates.
+[25:32.400 --> 25:33.400]  Yes.
+[25:33.400 --> 25:37.400]  These certification and co-occupation lists,
+[25:37.400 --> 25:40.400]  they are pipeline extensions?
+[25:40.400 --> 25:45.400]  Yes, yes, they are.
+[25:45.400 --> 25:47.400]  There is also, if you scroll down further,
+[25:47.400 --> 25:53.400]  you'll also see this very nice, but unfortunately not used,
+[25:53.400 --> 25:57.400]  protocol called online certificate status protocol.
+[25:57.400 --> 25:59.400]  So you'll see another URL, you'll come to this.
+[25:59.400 --> 26:04.400]  It's a very nice one, I like it, but unfortunately it's not used.
+[26:04.400 --> 26:07.400]  It's a protocol that tells you, you could check this.
+[26:07.400 --> 26:09.400]  But you'll see why you have two mechanisms,
+[26:09.400 --> 26:12.400]  what are the pros and cons.
+[26:12.400 --> 26:13.400]  So there are two ways.
+[26:13.400 --> 26:15.400]  One is a CRL, one is OCSP.
+[26:15.400 --> 26:22.400]  CRL is the standard today, whether related or not.
+[26:22.400 --> 26:27.400]  Changing the mindset of a lot of websites takes a lot of muscle, right?
+[26:27.400 --> 26:30.400]  So unless you're Google or Apple or Microsoft,
+[26:30.400 --> 26:33.400]  it can't do anything, right?
+[26:33.400 --> 26:35.400]  Okay, so what does a CRL contain?
+[26:35.400 --> 26:37.400]  It's a list, it's a certificate revocation list,
+[26:37.400 --> 26:41.400]  so it's a list of revoked certs, that's it.
+[26:41.400 --> 26:44.400]  Certs usually, the way you identify a cert is,
+[26:44.400 --> 26:46.400]  it has a very long serial number,
+[26:46.400 --> 26:51.400]  and the list basically contains a list of serial numbers.
+[26:51.400 --> 26:53.400]  Here is the serial number of a particular cert,
+[26:53.400 --> 27:00.400]  it's really long, usually in hexadecimal format.
+[27:00.400 --> 27:03.400]  And the CRL list will have additional details, right?
+[27:03.400 --> 27:06.400]  Issue a signature, issue a distinguished name.
+[27:06.400 --> 27:08.400]  It's a fancy way of saying it's the company
+[27:08.400 --> 27:12.400]  or the fully qualified name of the company
+[27:12.400 --> 27:14.400]  that's actually publishing the list.
+[27:14.400 --> 27:16.400]  When was it issued and so on,
+[27:16.400 --> 27:20.400]  because CRL lists do keep changing.
+[27:20.400 --> 27:22.400]  The next update and revoked certs, right?
+[27:22.400 --> 27:24.400]  So it will tell you when is the next update,
+[27:24.400 --> 27:25.400]  this is how your browser knows,
+[27:25.400 --> 27:27.400]  hey, I already checked,
+[27:27.400 --> 27:30.400]  because a list URL itself can't change, right?
+[27:30.400 --> 27:31.400]  Because it's encoded in the cert,
+[27:31.400 --> 27:34.400]  so only when you change the cert, it can change.
+[27:34.400 --> 27:38.400]  So one way of figuring out when should you check next
+[27:38.400 --> 27:40.400]  is by using next update, right?
+[27:40.400 --> 27:42.400]  Again, this is a standard mechanism, right?
+[27:42.400 --> 27:45.400]  If you're as old as me,
+[27:45.400 --> 27:47.400]  and then you still use RSS and Atom feeds
+[27:47.400 --> 27:49.400]  to read different blogs.
+[27:49.400 --> 27:51.400]  There is another mechanism, similarly.
+[27:51.400 --> 27:53.400]  There's something called an ETag
+[27:53.400 --> 27:57.400]  that tells you when was something last updated.
+[27:57.400 --> 27:59.400]  And if you pull content,
+[27:59.400 --> 28:01.400]  and you see the time still hasn't updated,
+[28:01.400 --> 28:03.400]  then you don't pull again, right?
+[28:03.400 --> 28:06.400]  So the same mechanism.
+[28:06.400 --> 28:09.400]  This is another reason why you should keep your clocks
+[28:09.400 --> 28:11.400]  and your machine synchronized.
+[28:11.400 --> 28:14.400]  I mean, for most of us, we run PTP,
+[28:14.400 --> 28:18.400]  or not PDP, NTP, or some version of NDP,
+[28:18.400 --> 28:21.400]  or something similar that keeps our clocks synchronized.
+[28:21.400 --> 28:22.400]  But if your clocks are not synchronized,
+[28:22.400 --> 28:25.400]  something interesting is going to happen, okay?
+[28:25.400 --> 28:28.400]  Someone asked about the lifetime of certs, right?
+[28:28.400 --> 28:30.400]  How long do you issue?
+[28:30.400 --> 28:32.400]  One other way of thinking about it is
+[28:32.400 --> 28:36.400]  that you typically want certs to be really, really short lifespans.
+[28:36.400 --> 28:38.400]  Why?
+[28:40.400 --> 28:43.400]  If they get compromised, they're not in use for long?
+[28:43.400 --> 28:44.400]  Yeah.
+[28:44.400 --> 28:46.400]  As simple as that.
+[28:46.400 --> 28:47.400]  But there's an issue with that.
+[28:47.400 --> 28:49.400]  So someone did an experiment to try and say
+[28:49.400 --> 28:51.400]  how small these certs could be.
+[28:51.400 --> 28:56.400]  There is a lot of actually push or support
+[28:56.400 --> 28:59.400]  for keeping certs just valid for a few days.
+[28:59.400 --> 29:01.400]  Because if they're only valid for a few days,
+[29:01.400 --> 29:05.400]  it's highly unlikely anyone will even have the incentive
+[29:05.400 --> 29:07.400]  to try and break it, okay?
+[29:07.400 --> 29:09.400]  A few days is not much, okay?
+[29:09.400 --> 29:11.400]  If you're still able to compromise a certificate
+[29:11.400 --> 29:12.400]  within the span of a few days,
+[29:12.400 --> 29:14.400]  then there are other things you should worry about, right?
+[29:14.400 --> 29:16.400]  Because the computation power you should have
+[29:16.400 --> 29:20.400]  in order to do that tells you so much about the attacker.
+[29:20.400 --> 29:23.400]  So that's not the kind of attacker we're worried about, okay?
+[29:23.400 --> 29:25.400]  But there was an issue.
+[29:25.400 --> 29:29.400]  Actually, Google and some academic researchers
+[29:29.400 --> 29:31.400]  from academia, they did this study,
+[29:31.400 --> 29:34.400]  and then they figured out that, said, let's do a study.
+[29:34.400 --> 29:37.400]  How do you figure out how short the certs can be?
+[29:37.400 --> 29:39.400]  Well, it depends, first of all,
+[29:39.400 --> 29:44.400]  on how accurate users' clocks are, right?
+[29:44.400 --> 29:46.400]  Because if our clocks are, let's say,
+[29:46.400 --> 29:49.400]  what do you think, how inaccurate do you think
+[29:49.400 --> 29:52.400]  the clocks on our computer systems are?
+[29:52.400 --> 29:56.400]  Meaning, if I tell you the reference time right now
+[29:56.400 --> 30:00.400]  is, let's say, 4 or 3, okay,
+[30:00.400 --> 30:03.400]  how sloppy can the clocks on your computers could be?
+[30:03.400 --> 30:06.400]  What's your estimate?
+[30:06.400 --> 30:09.400]  As in per day, how many seconds does it take?
+[30:09.400 --> 30:11.400]  Right now, if you check, yeah.
+[30:11.400 --> 30:13.400]  How far can it go?
+[30:13.400 --> 30:14.400]  A couple of minutes.
+[30:14.400 --> 30:16.400]  A couple of minutes. Oh, my God.
+[30:16.400 --> 30:17.400]  Microseconds?
+[30:17.400 --> 30:18.400]  Huh?
+[30:18.400 --> 30:19.400]  Microseconds?
+[30:19.400 --> 30:20.400]  Oh, no, no.
+[30:20.400 --> 30:21.400]  No.
+[30:21.400 --> 30:22.400]  That's the topia.
+[30:22.400 --> 30:23.400]  It doesn't have to be.
+[30:23.400 --> 30:25.400]  Microseconds, you know, see, look,
+[30:25.400 --> 30:28.400]  any time you hear words like microsecond and nanoseconds,
+[30:28.400 --> 30:29.400]  that's very specific, right?
+[30:29.400 --> 30:32.400]  Within a data center, within routers,
+[30:32.400 --> 30:33.400]  those things can happen.
+[30:33.400 --> 30:36.400]  Microsecond resolution, it's impossible to get out
+[30:36.400 --> 30:38.400]  on the Internet.
+[30:38.400 --> 30:42.400]  Minutes possible, but I like your guesses.
+[30:42.400 --> 30:45.400]  I know some of the digital watches have, like,
+[30:45.400 --> 30:47.400]  one second over a three-month period,
+[30:47.400 --> 30:49.400]  and in margin, so it can go up and down.
+[30:49.400 --> 30:50.400]  Seconds can happen.
+[30:50.400 --> 30:51.400]  Seconds is very typical.
+[30:51.400 --> 30:53.400]  Minutes, not so typical.
+[30:53.400 --> 30:54.400]  You wish that it doesn't happen.
+[30:54.400 --> 30:56.400]  It does happen.
+[30:56.400 --> 30:58.400]  Days, you hope it doesn't.
+[30:58.400 --> 31:01.400]  You don't see that, but it does happen.
+[31:01.400 --> 31:04.400]  Months, you wouldn't believe me, but it does happen.
+[31:04.400 --> 31:08.400]  Years also happens.
+[31:08.400 --> 31:14.400]  The years, probably something went pathologically wrong.
+[31:14.400 --> 31:18.400]  Months, once again, you know, some bug or some issue.
+[31:18.400 --> 31:20.400]  So let me ask you a slightly different question.
+[31:20.400 --> 31:21.400]  You run a server.
+[31:21.400 --> 31:23.400]  The server runs an NTP daemon.
+[31:23.400 --> 31:26.400]  If you run them, most versions of Linux
+[31:26.400 --> 31:30.400]  does the meaningful thing, which is run an NTP daemon, right?
+[31:30.400 --> 31:33.400]  Behind the scenes, NTP is a network time protocol,
+[31:33.400 --> 31:35.400]  talks to a bunch of servers, right?
+[31:35.400 --> 31:38.400]  Publicly well-known servers, and then tries to synchronize.
+[31:38.400 --> 31:41.400]  Now, let's ask ourselves the questions.
+[31:41.400 --> 31:43.400]  The NTP daemon tries to go fetch the updates.
+[31:43.400 --> 31:45.400]  It doesn't receive the updates.
+[31:45.400 --> 31:48.400]  So what does the operating system do?
+[31:48.400 --> 31:50.400]  Your internet connection is fine.
+[31:50.400 --> 31:52.400]  OK, let's keep this in mind.
+[31:52.400 --> 31:54.400]  Let's say I run a very notorious organization.
+[31:54.400 --> 31:56.400]  I run a public Wi-Fi.
+[31:56.400 --> 31:57.400]  You all connect to my Wi-Fi.
+[31:57.400 --> 32:00.400]  I configure my Wi-Fi to drop NTP packets.
+[32:00.400 --> 32:02.400]  What do you think your operating system will do?
+[32:02.400 --> 32:04.400]  It just continues.
+[32:04.400 --> 32:05.400]  Huh?
+[32:05.400 --> 32:06.400]  Just continue.
+[32:06.400 --> 32:08.400]  Yeah, it should continue.
+[32:08.400 --> 32:09.400]  That's a meaningful thing.
+[32:09.400 --> 32:11.400]  But what does it tell the user?
+[32:11.400 --> 32:14.400]  Oh, I wanted to say maybe it accepts packets
+[32:14.400 --> 32:17.400]  from other interested servers.
+[32:17.400 --> 32:18.400]  Yeah.
+[32:18.400 --> 32:20.400]  How secure is NTP?
+[32:20.400 --> 32:23.400]  Well, yeah, that speaks volumes.
+[32:23.400 --> 32:25.400]  But what do you think the operating system
+[32:25.400 --> 32:28.400]  will tell the user?
+[32:28.400 --> 32:30.400]  Nothing.
+[32:30.400 --> 32:33.400]  It tells you nothing, right?
+[32:33.400 --> 32:35.400]  It'll run fine, as in your operating system
+[32:35.400 --> 32:39.400]  will blissfully be ignorant of the fact that NTP is not running.
+[32:40.400 --> 32:43.400]  Once again, there's been a lot of pushback
+[32:43.400 --> 32:44.400]  against the default behavior.
+[32:44.400 --> 32:47.400]  But this is something to keep in mind, right?
+[32:47.400 --> 32:49.400]  Don't think about your laptops.
+[32:49.400 --> 32:51.400]  Don't think about your servers.
+[32:51.400 --> 32:56.400]  I assume that at least a reasonable chunk of you
+[32:56.400 --> 32:58.400]  run at least one or two smart devices at home.
+[32:58.400 --> 33:00.400]  Don't be embarrassed.
+[33:00.400 --> 33:01.400]  It's OK.
+[33:01.400 --> 33:04.400]  We all do mistakes.
+[33:04.400 --> 33:07.400]  I have tons of things that connect to the internet
+[33:07.400 --> 33:09.400]  that they shouldn't.
+[33:09.400 --> 33:10.400]  But it's out of convenience, right?
+[33:10.400 --> 33:13.400]  Sometimes I like the convenience.
+[33:13.400 --> 33:18.400]  These things also have a small microprocessor running.
+[33:18.400 --> 33:22.400]  Do you think they're on NTP?
+[33:22.400 --> 33:24.400]  Now, if you're wondering why should they run,
+[33:24.400 --> 33:26.400]  you should ask yourself the second question.
+[33:26.400 --> 33:28.400]  They do get updates, right?
+[33:28.400 --> 33:29.400]  I mean, sometimes.
+[33:29.400 --> 33:31.400]  I mean, most of them don't.
+[33:31.400 --> 33:33.400]  But they do pull data from the internet.
+[33:33.400 --> 33:37.400]  You hope that they're actually pulling data over HTTPS.
+[33:37.400 --> 33:39.400]  If they're not, then that's another issue.
+[33:39.400 --> 33:42.400]  But if they are pulling data over HTTPS
+[33:42.400 --> 33:43.400]  and they don't have a synchronized clock,
+[33:43.400 --> 33:47.400]  what bets can you actually make?
+[33:47.400 --> 33:49.400]  They can't do revocation checks.
+[33:49.400 --> 33:51.400]  They'll happily pull data
+[33:51.400 --> 33:54.400]  under whatever crap set is being used.
+[33:54.400 --> 33:58.400]  So unfortunately, and these things happen even today,
+[33:58.400 --> 34:01.400]  I know for sure my TV doesn't update, right?
+[34:01.400 --> 34:03.400]  It doesn't do any sort of replication check,
+[34:03.400 --> 34:04.400]  which is very sad.
+[34:04.400 --> 34:06.400]  But they actually tout that saying,
+[34:06.400 --> 34:09.400]  hey, you have a smart TV which has a built-in browser.
+[34:09.400 --> 34:14.400]  Yeah, shouldn't even try and use those browsers.
+[34:14.400 --> 34:19.400]  This is another annoying thing.
+[34:19.400 --> 34:21.400]  Notifications like these are why people
+[34:21.400 --> 34:24.400]  don't do security updates, right?
+[34:24.400 --> 34:30.400]  But anyway, so roots don't have any CRLs, right?
+[34:30.400 --> 34:32.400]  Even if they have, doesn't have any value.
+[34:32.400 --> 34:34.400]  You should check if roots have CRLs.
+[34:34.400 --> 34:35.400]  Yes?
+[34:35.400 --> 34:38.400]  How many, like how often do certificates get revoked?
+[34:38.400 --> 34:41.400]  And from this, it seems like you're pulling
+[34:41.400 --> 34:42.400]  all the revoked certificates.
+[34:42.400 --> 34:45.400]  What does your browser really use to cache them?
+[34:45.400 --> 34:47.400]  That's an excellent question.
+[34:47.400 --> 34:48.400]  Browsers do have different,
+[34:48.400 --> 34:51.400]  browsers have different mechanisms.
+[34:51.400 --> 34:54.400]  And I think Firefox, there are command line utilities
+[34:54.400 --> 34:59.400]  by which you could query the database that Firefox uses.
+[34:59.400 --> 35:02.400]  For Macs, I think there's a keychain, Apple keychain.
+[35:02.400 --> 35:04.400]  You can actually check the list of,
+[35:04.400 --> 35:06.400]  it doesn't tell you where the revoked certificates are stored,
+[35:06.400 --> 35:09.400]  but every browser has more or less slightly different mechanisms.
+[35:09.400 --> 35:12.400]  But ultimately, there is a small database running in your thing
+[35:12.400 --> 35:17.400]  where everything is cached.
+[35:17.400 --> 35:20.400]  So there's a CA, it publishes its list,
+[35:20.400 --> 35:23.400]  your browser every once in a while based on the next update.
+[35:23.400 --> 35:26.400]  If it's a well behaving one, it'll pull the CRLs.
+[35:26.400 --> 35:29.400]  It contains all revoked certificates issued by the CA,
+[35:29.400 --> 35:31.400]  which is actually a nice thing.
+[35:31.400 --> 35:36.400]  Can someone tell me why?
+[35:36.400 --> 35:39.400]  You might discover another one that hasn't been.
+[35:39.400 --> 35:42.400]  Okay, no, no, think about it in a privacy perspective.
+[35:42.400 --> 35:45.400]  Oh, you don't know exactly what CA you're doing the check for.
+[35:45.400 --> 35:47.400]  Yeah, right.
+[35:47.400 --> 35:50.400]  So again, multiple ways to think about it, right?
+[35:50.400 --> 35:53.400]  So you should always be skeptical.
+[35:53.400 --> 35:55.400]  If someone provides you a service by which they say,
+[35:55.400 --> 35:58.400]  you know what, you could check whether a particular set is expired or not.
+[35:58.400 --> 36:00.400]  It's great.
+[36:00.400 --> 36:04.400]  But then the disadvantage is that the CA can now figure out,
+[36:04.400 --> 36:08.400]  or any person along the path, depending on how,
+[36:08.400 --> 36:10.400]  whether the request is encrypted or not,
+[36:10.400 --> 36:13.400]  can figure out what you're trying to do.
+[36:13.400 --> 36:17.400]  Okay, downloading all revoked certificates to check the status of one.
+[36:17.400 --> 36:19.400]  There's a latency penalty.
+[36:19.400 --> 36:22.400]  So of course, you could cover that by caching things.
+[36:22.400 --> 36:25.400]  Again, caching, one providing a level of indirection,
+[36:25.400 --> 36:30.400]  two common solutions to most systems problems, right?
+[36:30.400 --> 36:31.400]  Lists could be quite large.
+[36:31.400 --> 36:33.400]  There's a bandwidth issue.
+[36:33.400 --> 36:36.400]  Now, this might look very trivial and silly, right,
+[36:36.400 --> 36:37.400]  that I'm even mentioning this.
+[36:37.400 --> 36:42.400]  But trust me, mobile phones for a long time refused to update CROs
+[36:42.400 --> 36:44.400]  because they don't have downloaded ones.
+[36:44.400 --> 36:46.400]  You know, why would I download it again?
+[36:46.400 --> 36:48.400]  You might think, oh, I would want it to download.
+[36:48.400 --> 36:52.400]  But go back, let's say, five years, ten years ago.
+[36:52.400 --> 36:57.400]  If you're going around on a 4G or 3G connection or LTE,
+[36:57.400 --> 37:00.400]  you don't want to download a huge CRO on that connection
+[37:00.400 --> 37:02.400]  because there's a cost involved.
+[37:02.400 --> 37:05.400]  So again, you might say the user might be okay.
+[37:05.400 --> 37:08.400]  But how do you ask the user whether it's okay or not?
+[37:08.400 --> 37:11.400]  If you are, let's say, Google or you are Apple,
+[37:11.400 --> 37:17.400]  you provide the operating system that pulls the frequently updated CROs and so on.
+[37:17.400 --> 37:19.400]  What would you do?
+[37:19.400 --> 37:22.400]  You'll normally think, look, users don't know what I'm trying to do.
+[37:22.400 --> 37:25.400]  All they know is if I use an iPhone and then I roam around,
+[37:25.400 --> 37:29.400]  my bill seems to be much higher than when I run Google's phone.
+[37:29.400 --> 37:32.400]  So these are all the kind of decisions that they make, unfortunately,
+[37:32.400 --> 37:35.400]  on behalf of all of us.
+
+[37:35.400 --> 37:39.400]  Mobile phones and tablets, there's an energy cost as well.
+[37:39.400 --> 37:42.400]  That is fast disappearing these days.
+[37:42.400 --> 37:46.400]  One might even say that it has disappeared.
+[37:46.400 --> 37:51.400]  There is a very nice alternative to CROs, which is the OCSP protocol.
+[37:51.400 --> 37:55.400]  It's basically a service provided by the CA itself
+[37:55.400 --> 37:57.400]  to check the status of a certificate.
+[37:57.400 --> 37:59.400]  So you can, for instance, query the serial number.
+[37:59.400 --> 38:00.400]  It's like a REST API.
+[38:00.400 --> 38:04.400]  You query the serial number, it tells you whether it's revoked or not.
+[38:04.400 --> 38:08.400]  All of these, you can actually write a very simple shell script
+[38:08.400 --> 38:12.400]  to do these CRO checks or OCSP checks.
+[38:12.400 --> 38:18.400]  If you do something like this, it spits out a lot of things.
+[38:18.400 --> 38:22.400]  At the end of the output, you'll see something like,
+[38:22.400 --> 38:24.400]  oh, the certificate is good or not.
+[38:24.400 --> 38:26.400]  If it says good, everything is good.
+[38:26.400 --> 38:30.400]  If it says bad or not okay, which means something is wrong.
+[38:30.400 --> 38:34.400]  I don't remember if it actually provides a reason
+[38:34.400 --> 38:37.400]  for why a certificate was not okay.
+[38:37.400 --> 38:40.400]  When you do the OCSP check, just like the CRL,
+[38:40.400 --> 38:45.400]  you want to tell the caller when the status might get updated again.
+[38:45.400 --> 38:49.400]  And so there are also this update and next update fields.
+[38:49.400 --> 38:55.400]  Again, well-known battle-tested techniques.
+[38:55.400 --> 38:57.400]  Okay, so cert is good.
+[38:57.400 --> 38:59.400]  Oh, it says here, cert is good.
+[38:59.400 --> 39:01.400]  It tells you when this update was generated
+[39:01.400 --> 39:04.400]  and when the next update is expected.
+[39:04.400 --> 39:07.400]  Each query validates one certificate.
+[39:07.400 --> 39:09.400]  The call blocks or delays transaction.
+[39:09.400 --> 39:11.400]  There's a latency issue.
+[39:11.400 --> 39:14.400]  Reveals browser behavior to CAs, not just to CAs,
+[39:14.400 --> 39:16.400]  to actually pretty much everyone along the path,
+[39:16.400 --> 39:20.400]  depending on the protocol needs.
+[39:20.400 --> 39:21.400]  This is another issue, right?
+[39:21.400 --> 39:24.400]  So Firefox actually publishes what is called telemetry data.
+[39:24.400 --> 39:25.400]  It's actually public.
+[39:25.400 --> 39:28.400]  You and I can actually go query this data.
+[39:28.400 --> 39:32.400]  As of 2020, actually, 7% of the query is timed out.
+[39:32.400 --> 39:36.400]  7% is a lot, by the way.
+[39:36.400 --> 39:37.400]  Again, don't look at the percentage.
+[39:37.400 --> 39:41.400]  Think about how many millions of users it translates to.
+[39:41.400 --> 39:44.400]  And again, so there's a reliability issue, right?
+[39:44.400 --> 39:46.400]  This is a service, again, to keep in mind.
+[39:46.400 --> 39:49.400]  This is a service that tells whether a certificate has been revoked or not.
+[39:49.400 --> 39:51.400]  It's valid or not.
+[39:51.400 --> 39:55.400]  And what studies have found out is that 7% of these fail as of 2020.
+[39:55.400 --> 40:00.400]  Maybe it has come down to 5% or 3%, but that's still not acceptable.
+[40:00.400 --> 40:05.400]  Why is it not acceptable?
+[40:05.400 --> 40:07.400]  Simple guesses.
+[40:07.400 --> 40:08.400]  Yeah?
+[40:08.400 --> 40:10.400]  Probably because it's not transparent to the user.
+[40:10.400 --> 40:12.400]  Yeah, so what do you think the browser will do?
+[40:12.400 --> 40:14.400]  What do you think the browser will tell you?
+[40:14.400 --> 40:15.400]  If it makes an OCSB request,
+[40:15.400 --> 40:19.400]  and the answers to these questions should become obvious by now.
+[40:19.400 --> 40:21.400]  What do you think the browser will do?
+[40:21.400 --> 40:24.400]  If it makes an OCSB request, doesn't this even answer?
+[40:24.400 --> 40:25.400]  Nothing.
+[40:25.400 --> 40:26.400]  It just moves on.
+[40:26.400 --> 40:28.400]  This process is called soft fail.
+[40:28.400 --> 40:30.400]  There's something called as a hard fail in soft fail.
+[40:30.400 --> 40:34.400]  Hard fail, and this is a very common term that you actually encounter in networking,
+[40:34.400 --> 40:35.400]  maybe also in systems.
+[40:35.400 --> 40:39.400]  A hard fail basically means that after encountering a failure,
+[40:39.400 --> 40:41.400]  a well-defined failure, you don't move forward.
+[40:41.400 --> 40:43.400]  Status is halted.
+[40:43.400 --> 40:47.400]  The system will barf some output and then crash, or it will stop functioning.
+[40:47.400 --> 40:51.400]  Soft fail, on the other hand, takes a look at the error,
+[40:51.400 --> 40:55.400]  maybe puts a notification somewhere, or sometimes even not,
+[40:55.400 --> 40:59.400]  but just continues working with diminished capability.
+[40:59.400 --> 41:01.400]  For browsers, yes?
+[41:01.400 --> 41:04.400]  Does the browser even retry?
+[41:04.400 --> 41:08.400]  When the server is done, what can you do?
+[41:08.400 --> 41:09.400]  Browsers usually don't retry.
+[41:09.400 --> 41:16.400]  Why?
+[41:16.400 --> 41:17.400]  Latency issue.
+[41:17.400 --> 41:19.400]  Every time you retry, there is an RTT.
+[41:19.400 --> 41:21.400]  There is an RTT you incur.
+[41:21.400 --> 41:23.400]  Why would browsers do?
+[41:23.400 --> 41:27.400]  The fact that they even do the first time is great.
+[41:27.400 --> 41:32.400]  Again, it's just a question of what is the image that they provide.
+[41:32.400 --> 41:35.400]  Someone was asking me a similar question a couple of lectures earlier.
+[41:35.400 --> 41:39.400]  Always keep in mind, if a browser actually fails to show a website
+[41:39.400 --> 41:42.400]  because the cert failed, because the OCSP failed,
+[41:42.400 --> 41:45.400]  it's not the browser's fault, the CA's fault,
+[41:45.400 --> 41:48.400]  that the OCSP server was not running up,
+[41:48.400 --> 41:50.400]  but your browser doesn't show a page,
+[41:50.400 --> 41:52.400]  it can't tell you that the certificate is not valid
+[41:52.400 --> 41:55.400]  because a check hasn't happened.
+[41:55.400 --> 41:57.400]  The only thing it says is something went wrong,
+[41:57.400 --> 41:58.400]  and it shows you a blank screen.
+[41:58.400 --> 42:00.400]  What is your immediate reaction?
+[42:00.400 --> 42:02.400]  Refresh.
+[42:02.400 --> 42:05.400]  What then?
+[42:05.400 --> 42:08.400]  Access anyway.
+[42:08.400 --> 42:09.400]  I'm sorry?
+[42:09.400 --> 42:10.400]  Access anyway.
+[42:10.400 --> 42:11.400]  Access anyway.
+[42:11.400 --> 42:13.400]  But you can't because the browser won't allow you.
+[42:13.400 --> 42:15.400]  Use another browser.
+[42:15.400 --> 42:16.400]  See, that's the issue,
+[42:16.400 --> 42:19.400]  which is why they actually don't show you failures.
+[42:19.400 --> 42:23.400]  We don't have a way to attribute errors to the actual entity
+[42:23.400 --> 42:25.400]  that is generating them.
+[42:25.400 --> 42:27.400]  So what you simply do is you simply say,
+[42:27.400 --> 42:29.400]  the user maybe doesn't care,
+[42:29.400 --> 42:31.400]  maybe the cert is still okay,
+[42:31.400 --> 42:35.400]  and then you show the content.
+[42:35.400 --> 42:36.400]  What if OCSP query fails?
+[42:36.400 --> 42:37.400]  Does the cert fail?
+[42:37.400 --> 42:42.400]  Art fails.
+[42:42.400 --> 42:45.400]  So here is another way you could solve this.
+[42:45.400 --> 42:50.400]  So again, security people, they talk hard about this.
+[42:50.400 --> 42:53.400]  They say, ah, you know, there's an issue here.
+[42:53.400 --> 42:56.400]  Nobody wants to, first of all, this process fails,
+[42:56.400 --> 42:58.400]  so it wasn't still bad.
+[42:58.400 --> 43:00.400]  Plus, nobody wants to go to the CA
+[43:00.400 --> 43:02.400]  and then keep declaring to them
+[43:02.400 --> 43:03.400]  what websites you're actually going to,
+[43:03.400 --> 43:06.400]  which is a terrible design.
+[43:06.400 --> 43:08.400]  But ultimately, keep this in mind.
+[43:08.400 --> 43:10.400]  So any time you go to a cert,
+[43:10.400 --> 43:12.400]  I'm sorry, any time you go to a server,
+[43:12.400 --> 43:14.400]  when the server actually gives you its cert,
+[43:14.400 --> 43:17.400]  why can't it actually attach the OCSP response?
+[43:17.400 --> 43:20.400]  So this is OCSP stapling.
+[43:20.400 --> 43:22.400]  Just as the name implies,
+[43:22.400 --> 43:24.400]  it's imagined as if the response,
+[43:24.400 --> 43:29.400]  OCSP response is being stapled to the cert and given.
+[43:29.400 --> 43:33.400]  So which means you remove car, the picture,
+[43:33.400 --> 43:35.400]  and instead of doing,
+[43:35.400 --> 43:37.400]  instead of the client fetching the response,
+[43:37.400 --> 43:39.400]  it requires stapling basically includes
+[43:39.400 --> 43:40.400]  the response of the leaf cert.
+[43:40.400 --> 43:43.400]  It's only for the leaf cert, but that's okay.
+[43:43.400 --> 43:48.400]  But the idea here is that by enabling stapling,
+[43:48.400 --> 43:53.400]  you're basically removing an extra step.
+[43:53.400 --> 43:55.400]  So instead of the client or your browser
+[43:55.400 --> 43:56.400]  going and then checking with the CA,
+[43:56.400 --> 43:58.400]  it gets it for free.
+[43:58.400 --> 44:00.400]  You have to be a bit careful about
+[44:00.400 --> 44:02.400]  signing this response, timestamping it,
+[44:02.400 --> 44:04.400]  but those are easy in order to ensure
+[44:04.400 --> 44:06.400]  that the server doesn't give you a stale response
+[44:06.400 --> 44:10.400]  because that doesn't help either.
+[44:10.400 --> 44:14.400]  Well, what does this process solve
+[44:14.400 --> 44:17.400]  in terms of performance? Yes?
+[44:17.400 --> 44:18.400]  There's a privacy issue.
+[44:18.400 --> 44:20.400]  There's a privacy issue, definitely solved.
+[44:20.400 --> 44:22.400]  In terms of performance?
+[44:22.400 --> 44:25.400]  One query to the LSEP list.
+[44:25.400 --> 44:26.400]  One query.
+[44:26.400 --> 44:28.400]  So as in if this was a separate query,
+[44:28.400 --> 44:29.400]  you say one RTD, let's say.
+[44:29.400 --> 44:32.400]  RTD between you and the CA, which could be large.
+[44:32.400 --> 44:34.400]  Okay, that's a very good point.
+[44:34.400 --> 44:36.400]  And also you are not...
+[44:36.400 --> 44:38.400]  In terms of bandwidth?
+[44:39.400 --> 44:42.400]  You don't have to get the whole list?
+[44:42.400 --> 44:46.400]  OCSP has got nothing to do with the list.
+[44:46.400 --> 44:49.400]  People?
+[44:49.400 --> 44:54.400]  It adds bandwidth if you check it for every thread?
+[44:54.400 --> 44:57.400]  That's an interesting, awesome response.
+[44:57.400 --> 44:59.400]  Why? Why would it add bandwidth?
+[44:59.400 --> 45:00.400]  So there are two ways, right?
+[45:00.400 --> 45:01.400]  Either the server tells you,
+[45:01.400 --> 45:05.400]  staples the OCSP response, or you go fetch it.
+[45:06.400 --> 45:07.400]  So, yeah.
+[45:07.400 --> 45:11.400]  If the website does it, it's not required to do.
+[45:11.400 --> 45:14.400]  Yeah, the client is not required to do, yes.
+[45:14.400 --> 45:16.400]  But okay, let me rephrase the question.
+[45:16.400 --> 45:19.400]  What is the bandwidth saving for the client?
+[45:21.400 --> 45:25.400]  You could say it removes the overhead from...
+[45:25.400 --> 45:27.400]  Let's say the overhead in terms of RTD, yes.
+[45:27.400 --> 45:29.400]  Arguable, but yes.
+[45:29.400 --> 45:31.400]  But it will probably increase it, right?
+[45:31.400 --> 45:32.400]  The bandwidth?
+[45:32.400 --> 45:33.400]  Yes.
+[45:34.400 --> 45:36.400]  There will be no change.
+[45:36.400 --> 45:37.400]  Yes.
+[45:37.400 --> 45:39.400]  Maybe in terms of timeout situations,
+[45:39.400 --> 45:40.400]  like in clients on the request?
+[45:40.400 --> 45:42.400]  That's a reliability, yes.
+[45:42.400 --> 45:43.400]  Reliability improvements, yes.
+[45:43.400 --> 45:44.400]  Privacy improvements, yes.
+[45:44.400 --> 45:48.400]  Performance improvements, if the RTD is really bad.
+[45:48.400 --> 45:51.400]  Because CAs have no reason
+[45:51.400 --> 45:53.400]  why they should deploy servers close to you, right?
+[45:53.400 --> 45:56.400]  The fact that they even operate really high.
+[45:56.400 --> 46:00.400]  Can't the server then also catch the OCSP?
+[46:00.400 --> 46:02.400]  Which is why I rephrased my question,
+[46:02.400 --> 46:06.400]  saying what is the bandwidth saving for the client?
+[46:06.400 --> 46:08.400]  Servers can cache.
+[46:08.400 --> 46:10.400]  The clients, they can always cache,
+[46:10.400 --> 46:12.400]  but they can also cache the OCSP response.
+[46:12.400 --> 46:14.400]  So the total doesn't change
+[46:14.400 --> 46:16.400]  because all the other clients can get the same...
+[46:16.400 --> 46:18.400]  Oh, you have to be careful.
+[46:18.400 --> 46:20.400]  Total does change, right?
+[46:20.400 --> 46:22.400]  Meaning there is a bandwidth saving
+[46:22.400 --> 46:26.400]  as far as a CA is concerned, right?
+[46:26.400 --> 46:28.400]  So instead of having one million requests,
+[46:28.400 --> 46:31.400]  now you might have like 10,000 requests.
+[46:31.400 --> 46:32.400]  So be careful, right?
+[46:32.400 --> 46:35.400]  These are the ways in which I can ask questions.
+[46:35.400 --> 46:38.400]  So pay attention to what segment.
+[46:38.400 --> 46:40.400]  For the client, usually it doesn't make a difference.
+[46:40.400 --> 46:42.400]  Don't think about caching,
+[46:42.400 --> 46:44.400]  because nothing has changed in terms of client caching,
+[46:44.400 --> 46:48.400]  whether you do OCSP requests or OCSP stately.
+[46:48.400 --> 46:50.400]  Yes?
+[46:50.400 --> 46:52.400]  I'm just wondering if the server itself
+[46:52.400 --> 46:56.400]  says the OCSP response cannot tamper with that somehow,
+[46:56.400 --> 46:57.400]  or is it...
+[46:57.400 --> 46:58.400]  Ah, you have to be careful, right?
+[46:58.400 --> 47:00.400]  When the OCSP response is still signed.
+[47:00.400 --> 47:01.400]  Oh, right.
+[47:01.400 --> 47:02.400]  Right.
+[47:02.400 --> 47:04.400]  I mean, otherwise you wouldn't trust it.
+[47:04.400 --> 47:06.400]  One thing you might actually notice
+[47:06.400 --> 47:08.400]  is that the CRL list, for instance,
+[47:08.400 --> 47:11.400]  is actually an HTTP URL, not an HTTPS one.
+[47:11.400 --> 47:14.400]  Does it really matter?
+[47:14.400 --> 47:16.400]  The client only has to send one request
+[47:16.400 --> 47:18.400]  instead of two, right?
+[47:18.400 --> 47:21.400]  That's an RTT argument, yeah.
+[47:21.400 --> 47:22.400]  That's what I said.
+[47:22.400 --> 47:24.400]  Performance in terms of RTTS,
+[47:24.400 --> 47:26.400]  performance in terms of bandwidth, no.
+[47:26.400 --> 47:27.400]  There's no improvement.
+[47:27.400 --> 47:29.400]  Because you anyway have to download the response,
+[47:29.400 --> 47:31.400]  no matter whether you get it from the CA or from the server.
+[47:31.400 --> 47:34.400]  How does it matter?
+[47:34.400 --> 47:38.400]  Like, perhaps you don't have to negotiate the SSL.
+[47:38.400 --> 47:40.400]  You have to do a little...
+[47:40.400 --> 47:42.400]  Once again, an RTT argument.
+[47:42.400 --> 47:45.400]  What if I tell you that the protocol is a zero RTT one?
+[47:45.400 --> 47:47.400]  No, but I mean, like, you do have to spend
+[47:47.400 --> 47:50.400]  a little less bandwidth if you use one connection, right?
+[47:50.400 --> 47:52.400]  Not RTT.
+[47:52.400 --> 47:54.400]  Now you're getting into very specific things.
+[47:54.400 --> 47:56.400]  Don't you elaborate?
+[47:56.400 --> 47:58.400]  I do buy where you're going with this,
+[47:58.400 --> 48:00.400]  but could you elaborate?
+[48:00.400 --> 48:01.400]  Why would you save bandwidth
+[48:01.400 --> 48:02.400]  if you use a single connection
+[48:02.400 --> 48:04.400]  where there's multiple connections?
+[48:04.400 --> 48:07.400]  Yeah, just like one LO, one server LO.
+[48:07.400 --> 48:11.400]  Okay, let's ignore the handshake.
+[48:11.400 --> 48:12.400]  Not sure.
+[48:12.400 --> 48:15.400]  Because a handshake is basically a question of RTT, right?
+[48:15.400 --> 48:16.400]  Which is why it's...
+[48:16.400 --> 48:19.400]  Handshake is just RTT.
+[48:19.400 --> 48:20.400]  Handshake has got nothing to do with bandwidth.
+[48:20.400 --> 48:23.400]  I mean, the bandwidth savings there is like...
+[48:23.400 --> 48:27.400]  Query also takes a bit of bandwidth.
+[48:27.400 --> 48:28.400]  No, the way to think about it
+[48:28.400 --> 48:30.400]  is that if you say that, look,
+[48:30.400 --> 48:32.400]  having one connection actually improves things,
+[48:32.400 --> 48:34.400]  that means that you're actually looking into...
+[48:34.400 --> 48:37.400]  You're thinking about TCP, right?
+[48:37.400 --> 48:39.400]  As the connection progresses,
+[48:39.400 --> 48:42.400]  TCP's estimate of the window will keep changing,
+[48:42.400 --> 48:43.400]  and if it's stable enough,
+[48:43.400 --> 48:45.400]  it means that it can actually pull
+[48:45.400 --> 48:48.400]  a lot of content in one go, right?
+[48:48.400 --> 48:53.400]  So that applies, but it's always enough.
+[48:53.400 --> 48:57.400]  Operating systems do remember last congestion windows.
+[48:57.400 --> 48:59.400]  So when you use PTI,
+[48:59.400 --> 49:01.400]  you typically use asymmetric crypto,
+[49:01.400 --> 49:04.400]  which has larger messages than symmetric crypto.
+[49:04.400 --> 49:05.400]  Yes.
+[49:05.400 --> 49:06.400]  Couldn't you make the argument
+[49:06.400 --> 49:09.400]  that if you set a request to a CA
+[49:09.400 --> 49:12.400]  that you could there use symmetric crypto,
+[49:12.400 --> 49:15.400]  whereas with the server implementation,
+[49:15.400 --> 49:19.400]  you would need asymmetric and hence a larger message?
+[49:19.400 --> 49:25.400]  I'm not sure if that is true.
+[49:25.400 --> 49:26.400]  I'm not sure.
+[49:26.400 --> 49:28.400]  Maybe we should discuss that offline.
+[49:28.400 --> 49:29.400]  Yeah, yeah.
+[49:29.400 --> 49:31.400]  It's a good way to think about it.
+[49:31.400 --> 49:35.400]  Okay, extension for supporting multiple status exists.
+[49:35.400 --> 49:37.400]  You could staple multiple.
+[49:37.400 --> 49:40.400]  Meaning, stapling, when it was introduced,
+[49:40.400 --> 49:42.400]  it was only for the leaf set, right?
+[49:42.400 --> 49:43.400]  And then the question is,
+[49:43.400 --> 49:45.400]  do I need to have to go check the other ones?
+[49:45.400 --> 49:46.400]  But then there is extension
+[49:46.400 --> 49:50.400]  to actually support multiple statuses.
+[49:50.400 --> 49:52.400]  And then, of course, stapling didn't stop
+[49:52.400 --> 49:53.400]  because whenever you introduce something,
+[49:53.400 --> 49:55.400]  what is the incentive for anyone to use it?
+[49:55.400 --> 49:56.400]  Nothing.
+[49:56.400 --> 49:57.400]  So nobody used it.
+[49:57.400 --> 50:00.400]  So then they introduced must staple, right?
+[50:00.400 --> 50:03.400]  So you as a certificate owner
+[50:03.400 --> 50:06.400]  or the CA can actually mandate that,
+[50:06.400 --> 50:08.400]  look, for the certs that I issue,
+[50:08.400 --> 50:12.400]  must staple is actually a mandatory thing.
+[50:12.400 --> 50:14.400]  Must staple basically says that
+[50:14.400 --> 50:17.400]  if a server actually issues a set
+[50:17.400 --> 50:21.400]  without the OCSB response, do not accept it.
+[50:21.400 --> 50:23.400]  Once again, you can't enforce this behavior.
+[50:23.400 --> 50:24.400]  Browsers have to do it.
+[50:24.400 --> 50:28.400]  Did you mention the bandwidth saving for the client?
+[50:28.400 --> 50:29.400]  Did you explain that?
+[50:29.400 --> 50:30.400]  Yes.
+[50:30.400 --> 50:31.400]  What it was?
+[50:31.400 --> 50:32.400]  I didn't completely catch that.
+[50:32.400 --> 50:34.400]  What is the exact thing there?
+[50:34.400 --> 50:35.400]  The OCSB response,
+[50:35.400 --> 50:37.400]  whether it is delivered by the CA or the server,
+[50:37.400 --> 50:40.400]  it's the same.
+[50:40.400 --> 50:41.400]  So there's a no?
+[50:41.400 --> 50:42.400]  No.
+[50:42.400 --> 50:43.400]  Oh, so there's no business?
+[50:43.400 --> 50:44.400]  Okay.
+[50:44.400 --> 50:46.400]  Almost a trick question all along.
+[50:46.400 --> 50:48.400]  From the client's perspective, none.
+[50:48.400 --> 50:49.400]  Okay.
+[50:49.400 --> 50:50.400]  From the server, from the CA's perspective,
+[50:50.400 --> 50:51.400]  there is a lot.
+[50:51.400 --> 50:52.400]  All right.
+[50:52.400 --> 50:53.400]  So that's why I said
+[50:53.400 --> 50:54.400]  you have to walk through the segments
+[50:54.400 --> 50:57.400]  and then be careful.
+[50:57.400 --> 51:01.400]  The devil's always in the details.
+[51:01.400 --> 51:02.400]  So for instance,
+[51:02.400 --> 51:04.400]  I could also ask you questions based on,
+[51:04.400 --> 51:05.400]  you know, for instance,
+[51:05.400 --> 51:07.400]  if I change the entire OCSB protocol
+[51:07.400 --> 51:10.400]  to happen on Unity, right?
+[51:10.400 --> 51:13.400]  Just to take away the concerns about TCP and all that.
+[51:13.400 --> 51:15.400]  Then, of course, the question changes a slightly different,
+[51:15.400 --> 51:18.400]  takes a slightly different shape.
+[51:18.400 --> 51:21.400]  Again, make sure you understand the basics
+[51:21.400 --> 51:23.400]  and then you can work out from,
+[51:23.400 --> 51:24.400]  given the context of the question,
+[51:24.400 --> 51:26.400]  you can build on top of that.
+[51:26.400 --> 51:27.400]  Okay.
+[51:27.400 --> 51:29.400]  Client must not fetch the OCSB response.
+[51:29.400 --> 51:31.400]  In must table, what happens is that
+[51:31.400 --> 51:32.400]  you're basically telling the browser
+[51:32.400 --> 51:33.400]  that if you ever go to the CA,
+[51:33.400 --> 51:35.400]  the CA will give you nothing
+[51:35.400 --> 51:39.400]  or there is no reason for the CA to do it.
+[51:39.400 --> 51:40.400]  And the CA will still do it
+[51:40.400 --> 51:42.400]  because the CA can't check who's querying.
+[51:42.400 --> 51:44.400]  But the main point is the browser shouldn't do it.
+[51:44.400 --> 51:48.400]  If the server did not give you an OCSB response table,
+[51:48.400 --> 51:49.400]  then you shouldn't do it.
+[51:49.400 --> 51:52.400]  It's basically protecting the privacy of the users.
+[51:52.400 --> 51:54.400]  Server doesn't table, reject the server,
+
+[51:54.400 --> 51:56.400]  solves a soft fail problem, right?
+[51:56.400 --> 51:57.400]  Because it now,
+[51:57.400 --> 52:00.400]  basically it's like trying to provide a mechanism
+[52:00.400 --> 52:03.400]  to assign blame, right?
+[52:03.400 --> 52:05.400]  As long as you design a protocol
+[52:05.400 --> 52:07.400]  where it's very clear when something goes wrong,
+[52:07.400 --> 52:10.400]  who's to be blamed, it'll be great, right?
+[52:10.400 --> 52:12.400]  When that distinction is not clear,
+[52:12.400 --> 52:14.400]  then you run into problems.
+[52:14.400 --> 52:15.400]  I'll stop here.
+[52:15.400 --> 52:17.400]  Maybe we'll take a five-minute break and then resume.
+[52:17.400 --> 52:18.400]  Yes?
+[52:18.400 --> 52:23.400]  The server's like, by this, OCSB must table.
+[52:23.400 --> 52:25.400]  Like, are we using OCP?
+[52:25.400 --> 52:26.400]  OCP must table?
+[52:26.400 --> 52:27.400]  Good question.
+[52:27.400 --> 52:28.400]  We'll come back to that.
+[52:28.400 --> 52:32.400]  That's a good question.
+[52:32.400 --> 52:36.400]  I'll give one more minute.
+[52:36.400 --> 52:37.400]  People are still joining.
+[52:37.400 --> 52:40.400]  But anyway, I think we can stop.
+[52:40.400 --> 52:42.400]  I'm going to walk through a study
+[52:42.400 --> 52:45.400]  that Michael Albrecht and I did some time back.
+[52:45.400 --> 52:46.400]  It's my own paper.
+[52:46.400 --> 52:49.400]  I'm going to gloss over the details
+[52:49.400 --> 52:51.400]  and just focus on the high-level bits.
+[52:51.400 --> 52:53.400]  There's a lot of measurement work
+[52:53.400 --> 52:57.400]  that look at security protocols, right?
+[52:57.400 --> 52:59.400]  You don't need to know a lot of things.
+[52:59.400 --> 53:03.400]  If you know a few basic protocols, a few tools,
+[53:03.400 --> 53:06.400]  and you're good at some scripting language
+[53:06.400 --> 53:08.400]  or some programming language,
+[53:08.400 --> 53:13.400]  then you can write actually very strong papers,
+[53:13.400 --> 53:16.400]  publishable material.
+[53:16.400 --> 53:18.400]  It's quite easy.
+[53:18.400 --> 53:22.400]  Networking, the one advantage is that it's very easy
+[53:22.400 --> 53:24.400]  once you have some basic understanding
+[53:24.400 --> 53:26.400]  of how things work.
+[53:26.400 --> 53:29.400]  This is a very simple study.
+[53:29.400 --> 53:31.400]  It's about revocation checks.
+[53:31.400 --> 53:36.400]  You already know what they are.
+[53:36.400 --> 53:38.400]  And in this paper, what we did was,
+[53:38.400 --> 53:40.400]  again, do read this paper.
+[53:40.400 --> 53:43.400]  It's very easy to read, even though it's one of the papers,
+[53:43.400 --> 53:46.400]  so it sounds a bit weird to say it.
+[53:46.400 --> 53:50.400]  But I think it's a very simple paper to read.
+[53:50.400 --> 53:52.400]  So it's basically looking at significant revocation
+[53:52.400 --> 53:53.400]  in practice, right?
+[53:53.400 --> 53:55.400]  So analyze the revocation process and shed light
+[53:55.400 --> 54:00.400]  on the behavior of website administrators.
+[54:00.400 --> 54:03.400]  Looks at the behavior of website administrators,
+[54:03.400 --> 54:05.400]  certain authorities, clients.
+[54:05.400 --> 54:09.400]  Now, whatever I'm going to say, when was this study?
+[54:09.400 --> 54:12.400]  2015, so it's old.
+[54:12.400 --> 54:15.400]  In today's day and age, 2015 is probably things
+[54:15.400 --> 54:18.400]  not worthy of recollecting.
+[54:18.400 --> 54:20.400]  So hopefully the situation has changed,
+[54:20.400 --> 54:22.400]  but whatever I'm going to say shouldn't surprise you, right?
+[54:22.400 --> 54:25.400]  Expect the abysmal.
+[54:25.400 --> 54:29.400]  What did we do?
+[54:29.400 --> 54:35.400]  We basically did a whole IPv4 HTTP scans.
+[54:35.400 --> 54:40.400]  How many of you have heard of a tool called ZMap?
+[54:40.400 --> 54:41.400]  Awesome.
+[54:41.400 --> 54:43.400]  For those of you who don't know,
+[54:43.400 --> 54:45.400]  there used to be a tool called Nmap.
+[54:45.400 --> 54:47.400]  It's a very simple scanning tool.
+[54:47.400 --> 54:48.400]  You run it.
+[54:48.400 --> 54:51.400]  It tells you who's listening on what port.
+[54:51.400 --> 54:54.400]  The Zmap is basically Nmap on steroids.
+[54:54.400 --> 54:56.400]  So they basically found a bunch of ways
+[54:56.400 --> 54:58.400]  in which you can speed things up.
+[54:58.400 --> 55:00.400]  I mean, I'm trying to belittle the word,
+[55:00.400 --> 55:02.400]  but it's not what I want to do.
+[55:02.400 --> 55:04.400]  But they found some clever hacks
+[55:04.400 --> 55:07.400]  by which you could do fast scanning.
+[55:07.400 --> 55:09.400]  And it reduced the, for instance,
+[55:09.400 --> 55:14.400]  using Zmap you could scan almost the entire IPv4 space
+[55:14.400 --> 55:17.400]  in 45 minutes.
+[55:17.400 --> 55:19.400]  That's quite a lot.
+[55:19.400 --> 55:21.400]  Please don't do it.
+[55:21.400 --> 55:24.400]  At least if you want to do it, don't do it from the VU, right?
+[55:24.400 --> 55:27.400]  Not in the campus network.
+[55:27.400 --> 55:29.400]  You will be stopped.
+[55:29.400 --> 55:32.400]  The admins will know what you're doing.
+[55:32.400 --> 55:34.400]  Within 45 minutes, though?
+[55:34.400 --> 55:35.400]  That's a good question.
+[55:35.400 --> 55:37.400]  Why are you asking this question?
+[55:41.400 --> 55:44.400]  Yeah, at least, yeah, don't attribute,
+[55:44.400 --> 55:46.400]  don't, you didn't hear it from me.
+[55:46.400 --> 55:48.400]  Well, the disclaimer is the following, right?
+[55:48.400 --> 55:51.400]  So I have a, I mean, I had a bachelor,
+[55:51.400 --> 55:53.400]  and he's still working with me.
+[55:53.400 --> 55:56.400]  The bachelor student basically ran a Zmap scan.
+[55:56.400 --> 56:00.400]  Unfortunately, right during the time of the scan,
+[56:00.400 --> 56:04.400]  there was, again, I can't go into much detail,
+[56:04.400 --> 56:07.400]  there was an attack that looked like it was trying
+[56:07.400 --> 56:11.400]  to gain entry into the HR system of another university
+[56:11.400 --> 56:13.400]  that is close by.
+[56:13.400 --> 56:15.400]  Maybe close by.
+[56:15.400 --> 56:19.400]  And then, you know, people just flagged us by saying,
+[56:19.400 --> 56:22.400]  ah, the VU is attacking another academic institution.
+[56:22.400 --> 56:25.400]  It didn't make news because it was not true.
+[56:25.400 --> 56:28.400]  My student was not doing anything like that.
+[56:28.400 --> 56:30.400]  Definitely, I wasn't thinking anything like that.
+[56:30.400 --> 56:33.400]  But it's unfortunate.
+[56:33.400 --> 56:36.400]  So I'm notorious now.
+[56:36.400 --> 56:40.400]  Okay, so what we did was we used a Zmap-like tool,
+[56:40.400 --> 56:41.400]  or a Zmap variant.
+[56:41.400 --> 56:46.400]  We did a full IPV for scans, roughly weekly.
+[56:46.400 --> 56:48.400]  There were in total 74.
+[56:48.400 --> 56:49.400]  This is a measurement, right?
+[56:49.400 --> 56:51.400]  So this is what we used.
+[56:51.400 --> 56:54.400]  When you do an HTTP scan,
+[56:54.400 --> 56:59.400]  what it means is we're trying to pull the set, right?
+[56:59.400 --> 57:04.400]  So we have 35.5 million unique SSL sets.
+[57:04.400 --> 57:07.400]  Many are invalid.
+[57:07.400 --> 57:10.400]  These are self-signed certificates on Wi-Fi routers.
+[57:10.400 --> 57:14.400]  Some Wi-Fi routers do respond when you scan from the outside.
+[57:14.400 --> 57:16.400]  Why should they? I don't know.
+[57:16.400 --> 57:18.400]  They did respond.
+[57:18.400 --> 57:19.400]  And they have self-signed sets.
+[57:19.400 --> 57:23.400]  Great.
+[57:24.400 --> 57:25.400]  Yes?
+[57:25.400 --> 57:31.400]  So in this study you're querying all kinds of IPs, but not necessarily domains.
+[57:31.400 --> 57:35.400]  Yeah, we're scanning anyone who's listening on port 443.
+[57:35.400 --> 57:38.400]  That's an IPV for address.
+[57:38.400 --> 57:46.400]  Now, why would a router have an HTTP set at all?
+[57:46.400 --> 57:50.400]  Maybe from its admin page, or its config web page.
+[57:50.400 --> 57:56.400]  Why would the admin page be listening on a public IP?
+[57:56.400 --> 57:59.400]  Actually, there are good reasons.
+[57:59.400 --> 58:01.400]  There's maybe one reason.
+[58:01.400 --> 58:07.400]  If you forgot to configure something and you're away from home, you want to remotely log in, do this.
+[58:07.400 --> 58:09.400]  Now think about this.
+[58:09.400 --> 58:12.400]  This one is using self-signed set.
+[58:12.400 --> 58:18.400]  How confident are you it does anything meaningful over that interface?
+[58:18.400 --> 58:20.400]  Or how secure it is.
+[58:20.400 --> 58:23.400]  Unfortunately, this is a feature that's gaining quite a lot of prominence.
+[58:23.400 --> 58:27.400]  I have no clue who these people are who try to manage their Wi-Fi routers remotely.
+[58:27.400 --> 58:31.400]  It's a terrible idea. Don't do it.
+[58:31.400 --> 58:36.400]  Oh, by the way, if you are in the US, I'm really sorry for saying bad things about the US.
+[58:36.400 --> 58:40.400]  But if you're in the US, again, you can Google this out.
+[58:40.400 --> 58:46.400]  There are ISPs that actually give you Wi-Fi routers when you get the connection, just like it's here.
+[58:46.400 --> 58:53.400]  And one of the nice features that you get is you can store the password with the ISP.
+[58:53.400 --> 58:57.400]  Just in case you forget, they can actually help you with it.
+[58:57.400 --> 59:02.400]  Again, I don't know how great that is.
+[59:02.400 --> 59:06.400]  Then at the time of this paper, we had 222 root sets.
+[59:06.400 --> 59:08.400]  Not a joke.
+[59:08.400 --> 59:14.400]  On the root server, the macro is because at that time, we were all using Mac.
+[59:14.400 --> 59:22.400]  Of these 222 roots, now this is important.
+[59:22.400 --> 59:31.400]  222 root sets means that at least 222, at most 222 CAs.
+[59:31.400 --> 59:35.400]  That should raise alarm bells.
+[59:35.400 --> 59:39.400]  But the reason I'm saying at most is because ACA can have multiple sets.
+[59:39.400 --> 59:41.400]  But it's still alarming.
+[59:41.400 --> 59:45.400]  And these translate to roughly about 2,000 intermediate sets.
+[59:45.400 --> 59:48.400]  Think about root sets, and there's a bunch of intermediates.
+[59:48.400 --> 59:53.400]  It looks like there's a huge fan out.
+[59:53.400 --> 59:59.400]  We gathered 5 million valid leaf sets, and this is what we will talk about.
+[59:59.400 --> 01:00:03.400]  99% of them use CRL. This you can check by yourself.
+[01:00:03.400 --> 01:00:05.400]  95% of them use OCLB.
+[01:00:05.400 --> 01:00:08.400]  By the way, in order to do this particular scan, all you have to do is two things.
+[01:00:09.400 --> 01:00:11.400]  One is you need zmap.
+[01:00:11.400 --> 01:00:15.400]  You spend 15 minutes, you'll figure out how to run it.
+[01:00:15.400 --> 01:00:19.400]  Maybe another 15 minutes to figure out how to evade admins.
+[01:00:19.400 --> 01:00:27.400]  And then it takes 15 minutes to learn how OpenSSL, a tool that actually ships by default in Linux, how it works.
+[01:00:27.400 --> 01:00:31.400]  I showed you a bash script, and that takes 10 minutes to write.
+[01:00:31.400 --> 01:00:34.400]  And then you can extract different parts.
+[01:00:34.400 --> 01:00:38.400]  You don't have to write fancy C programs, you don't have to learn how to parse sets.
+[01:00:38.400 --> 01:00:40.400]  It'll be great if you don't, but you don't have to.
+[01:00:40.400 --> 01:00:43.400]  The bar is quite low for these sets.
+[01:00:46.400 --> 01:00:50.400]  So, first question is, are there sets that use neither?
+[01:00:50.400 --> 01:00:53.400]  Unfortunately, there are. There is a small person.
+[01:00:53.400 --> 01:00:55.400]  About 4,000 sets.
+[01:00:55.400 --> 01:00:57.400]  Again, two ways to look at it.
+[01:00:57.400 --> 01:00:59.400]  Very small fraction, maybe you don't have to worry.
+[01:00:59.400 --> 01:01:01.400]  But there are still 4,000 sets.
+[01:01:01.400 --> 01:01:03.400]  Who knows what they're running.
+[01:01:03.400 --> 01:01:05.400]  They have no CRL, no OCSB.
+[01:01:05.400 --> 01:01:07.400]  How do you check the revocation for these?
+[01:01:07.400 --> 01:01:09.400]  You can't.
+[01:01:11.400 --> 01:01:14.400]  So these are certificates that can never be revoked.
+[01:01:14.400 --> 01:01:15.400]  Great.
+[01:01:15.400 --> 01:01:23.400]  Intermediate sets, 98% of them use CRL, 48% use OCSB.
+[01:01:23.400 --> 01:01:27.400]  18% of intermediate sets use neither.
+[01:01:31.400 --> 01:01:33.400]  That's bad.
+[01:01:33.400 --> 01:01:35.400]  It goes without saying.
+[01:01:35.400 --> 01:01:39.400]  Fraction of fresh sets that are revoked.
+[01:01:39.400 --> 01:01:42.400]  These are all certificates, these are EV sets.
+[01:01:42.400 --> 01:01:44.400]  Remember EV sets?
+[01:01:44.400 --> 01:01:46.400]  DV, OB, EV.
+[01:01:46.400 --> 01:01:47.400]  EVs are expensive.
+[01:01:47.400 --> 01:01:50.400]  Extended validation is very expensive.
+[01:01:50.400 --> 01:01:53.400]  I think probably around 600 euros or something like that, if I remember correctly.
+[01:01:53.400 --> 01:01:55.400]  And this is a per year or something like that.
+[01:01:55.400 --> 01:01:58.400]  The longer the lifespan you request, the more money you pay.
+[01:01:58.400 --> 01:02:02.400]  And there's also still a limit on how long it can be.
+[01:02:02.400 --> 01:02:05.400]  So this is all sets and fresh sets.
+[01:02:05.400 --> 01:02:07.400]  Something seems to have happened here.
+[01:02:07.400 --> 01:02:10.400]  A lot of them got revoked.
+[01:02:10.400 --> 01:02:17.400]  Again, just to recall, revoked basically shortens the lifespan of a set.
+[01:02:17.400 --> 01:02:20.400]  So significant fraction of certificates were revoked.
+[01:02:20.400 --> 01:02:23.400]  9%, 6%.
+[01:02:24.400 --> 01:02:27.400]  By the way, this is fractions.
+[01:02:27.400 --> 01:02:30.400]  Very small.
+[01:02:30.400 --> 01:02:34.400]  If you're wondering what happened, that's the Hartley vulnerability.
+[01:02:34.400 --> 01:02:36.400]  So this revocation is okay.
+[01:02:36.400 --> 01:02:44.400]  If you remember the Hartley vulnerability, there were lots of keys that were presumably taken over by compromised.
+[01:02:44.400 --> 01:02:47.400]  And so you do want to revoke the sets.
+[01:02:47.400 --> 01:02:50.400]  Because you no longer use the sets.
+[01:02:50.400 --> 01:02:55.400]  It doesn't mean that someone has compromised your set, but the odds are pretty likely.
+[01:02:55.400 --> 01:03:00.400]  But in any case, what you would expect is the set to be revoked.
+[01:03:00.400 --> 01:03:04.400]  Fraction of alive sets that are revoked.
+[01:03:04.400 --> 01:03:06.400]  This shouldn't happen.
+[01:03:06.400 --> 01:03:10.400]  So this is still a fraction, so maybe it's a bit hard.
+[01:03:10.400 --> 01:03:12.400]  It's still low numbers.
+[01:03:12.400 --> 01:03:16.400]  An absolute value, it's still pretty high.
+[01:03:16.400 --> 01:03:19.400]  Alive, basically, this is okay.
+[01:03:19.400 --> 01:03:23.400]  Just to remember, this one shouldn't happen.
+[01:03:23.400 --> 01:03:27.400]  So about 0.6%.
+[01:03:27.400 --> 01:03:33.400]  Site administrators took the effect of revoke the set, but failed to update the service.
+[01:03:33.400 --> 01:03:35.400]  This is really bad.
+[01:03:35.400 --> 01:03:38.400]  Again, manual process, no one wants to do it.
+[01:03:38.400 --> 01:03:42.400]  Even if there are jobs on the line.
+[01:03:42.400 --> 01:03:49.400]  Fraction of servers that support OCSP stapling.
+[01:03:49.400 --> 01:03:52.400]  This is before my staple, if I remember correctly.
+[01:03:52.400 --> 01:03:57.400]  Showing no reason at all.
+[01:03:57.400 --> 01:04:09.400]  So I think this is for, I don't remember this exact class, but I think what it means is that the number of requests made by one particular browser or client.
+[01:04:09.400 --> 01:04:14.400]  Fraction of servers observed to support OCSP stapling.
+[01:04:14.400 --> 01:04:17.400]  Unfortunately, I'm not sure how to interpret this one.
+[01:04:17.400 --> 01:04:19.400]  If you can look up the details in the paper, I'm really sorry.
+[01:04:19.400 --> 01:04:22.400]  I don't remember this one.
+[01:04:22.400 --> 01:04:24.400]  Server observed to support.
+[01:04:24.400 --> 01:04:26.400]  Okay, not sure.
+[01:04:26.400 --> 01:04:27.400]  That's more.
+[01:04:27.400 --> 01:04:31.400]  OCSP stapling, you already know what the process is like.
+[01:04:31.400 --> 01:04:37.400]  Illustration should serve to help you to recall.
+[01:04:37.400 --> 01:04:38.400]  Let's see.
+[01:04:38.400 --> 01:04:42.400]  So in stapling.
+[01:04:42.400 --> 01:04:45.400]  That doesn't happen.
+[01:04:45.400 --> 01:04:57.400]  Okay, certain servers will staple only if a fresh is used in cache.
+[01:04:57.400 --> 01:05:05.400]  Just trying to think.
+[01:05:05.400 --> 01:05:13.400]  I'm not sure.
+[01:05:13.400 --> 01:05:15.400]  Unfortunately, not sure.
+[01:05:15.400 --> 01:05:19.400]  That's what I initially thought, but this is not probability.
+[01:05:19.400 --> 01:05:24.400]  That looks like a CDF.
+[01:05:24.400 --> 01:05:25.400]  I'm not sure.
+[01:05:25.400 --> 01:05:28.400]  So it looks, I mean, yeah, I'm really sorry.
+[01:05:28.400 --> 01:05:30.400]  I don't want to say something that is wrong.
+[01:05:30.400 --> 01:05:38.400]  You can find this graph in the paper and the caption should fill you all in.
+[01:05:38.400 --> 01:05:41.400]  Status of the PKI when it comes to supporting OCSP must staple.
+[01:05:41.400 --> 01:05:42.400]  So we did another study.
+[01:05:42.400 --> 01:05:51.400]  Again, pretty simple.
+[01:05:51.400 --> 01:05:54.400]  I don't think I'll ask any questions about this one.
+[01:05:54.400 --> 01:05:56.400]  So I'll mark it as an optional one.
+[01:05:56.400 --> 01:05:58.400]  The same thing.
+[01:05:59.400 --> 01:06:07.400]  So analyzing the behaviors of website administrators we saw, we can ask a certificate of parties and clients.
+[01:06:07.400 --> 01:06:15.400]  I think that's the next slide deck.
+[01:06:15.400 --> 01:06:17.400]  So let's look at C as in clients.
+[01:06:17.400 --> 01:06:20.400]  This is CA behavior.
+[01:06:20.400 --> 01:06:25.400]  You can look at the size of the CRL that tells you a lot about how many sets are getting revoked.
+[01:06:25.400 --> 01:06:28.400]  So this is basically showing a CDF of the CRL size.
+[01:06:28.400 --> 01:06:30.400]  Size is an X axis.
+[01:06:30.400 --> 01:06:41.400]  That's a CDF across all the CAs that we observed, all the 220 oddish.
+[01:06:41.400 --> 01:06:48.400]  If you adjusted by, you know, the raw size does not give you, in some sense, it's a bit misleading, right?
+[01:06:48.400 --> 01:06:56.400]  Because the size of the CRL obviously depends on how many sets a CA is actually issuing.
+[01:06:56.400 --> 01:07:02.400]  If a CA only issues one set, just making up numbers, and it revokes that one, that will be 100%.
+[01:07:02.400 --> 01:07:03.400]  Why?
+[01:07:03.400 --> 01:07:08.400]  If a CA issues 1,000 sets and it revokes two, it's a much smaller person.
+[01:07:08.400 --> 01:07:13.400]  So basically what you then do is you could do a weighted fraction.
+[01:07:14.400 --> 01:07:20.400]  If you adjusted by weight, then you see roughly, you know, the median size is 50 kilobytes.
+[01:07:20.400 --> 01:07:24.400]  I think this is in response to the total number of sets and whatnot.
+[01:07:24.400 --> 01:07:26.400]  What is CDF?
+[01:07:26.400 --> 01:07:33.400]  Cumulative distribution function.
+[01:07:33.400 --> 01:07:37.400]  Basically that's a way of saying you calculate for each of the values in the X axis,
+[01:07:37.400 --> 01:07:42.400]  you calculate the probability that they could happen, and you sum up the probabilities in increasing order.
+[01:07:45.400 --> 01:07:48.400]  So there are very large CRLs which are problematic, right?
+[01:07:48.400 --> 01:07:54.400]  Keep in mind the cost of bandwidth, latency penalties, and so on.
+[01:07:54.400 --> 01:08:04.400]  So CAs can issue multiple CRLs, and so these unique CRL numbers in this particular column
+[01:08:04.400 --> 01:08:08.400]  tells you for some of the very famous CAs.
+[01:08:08.400 --> 01:08:12.400]  I'm just trying to think if any of them have been revoked.
+[01:08:12.400 --> 01:08:15.400]  I'm not sure about Starcom anymore, I don't think it is there.
+[01:08:19.400 --> 01:08:22.400]  And also GlobalSign, I remember, or something.
+[01:08:22.400 --> 01:08:30.400]  So Talk is still there, Talk Consulting, VeriSign, Komodo and GoDaddy, they are still very, very famous, very large.
+[01:08:31.400 --> 01:08:34.400]  I do think Starcom and GlobalSign are not there, but I could be wrong.
+[01:08:34.400 --> 01:08:35.400]  You can check this.
+[01:08:35.400 --> 01:08:37.400]  I definitely remember something about Starcom.
+[01:08:37.400 --> 01:08:40.400]  So these are basically telling you how many unique CRLs they have.
+[01:08:40.400 --> 01:08:42.400]  Why would they have a number of different CRLs?
+[01:08:48.400 --> 01:08:54.400]  Yeah, I mean, it could be, I mean, the size of the CRL actually changes over time,
+[01:08:54.400 --> 01:08:57.400]  because you don't have to keep accumulating all the CRLs.
+[01:08:58.400 --> 01:09:01.400]  Okay, let me stop there.
+[01:09:01.400 --> 01:09:10.400]  So if you actually publish a list of all revoked certs, in principle, that list should keep increasing in size, but it doesn't.
+[01:09:10.400 --> 01:09:11.400]  Why?
+[01:09:17.400 --> 01:09:22.400]  You don't have to actually talk about the revocation status of an expired cert.
+[01:09:22.400 --> 01:09:25.400]  So in principle, the size of the list doesn't increase.
+[01:09:25.400 --> 01:09:29.400]  So the number of unique CRLs could be large because of other reasons.
+[01:09:29.400 --> 01:09:36.400]  I mean, these could correspond to different servers, so maybe some load issue comes into picture,
+[01:09:36.400 --> 01:09:44.400]  or it could be because for the different intermediate CAs that they delegate responsibility to, they might have a different set of lists.
+[01:09:44.400 --> 01:09:46.400]  So that could be there.
+[01:09:46.400 --> 01:09:48.400]  I don't know.
+[01:09:48.400 --> 01:09:50.400]  Certainly problematic, actually.
+[01:09:50.400 --> 01:09:54.400]  CAs can issue multiple CRLs.
+[01:09:54.400 --> 01:10:06.400]  This one is actually talking about, it's very hard to summarize this picture, but in one word, I have to say this is really bad.
+[01:10:06.400 --> 01:10:09.400]  You don't want to see cross signs here.
+[01:10:09.400 --> 01:10:17.400]  I don't have the time to go over all the details, but what I just wanted to say is that these are different desktop browsers on the columns.
+[01:10:17.400 --> 01:10:19.400]  These are a list of mobile browsers.
+[01:10:19.400 --> 01:10:22.400]  Don't even look at them, they're bad.
+[01:10:22.400 --> 01:10:26.400]  And this one is basically saying for different kinds of tests that we did.
+[01:10:26.400 --> 01:10:35.400]  So for instance, if I take this line, it says CRL, meaning we were trying to test whether browsers are actually fetching the CRLs.
+[01:10:35.400 --> 01:10:43.400]  The first one that says, okay, if they're revoked or unavailable, do they actually do the check?
+[01:10:44.400 --> 01:10:46.400]  Oh, this is intermediate.
+[01:10:46.400 --> 01:10:51.400]  For certs that have one intermediate, there are certs that have more than one intermediate CAs.
+[01:10:51.400 --> 01:10:56.400]  For a leaf cert, if it is revoked, do they actually use the protocol?
+[01:10:56.400 --> 01:10:59.400]  I think this is about OCSP, if I remember correctly.
+[01:10:59.400 --> 01:11:05.400]  So Chrome basically took the stand that we will not do any OCSP checks unless it's an EV cert.
+[01:11:05.400 --> 01:11:12.400]  Which is great, actually, because Amazon, banks, pretty much online shopping and banks will use an EV cert.
+[01:11:12.400 --> 01:11:15.400]  But for anything else, it doesn't really matter if the cert got revoked.
+[01:11:15.400 --> 01:11:17.400]  Google wouldn't care.
+[01:11:17.400 --> 01:11:21.400]  This is still true, by the way, today.
+[01:11:21.400 --> 01:11:23.400]  Firefox, on the other hand, is very nice.
+[01:11:23.400 --> 01:11:27.400]  Whether it was EV, TV, or OB, they didn't do OCSP.
+[01:11:27.400 --> 01:11:30.400]  Just good, at least consistent.
+[01:11:30.400 --> 01:11:32.400]  You know, you can look at different browsers.
+[01:11:32.400 --> 01:11:34.400]  I forgot, why am I hiding Safari?
+[01:11:34.400 --> 01:11:36.400]  I don't know, maybe it was bad.
+[01:11:36.400 --> 01:11:38.400]  But in general, you don't want crosses here.
+[01:11:38.400 --> 01:11:41.400]  You want the browsers to actually go check the sets.
+[01:11:41.400 --> 01:11:45.400]  But forget all of this, because it might be a little hard to assimilate.
+[01:11:45.400 --> 01:11:49.400]  But look at this one.
+[01:11:49.400 --> 01:11:53.400]  This was 2018, by the way, so five years ago.
+[01:11:53.400 --> 01:12:02.400]  Then you can make up your mind about what browsers are doing on the mobile phone.
+[01:12:02.400 --> 01:12:08.400]  These hyphens are, I think, sock fails or something like that.
+[01:12:08.400 --> 01:12:14.400]  I don't know.
+[01:12:14.400 --> 01:12:22.400]  Oh, non-linear certificates, again, basic things.
+[01:12:22.400 --> 01:12:24.400]  Oh, there were some interesting things.
+[01:12:24.400 --> 01:12:27.400]  So request, I think this was on OASIX, yeah.
+[01:12:28.400 --> 01:12:35.400]  It's also a bit bizarre that browsers on different operating systems would do different things.
+[01:12:35.400 --> 01:12:38.400]  I mean, it's not about rendering we're talking about.
+[01:12:38.400 --> 01:12:40.400]  We're talking about a security check.
+[01:12:40.400 --> 01:12:45.400]  And it annoys me to no end that they would do this.
+[01:12:45.400 --> 01:12:47.400]  Why?
+[01:12:47.400 --> 01:12:49.400]  Respect, revoke, staple.
+[01:12:49.400 --> 01:12:55.400]  It means that if a stapling actually tells you the certificate was revoked,
+[01:12:55.400 --> 01:12:59.400]  for some reason, whatever, Chrome 44, when we checked that particular version,
+[01:12:59.400 --> 01:13:01.400]  OASIX, it still would accept it.
+[01:13:01.400 --> 01:13:02.400]  It was great.
+[01:13:02.400 --> 01:13:07.400]  Is this functionality promoted by the operating systems?
+[01:13:07.400 --> 01:13:08.400]  Do you have?
+[01:13:08.400 --> 01:13:09.400]  That's a very good question.
+[01:13:09.400 --> 01:13:11.400]  That's a very good question.
+[01:13:11.400 --> 01:13:13.400]  What do you think is the default?
+[01:13:13.400 --> 01:13:17.400]  Maybe there is a slide that I say it.
+[01:13:17.400 --> 01:13:18.400]  Let's see.
+[01:13:18.400 --> 01:13:24.400]  On Mac, when we did the study, OCSB responses were disabled by default.
+[01:13:25.400 --> 01:13:26.400]  Thank you.
+[01:13:26.400 --> 01:13:29.400]  Why not?
+[01:13:29.400 --> 01:13:32.400]  I don't remember on Linux or Windows.
+[01:13:32.400 --> 01:13:36.400]  For whatever you say about Microsoft, there's a lot of good things that they have done.
+[01:13:36.400 --> 01:13:38.400]  I don't know what was their stance here.
+[01:13:38.400 --> 01:13:42.400]  I don't think we tested any IE browsers at that time.
+[01:13:42.400 --> 01:13:46.400]  But they did take at least a good stance when it comes to some of the security issues,
+[01:13:46.400 --> 01:13:50.400]  as long as it was not pointing at them.
+[01:13:50.400 --> 01:13:55.400]  No, the default behavior, to answer your question, was always that.
+[01:13:55.400 --> 01:13:59.400]  Sometimes they incorrectly trust OCSB responses with unknown status.
+[01:13:59.400 --> 01:14:00.400]  Sock fail, right?
+[01:14:00.400 --> 01:14:03.400]  If an OCSB status comes back and then simply says unknown,
+[01:14:03.400 --> 01:14:05.400]  why unknown?
+[01:14:05.400 --> 01:14:09.400]  Then the browsers would happily accept it and then show you the website,
+[01:14:09.400 --> 01:14:11.400]  without even any warning or anything.
+[01:14:11.400 --> 01:14:15.400]  Again, keep in mind, about six or seven years ago,
+[01:14:15.400 --> 01:14:19.400]  or maybe even longer, my recollection is six or seven years ago,
+[01:14:19.400 --> 01:14:22.400]  browsers used to change the color of your URL bar,
+[01:14:22.400 --> 01:14:27.400]  location bar, in response to what kind of search screen you're using.
+[01:14:27.400 --> 01:14:30.400]  It's a visual indication saying that, hey, you're using Amazon,
+[01:14:30.400 --> 01:14:35.400]  you want to see a big green bar, so you rest assured that the entity is legit
+[01:14:35.400 --> 01:14:40.400]  and you can spend, I don't know, thousands of dollars on Amazon.
+[01:14:40.400 --> 01:14:46.400]  But browsers actually fought for this, for reasons unknown, to remove this.
+[01:14:46.400 --> 01:14:50.400]  Because the reasoning was that a visual queue does not suffice.
+[01:14:50.400 --> 01:14:54.400]  Users should do more.
+[01:14:54.400 --> 01:15:01.400]  But anyway, so there are some more very obvious behaviors that you can observe.
+[01:15:01.400 --> 01:15:08.400]  Safari, Firefox, does not request OCSB staples, great.
+[01:15:08.400 --> 01:15:11.400]  So when you ask me, what does operating system do?
+[01:15:11.400 --> 01:15:15.400]  You can do system-wide behavior for Mac OS at that time was best at that,
+[01:15:15.400 --> 01:15:18.400]  which means that you don't do anything.
+[01:15:18.400 --> 01:15:20.400]  By the way, best effort, whenever you hear the word best,
+[01:15:20.400 --> 01:15:22.400]  it's not a positive thing.
+[01:15:22.400 --> 01:15:27.400]  IP, best effort delivery, means it won't do anything.
+[01:15:27.400 --> 01:15:29.400]  Send a packet, if it doesn't go through,
+[01:15:29.400 --> 01:15:35.400]  it'll still keep sending it without doing anything about it, for a good reason.
+[01:15:35.400 --> 01:15:40.400]  Anyway, native browsers do not check for, there's nothing that needs to be said.
+[01:15:40.400 --> 01:15:42.400]  This is abysmal.
+[01:15:42.400 --> 01:15:44.400]  You shouldn't trust your mobile browsers.
+[01:15:44.400 --> 01:15:49.400]  This picture has changed a bit, but again, it doesn't look so pretty.
+[01:15:49.400 --> 01:15:53.400]  There was another follow-up in 2020, if I remember correctly.
+[01:15:53.400 --> 01:15:58.400]  Half of these crosses have gone, these cross marks have gone, still half remain.
+[01:15:58.400 --> 01:16:00.400]  Maybe you could do a check and then check.
+[01:16:00.400 --> 01:16:04.400]  But this was tested five years ago, and there were four and five?
+[01:16:04.400 --> 01:16:05.400]  Yeah, maybe.
+[01:16:05.400 --> 01:16:07.400]  And there were eight and nine were already there.
+[01:16:07.400 --> 01:16:12.400]  In 2020, there was another study, which also shows half of the cross marks still remain.
+[01:16:12.400 --> 01:16:16.400]  You could do again and then hope for the best.
+[01:16:16.400 --> 01:16:20.400]  Google is dead against OCSB, so they won't do it.
+[01:16:20.400 --> 01:16:27.400]  Just backing up a little bit, could you enumerate the reasons why a certificate gets revoked in the first place?
+[01:16:27.400 --> 01:16:30.400]  It could be because of a number of reasons, but the basic one is
+[01:16:30.400 --> 01:16:36.400]  because you think that something has been compromised and you want to revoke it.
+[01:16:36.400 --> 01:16:38.400]  It's as simple as that.
+[01:16:38.400 --> 01:16:44.400]  We believe that, for instance, if you realize that someone has gained unauthorized access to your server,
+[01:16:44.400 --> 01:16:52.400]  the first thing you do is, if that server is my web front-end and there are certs in there, you'll probably revoke it.
+[01:16:52.400 --> 01:16:56.400]  So it's kind of the first response button for...
+[01:16:56.400 --> 01:16:58.400]  Yeah, it's also the safest thing to do.
+[01:16:58.400 --> 01:17:05.400]  You can't trust a cert anymore.
+[01:17:05.400 --> 01:17:08.400]  In general, you don't leave credentials.
+[01:17:08.400 --> 01:17:12.400]  If there are credentials on a machine and someone has taken access to it, you don't do it.
+[01:17:12.400 --> 01:17:22.400]  There's a famous incident of a very famous Indian software company publishing its credentials to Amazon.
+[01:17:22.400 --> 01:17:24.400]  It's Amazon infrastructure.
+[01:17:24.400 --> 01:17:26.400]  I don't know if you remember this.
+[01:17:26.400 --> 01:17:29.400]  It just reminded me of this.
+[01:17:29.400 --> 01:17:32.400]  What happened then?
+[01:17:32.400 --> 01:17:36.400]  Someone actually wrote to the company saying, hey, by the way, in your Git logs, I can see your credentials
+[01:17:36.400 --> 01:17:38.400]  and I can access your entire infrastructure.
+[01:17:38.400 --> 01:17:41.400]  Yes?
+[01:17:41.400 --> 01:17:44.400]  Was it what?
+[01:17:44.400 --> 01:17:46.400]  No, this is a much larger one.
+[01:17:46.400 --> 01:17:49.400]  I don't want to pick the name because it sounds very bad.
+[01:17:49.400 --> 01:17:52.400]  You can Google this out.
+[01:17:52.400 --> 01:17:53.400]  Search this.
+[01:17:53.400 --> 01:17:55.400]  Google uses a slightly different mechanism.
+[01:17:55.400 --> 01:17:56.400]  It doesn't use CLLs.
+[01:17:56.400 --> 01:17:57.400]  Why?
+[01:17:57.400 --> 01:18:00.400]  Because it's Google.
+[01:18:00.400 --> 01:18:07.400]  I said it in a very bad way, but I am annoyed by a lot of things that Google does.
+[01:18:07.400 --> 01:18:13.400]  They were one of the primary reasons why a CSP was not deployed or didn't gain major adoption.
+[01:18:13.400 --> 01:18:19.400]  They had good reasons, but refusing to do a CSP just looked like a lame one.
+[01:18:19.400 --> 01:18:23.400]  Google uses something called a CLL set.
+[01:18:23.400 --> 01:18:26.400]  And the idea is the following.
+[01:18:26.400 --> 01:18:30.400]  A CLL set is similar to a CLL in that it is a list.
+[01:18:30.400 --> 01:18:33.400]  But it's actually proactively shipped to the browser.
+[01:18:33.400 --> 01:18:34.400]  Not all browsers.
+[01:18:34.400 --> 01:18:36.400]  This is Chrome we are talking about.
+[01:18:36.400 --> 01:18:44.400]  So Chrome will every now and then will contact Google servers and then obtain the CLL set.
+[01:18:44.400 --> 01:18:47.400]  Why is it called a CLL set and not a CLL?
+[01:18:47.400 --> 01:18:52.400]  Because it's a set of sets, as in list of unique things.
+[01:18:52.400 --> 01:18:54.400]  The question is what does a CLL set contain?
+[01:18:54.400 --> 01:18:57.400]  It contains a subset of...you heard me right.
+[01:18:57.400 --> 01:19:01.400]  It contains a subset of revoked sets in the CLL.
+[01:19:01.400 --> 01:19:03.400]  Why a subset?
+[01:19:03.400 --> 01:19:04.400]  Yes.
+[01:19:04.400 --> 01:19:05.400]  Maybe faster?
+[01:19:05.400 --> 01:19:06.400]  Yeah.
+[01:19:06.400 --> 01:19:08.400]  This is exactly Google's response.
+[01:19:08.400 --> 01:19:10.400]  Why would you download a subset and not the CLL?
+[01:19:10.400 --> 01:19:11.400]  Well, it's faster.
+[01:19:11.400 --> 01:19:13.400]  Think about users on a mobile connection.
+[01:19:13.400 --> 01:19:15.400]  Don't you want them to spend less money?
+[01:19:15.400 --> 01:19:16.400]  Yes.
+[01:19:16.400 --> 01:19:17.400]  Great.
+[01:19:17.400 --> 01:19:19.400]  What subset did they download?
+[01:19:19.400 --> 01:19:20.400]  Their own.
+[01:19:20.400 --> 01:19:22.400]  They're not that bad.
+[01:19:23.400 --> 01:19:24.400]  They've ranked websites.
+[01:19:24.400 --> 01:19:26.400]  Figured out which are the high-value websites.
+[01:19:26.400 --> 01:19:27.400]  I'm not kidding.
+[01:19:27.400 --> 01:19:30.400]  This is exactly the reason that they put it.
+[01:19:30.400 --> 01:19:31.400]  Figured out high-value websites.
+[01:19:31.400 --> 01:19:33.400]  How do you figure out high-value websites?
+[01:19:33.400 --> 01:19:34.400]  I don't know.
+[01:19:34.400 --> 01:19:35.400]  They use some function that told them...
+[01:19:35.400 --> 01:19:36.400]  Page rank.
+[01:19:36.400 --> 01:19:37.400]  Huh?
+[01:19:37.400 --> 01:19:38.400]  Page rank.
+[01:19:38.400 --> 01:19:39.400]  Yeah.
+[01:19:39.400 --> 01:19:40.400]  It could be.
+[01:19:40.400 --> 01:19:41.400]  I don't know.
+[01:19:41.400 --> 01:19:43.400]  They didn't reveal their secret sauce.
+[01:19:43.400 --> 01:19:47.400]  Chrome still does it, by the way, for all the people at home.
+[01:19:47.400 --> 01:19:54.400]  The idea was that if you download frequently small amount of sets, that's actually better
+[01:19:54.400 --> 01:19:58.400]  because you save bandwidth and you're secured against most of the websites that you will
+[01:19:58.400 --> 01:19:59.400]  go to.
+[01:19:59.400 --> 01:20:00.400]  That's good.
+[01:20:00.400 --> 01:20:01.400]  That is exactly what Google did.
+[01:20:01.400 --> 01:20:02.400]  They're size-capped CLLs.
+[01:20:02.400 --> 01:20:09.400]  In order to cap them, you have to figure out who to remove, and they have a function.
+[01:20:09.400 --> 01:20:16.400]  You could ask how effective are CLLs.
+[01:20:16.400 --> 01:20:20.400]  I think in the paper we mention a bit...
+[01:20:20.400 --> 01:20:25.400]  So this is a fraction of CLL entries, CLLs entries in CLL set.
+[01:20:25.400 --> 01:20:26.400]  As in...
+[01:20:26.400 --> 01:20:27.400]  I forgot what this is.
+[01:20:27.400 --> 01:20:28.400]  Reason code.
+[01:20:28.400 --> 01:20:30.400]  It doesn't actually make much sense.
+[01:20:30.400 --> 01:20:31.400]  Anyway.
+[01:20:31.400 --> 01:20:33.400]  What it is saying is 80 percent...
+[01:20:33.400 --> 01:20:39.400]  I mean, there's a very small percentage of what you actually find in CLLs that appear
+[01:20:39.400 --> 01:20:40.400]  in CLL sets.
+[01:20:40.400 --> 01:20:41.400]  CLL sets are really small.
+[01:20:41.400 --> 01:20:43.400]  It's in kilobytes in size.
+[01:20:43.400 --> 01:20:48.400]  Very frequent, but questionable.
+[01:20:48.400 --> 01:20:55.400]  It still uses it.
+[01:20:55.400 --> 01:20:57.400]  There's a paper that some of my collaborators wrote.
+[01:20:57.400 --> 01:20:58.400]  I'm not part of it.
+[01:20:58.400 --> 01:21:04.400]  As in the team of people who are looking at browser revocations, certificate revocations
+[01:21:04.400 --> 01:21:11.400]  and studies, they followed up with a very nifty tool, which now ships with Firefox,
+[01:21:11.400 --> 01:21:12.400]  by the way.
+[01:21:12.400 --> 01:21:16.400]  It's called CLLife.
+[01:21:16.400 --> 01:21:20.400]  The whole idea that you can't download CLLs because they're large, unfortunately it's
+[01:21:20.400 --> 01:21:21.400]  true.
+[01:21:21.400 --> 01:21:24.400]  As in, you incur a lot of bandwidth.
+[01:21:24.400 --> 01:21:26.400]  This is a terrible idea.
+[01:21:26.400 --> 01:21:30.400]  As in, why would you trust Google to figure out which websites should be included in the
+[01:21:30.400 --> 01:21:31.400]  CLLs or not?
+[01:21:31.400 --> 01:21:33.400]  That doesn't seem like a nice thing.
+[01:21:33.400 --> 01:21:38.400]  Instead, what they did was they used a very simple data structure called Bloom Filters.
+[01:21:38.400 --> 01:21:41.400]  I don't know how many of you know Bloom Filters?
+[01:21:41.400 --> 01:21:42.400]  Awesome.
+[01:21:42.400 --> 01:21:49.400]  One of the coolest data structures that I know of, that and Fibonacci Heaps.
+[01:21:49.400 --> 01:21:52.400]  How many of you know Fibonacci Heaps?
+[01:21:52.400 --> 01:21:53.400]  Awesome.
+[01:21:53.400 --> 01:21:54.400]  How do you know?
+[01:21:54.400 --> 01:21:57.400]  I think we covered it in one of the operating systems.
+[01:21:57.400 --> 01:21:59.400]  Or they mentioned it.
+[01:21:59.400 --> 01:22:01.400]  They might have mentioned it.
+[01:22:01.400 --> 01:22:02.400]  I've seen it mentioned before.
+[01:22:02.400 --> 01:22:05.400]  I think they had it at Algorithms Data Structures.
+[01:22:06.400 --> 01:22:09.400]  It was mentioned at one point in the curriculum.
+[01:22:09.400 --> 01:22:10.400]  You should take a look at it.
+[01:22:10.400 --> 01:22:16.400]  It's a very beautiful and simple data structure.
+[01:22:16.400 --> 01:22:22.400]  You might have actually heard it when you think about Dijkstra's shortest path.
+[01:22:22.400 --> 01:22:26.400]  The running time of Dijkstra's shortest path is usually not that great, but you could reduce
+[01:22:26.400 --> 01:22:33.400]  it by using Fibonacci Heaps instead of a priority queue.
+[01:22:33.400 --> 01:22:36.400]  Things that I still remember from my undergrad days.
+[01:22:36.400 --> 01:22:37.400]  But anyway.
+[01:22:37.400 --> 01:22:40.400]  So, CLLite, you can actually check this.
+[01:22:40.400 --> 01:22:42.400]  I'm not going to question you based on this.
+[01:22:42.400 --> 01:22:44.400]  It's a very nice paper.
+[01:22:44.400 --> 01:22:46.400]  This is from my co-collaborators.
+[01:22:46.400 --> 01:22:47.400]  It actually ships.
+[01:22:47.400 --> 01:22:50.400]  It's a working product that actually ships with Firefox today.
+[01:22:50.400 --> 01:22:56.400]  It does something similar to CLL set, but it doesn't actually choose what sets you pick.
+[01:22:56.400 --> 01:23:01.400]  The idea is, again, I can't explain without explaining the data structure.
+[01:23:01.400 --> 01:23:06.400]  But it's very easy to make the CLLs very compact.
+[01:23:06.400 --> 01:23:11.400]  And it's actually written by an undergraduate student and it's actually shipped to Firefox,
+[01:23:11.400 --> 01:23:12.400]  so it's nice.
+[01:23:15.400 --> 01:23:16.400]  Yes?
+[01:23:16.400 --> 01:23:17.400]  One question still about that.
+[01:23:17.400 --> 01:23:24.400]  So what Google did is they just took the whole CLL list and they picked a bit of high value
+[01:23:24.400 --> 01:23:27.400]  domains of that and they said, okay, this is the CLL list.
+[01:23:27.400 --> 01:23:32.400]  So the other domains that would probably be revoked, you wouldn't even hear of if you're
+[01:23:32.400 --> 01:23:33.400]  using Chrome.
+[01:23:33.400 --> 01:23:37.400]  Could they not have done something like what we had earlier?
+[01:23:37.400 --> 01:23:39.400]  I can't answer what they couldn't have done.
+[01:23:39.400 --> 01:23:43.400]  No, but I mean like, would it be a solution to do like, where we had something like a
+[01:23:43.400 --> 01:23:48.400]  hashing and then you would see, look at the beginning of the hash and then you can then
+[01:23:48.400 --> 01:23:52.400]  retrieve a subset that contains what you're looking for.
+[01:23:52.400 --> 01:23:54.400]  Hashing doesn't work like that.
+[01:23:54.400 --> 01:23:57.400]  You have to, or at least regular hashes don't work like that.
+[01:23:57.400 --> 01:24:01.400]  You need something called as a locality sensitive hashing in order to do the kind of things
+[01:24:01.400 --> 01:24:02.400]  that you're talking about.
+[01:24:02.400 --> 01:24:03.400]  Those are not cheap.
+[01:24:03.400 --> 01:24:05.400]  I'm talking about something with buckets or something.
+[01:24:05.400 --> 01:24:07.400]  I forgot what exactly it was.
+[01:24:07.400 --> 01:24:08.400]  The what?
+[01:24:08.400 --> 01:24:09.400]  The page DNS.
+[01:24:09.400 --> 01:24:10.400]  The page DNS maybe.
+[01:24:10.400 --> 01:24:12.400]  Something like that.
+[01:24:12.400 --> 01:24:15.400]  But that still doesn't tell you which cert has been revoked.
+[01:24:15.400 --> 01:24:18.400]  So you're making the, the whole reason was that they didn't want the browser to do any
+[01:24:18.400 --> 01:24:19.400]  lookups.
+[01:24:19.400 --> 01:24:20.400]  Right?
+[01:24:20.400 --> 01:24:25.400]  So you want to, the Chrome browser, they want to make sure that it is fast.
+[01:24:25.400 --> 01:24:27.400]  It doesn't do any CRL checks or OCSB checks.
+[01:24:27.400 --> 01:24:29.400]  How do you make sure you do that?
+[01:24:29.400 --> 01:24:31.400]  Well, you could turn off revocation checks forever.
+[01:24:31.400 --> 01:24:33.400]  That would be terrible.
+[01:24:33.400 --> 01:24:38.400]  But what they did instead was they said, okay, how about every now and then you, you assimilate
+[01:24:38.400 --> 01:24:41.400]  a small amount of CRLs, right?
+[01:24:41.400 --> 01:24:42.400]  And this is their browser, right?
+[01:24:42.400 --> 01:24:44.400]  Chrome is their browser.
+[01:24:44.400 --> 01:24:47.400]  And they could have servers that keep shipping these updates, right?
+[01:24:47.400 --> 01:24:49.400]  And you can actually run Wireshark, run your Chrome browser.
+[01:24:49.400 --> 01:24:53.400]  You could see the CRL set fetches, by the way.
+[01:24:53.400 --> 01:24:58.400]  Again, I don't remember the frequency at which these things, but they should be very infrequent,
+[01:24:58.400 --> 01:24:59.400]  right?
+[01:24:59.400 --> 01:25:01.400]  You know, probably once in a day or something.
+[01:25:01.400 --> 01:25:02.400]  But they'll do this.
+[01:25:02.400 --> 01:25:03.400]  CRL sets.
+[01:25:03.400 --> 01:25:09.400]  But hashes don't give you that because a hash only tells me some things are compressed together
+[01:25:09.400 --> 01:25:12.400]  or some things fall in a bucket, but I don't know which one is in the bucket.
+[01:25:12.400 --> 01:25:14.400]  One question about OSCB stapling.
+[01:25:14.400 --> 01:25:15.400]  Yes.
+[01:25:15.400 --> 01:25:20.400]  So that was, I think you mentioned somewhere they made it mandatory in a way or tried to
+[01:25:20.400 --> 01:25:21.400]  do that?
+[01:25:21.400 --> 01:25:24.400]  Because, yeah, nobody would staple because they're like, oh, why should I care?
+[01:25:24.400 --> 01:25:28.400]  So in order to force the servers to staple, then you've made your OSCB must staple.
+[01:25:28.400 --> 01:25:29.400]  Okay.
+[01:25:29.400 --> 01:25:33.400]  And then if something is OSCB must staple and it doesn't include it, that was also what
+[01:25:33.400 --> 01:25:34.400]  they say, right?
+[01:25:34.400 --> 01:25:36.400]  Browsers should not go and fetch it.
+[01:25:36.400 --> 01:25:37.400]  Right.
+[01:25:37.400 --> 01:25:38.400]  But if something, someone should not.
+[01:25:38.400 --> 01:25:39.400]  Should not.
+[01:25:39.400 --> 01:25:42.400]  If someone staples it, if someone staples their server, I'm okay.
+[01:25:42.400 --> 01:25:43.400]  Yes.
+[01:25:43.400 --> 01:25:44.400]  Okay.
+[01:25:44.400 --> 01:25:49.400]  So what they say is that you're instructing the browser to not fetch it because if the
+[01:25:49.400 --> 01:25:53.400]  browsers do it, they reveal your browsing behavior in a CA.
+[01:25:53.400 --> 01:25:54.400]  Yep.
+[01:25:54.400 --> 01:25:56.400]  Again, should not.
+[01:25:56.400 --> 01:25:59.400]  That must not.
+[01:25:59.400 --> 01:26:00.400]  So there's a lot of questions.
+[01:26:00.400 --> 01:26:03.400]  So maybe I'll start with this and then I'll continue next week.
+[01:26:03.400 --> 01:26:07.400]  There's a lot of questions that you probably have about CAs.
+[01:26:07.400 --> 01:26:12.400]  Some of you asked, why do we have, what if the root CA gets compromised?
+[01:26:13.400 --> 01:26:15.400]  Why do we even have so many root CAs?
+[01:26:15.400 --> 01:26:16.400]  Right.
+[01:26:16.400 --> 01:26:18.400]  It doesn't make much sense.
+[01:26:18.400 --> 01:26:21.400]  And whatever root CA does something nefarious, right?
+[01:26:21.400 --> 01:26:22.400]  Could they do?
+[01:26:22.400 --> 01:26:24.400]  Well, there have been examples.
+[01:26:24.400 --> 01:26:28.400]  Certificate transparency was, I mean, Google is not that evil.
+[01:26:28.400 --> 01:26:34.400]  Certificate transparency was one initiative, lots of Google engineers spent their time
+[01:26:34.400 --> 01:26:35.400]  on.
+[01:26:35.400 --> 01:26:36.400]  It's a pretty nice one.
+[01:26:36.400 --> 01:26:40.400]  It's the sort of like the standard today and we have walked through what it means.
+[01:26:40.400 --> 01:26:46.400]  At a high level, what you have to keep in mind is it's about certificates and transparency
+[01:26:46.400 --> 01:26:53.400]  basically is trying to say, wouldn't it be nice if all of us know exactly the set of
+[01:26:53.400 --> 01:26:55.400]  certs that every CA has issued?
+[01:26:55.400 --> 01:26:56.400]  Okay.
+[01:26:56.400 --> 01:26:58.400]  How does this help?
+[01:26:58.400 --> 01:27:04.400]  Well, if you have lots of eyes, you know, looking at a particular data or an audit log,
+[01:27:04.400 --> 01:27:08.400]  then maybe not you and I, but someone else will figure out if something is wrong.
+[01:27:08.400 --> 01:27:09.400]  That's the whole idea.
+[01:27:09.400 --> 01:27:13.400]  And if you're wondering, hey, that shouldn't work, I mean, how does it work?
+[01:27:13.400 --> 01:27:17.400]  A lot of things in the Internet actually works because, you know, people have public access
+[01:27:17.400 --> 01:27:22.400]  to a data set and the chain works very well with the Internet, right?
+[01:27:22.400 --> 01:27:26.400]  A lot of people complain about a CA or an ISP doing something wrong.
+[01:27:26.400 --> 01:27:27.400]  It does work.
+[01:27:27.400 --> 01:27:31.400]  Again, because it affects their bottom line.
+[01:27:31.400 --> 01:27:32.400]  Okay.
+[01:27:32.400 --> 01:27:37.400]  So anyone can sign any domain, any CA can sign any domain and you know, you might sometimes
+[01:27:37.400 --> 01:27:42.400]  see this kind of thing as in multiple CAs could sign a given set.
+[01:27:42.400 --> 01:27:47.400]  And the reason why I wanted to show you this is because chain of trust does not mean a
+[01:27:47.400 --> 01:27:48.400]  single chain of trust.
+[01:27:48.400 --> 01:27:49.400]  Keep that in mind.
+[01:27:49.400 --> 01:27:50.400]  It could be multiple pathways.
+[01:27:50.400 --> 01:27:56.400]  As long as one pathway is valid, the browser can check the set.
+[01:27:56.400 --> 01:28:01.400]  The reason why these things can also happen is if because a CA is getting rolled out or
+[01:28:01.400 --> 01:28:06.400]  a CA is just getting started, it wants to ensure that it doesn't have enough servers
+[01:28:06.400 --> 01:28:10.400]  or it doesn't have the capacity to scale, so it doesn't, let's encrypt it initially
+[01:28:10.400 --> 01:28:11.400]  when it was starting out.
+[01:28:11.400 --> 01:28:16.400]  Some of the search would be cross signed by another one.
+[01:28:16.400 --> 01:28:23.400]  Ah, finally, I have a slide about, puts Netherlands to shame a bit.
+[01:28:23.400 --> 01:28:26.400]  Digi Notar was actually a wake up call, right?
+[01:28:26.400 --> 01:28:29.400]  So Digi Notar was a very large CA.
+[01:28:29.400 --> 01:28:34.400]  You could, I thought I put the URL.
+[01:28:34.400 --> 01:28:37.400]  This article should still be online.
+[01:28:37.400 --> 01:28:43.400]  Basically, Digi Notar was compromised and the hacker or the hackers or nation state,
+[01:28:43.400 --> 01:28:48.400]  depending on which you believe in, they issued multiple rogue sets.
+[01:28:48.400 --> 01:28:52.400]  Rogue sets basically means once you compromise a CA, you can pretty much issue a set for
+[01:28:52.400 --> 01:28:54.400]  any of its clients.
+[01:28:54.400 --> 01:28:58.400]  Because keep in mind, you've compromised the root CA, which means that you've compromised
+[01:28:58.400 --> 01:29:02.400]  the ultimate, you know, the trust anchors in your chain, which means you can create
+[01:29:02.400 --> 01:29:04.400]  whatever chain you want, right?
+[01:29:04.400 --> 01:29:08.400]  And your browsers will be forced to accept it because they're like, ah, I want the chain.
+[01:29:08.400 --> 01:29:09.400]  Looks good.
+[01:29:09.400 --> 01:29:11.400]  I'm good.
+[01:29:11.400 --> 01:29:14.400]  Okay.
+[01:29:14.400 --> 01:29:20.400]  Digi Notar is not the only incident, but the one incident that actually affected quite
+[01:29:20.400 --> 01:29:26.400]  a lot of organizations because if you look at the list of sites that were compromised,
+[01:29:26.400 --> 01:29:29.400]  many included development websites.
+[01:29:29.400 --> 01:29:32.400]  So it gained a lot of notoriety.
+[01:29:32.400 --> 01:29:36.400]  I think there was also some Dutch government websites or institutions that it took down,
+[01:29:36.400 --> 01:29:39.400]  but anyway.
+[01:29:39.400 --> 01:29:40.400]  What if CAs go rogue?
+[01:29:40.400 --> 01:29:42.400]  You cannot revoke root certificates.
+[01:29:42.400 --> 01:29:43.400]  You cannot.
+[01:29:43.400 --> 01:29:45.400]  So keep this in mind.
+[01:29:45.400 --> 01:29:50.400]  So regardless of how we twist the question, the question is about revoking root sets.
+[01:29:50.400 --> 01:29:51.400]  You can't.
+[01:29:51.400 --> 01:29:53.400]  You could remove them.
+[01:29:53.400 --> 01:29:56.400]  It's hard to remove CAs from the root store, but you could still remove them.
+[01:29:56.400 --> 01:29:58.400]  And the only way, for instance, we're using Chrome.
+[01:29:58.400 --> 01:30:00.400]  This is another problem.
+[01:30:00.400 --> 01:30:01.400]  You use Chrome.
+[01:30:01.400 --> 01:30:02.400]  You use Firefox.
+[01:30:02.400 --> 01:30:04.400]  Each one comes with its own root store.
+[01:30:04.400 --> 01:30:10.400]  So that presents complications.
+[01:30:10.400 --> 01:30:11.400]  There are articles.
+[01:30:11.400 --> 01:30:13.400]  Google's the famous one usually.
+[01:30:13.400 --> 01:30:18.400]  They're very loud about banning some CAs.
+[01:30:18.400 --> 01:30:19.400]  Ah, it will do.
+[01:30:19.400 --> 01:30:21.400]  StartCom.
+[01:30:21.400 --> 01:30:23.400]  StartCom was recently removed.
+[01:30:23.400 --> 01:30:26.400]  Yeah, 2017.
+[01:30:26.400 --> 01:30:28.400]  And look at the subheading right.
+[01:30:28.400 --> 01:30:33.400]  It says, when Chrome 61 is released, the Chinese CA will be completely blacklisted, which
+[01:30:33.400 --> 01:30:38.400]  means that it won't be in the root store, which means if you're using Chrome, if the
+[01:30:38.400 --> 01:30:45.400]  website is using a search signed by that CA, it won't work.
+[01:30:45.400 --> 01:30:49.400]  There's a lot of these articles you can look at.
+[01:30:49.400 --> 01:30:51.400]  Certainly get transparency, says the following.
+[01:30:51.400 --> 01:30:55.400]  I'll explain the high level thing that you need in detail.
+[01:30:55.400 --> 01:30:59.400]  So you have a CA that's issuing a bunch of certs, but every time it's issuing certs,
+[01:30:59.400 --> 01:31:03.400]  what if we force it to push it to a log?
+[01:31:03.400 --> 01:31:04.400]  You create a log.
+[01:31:04.400 --> 01:31:09.400]  And the idea is that if it's a public log, that anyone can access it, as in including
+[01:31:09.400 --> 01:31:16.400]  you and I, maybe it creates incentive for people who want to check the behavior or monitor
+[01:31:16.400 --> 01:31:20.400]  the behavior of CAs to take a look at the log and then say, you know what?
+[01:31:20.400 --> 01:31:22.400]  That doesn't look right.
+[01:31:22.400 --> 01:31:29.400]  For instance, if a CA accidentally issues a cert with a very weak key or a wrong method,
+[01:31:29.400 --> 01:31:31.400]  you could say, hey, that's not right.
+[01:31:31.400 --> 01:31:36.400]  Or it makes a typo in the website name or the domain name.
+[01:31:36.400 --> 01:31:38.400]  Somebody could point that out.
+[01:31:38.400 --> 01:31:41.400]  It has happened.
+[01:31:41.400 --> 01:31:48.400]  So the idea is that even if people don't do it out of public good, which is hard, but
+[01:31:48.400 --> 01:31:50.400]  at least you will monitor your own domains.
+[01:31:50.400 --> 01:31:55.400]  So if I tell you that, look, any cert that has ever been issued is in this database,
+[01:31:55.400 --> 01:31:57.400]  what's the minimum thing you would do?
+[01:31:57.400 --> 01:32:01.400]  If you are running a website, you'll say, I want to make sure my domain is protected.
+[01:32:01.400 --> 01:32:08.400]  So I'll keep pulling the database to say, has any cert been issued with my domain in
+[01:32:08.400 --> 01:32:09.400]  it?
+[01:32:09.400 --> 01:32:11.400]  Because that shouldn't happen.
+[01:32:11.400 --> 01:32:16.400]  At least I hope that makes sense.
+[01:32:16.400 --> 01:32:21.400]  So the question is, you know, the browsers, when they actually go to a website and then
+[01:32:21.400 --> 01:32:24.400]  they get the cert, they can also check the log.
+[01:32:24.400 --> 01:32:26.400]  I mean, that looks a little complicated.
+[01:32:26.400 --> 01:32:31.400]  But the point is that the browsers don't have to do any additional check other than ensuring
+[01:32:31.400 --> 01:32:34.400]  that this cert is present in the log.
+[01:32:34.400 --> 01:32:36.400]  That's it.
+[01:32:36.400 --> 01:32:41.400]  So certifying the transparency, what it says is if all your certs are in a log and the
+[01:32:41.400 --> 01:32:46.400]  browsers actually can test easily that your cert is in the log, that already gives you
+[01:32:46.400 --> 01:32:48.400]  additional benefits.
+[01:32:48.400 --> 01:32:49.400]  Yes?
+[01:32:49.400 --> 01:32:50.400]  Why is that?
+[01:32:50.400 --> 01:32:52.400]  Because it's public, right?
+[01:32:52.400 --> 01:32:58.400]  So as in, you know, if a CA actually does something funny, say for instance, you use
+[01:32:58.400 --> 01:33:03.400]  Avian Amro, let's say, you know, and suddenly, you know, someone notices that, you know,
+[01:33:03.400 --> 01:33:07.400]  DigiNote Avro is compromised and there's a cert issued for Avian Amro, right?
+[01:33:07.400 --> 01:33:11.400]  That goes into the website, but people would alert to it saying, hey, Avian Amro is compromised
+[01:33:11.400 --> 01:33:14.400]  because I see a new cert from DigiNote Art.
+[01:33:14.400 --> 01:33:16.400]  That shouldn't happen.
+[01:33:16.400 --> 01:33:22.400]  The only part that I haven't explained is how does a browser know that that has happened?
+[01:33:22.400 --> 01:33:24.400]  We will get to that.
+[01:33:24.400 --> 01:33:26.400]  But this is the whole idea.
+[01:33:26.400 --> 01:33:30.400]  If you have a log and the log, you make it transparent and make it easier for anyone to log it,
+[01:33:30.400 --> 01:33:31.400]  then you can have this.
+[01:33:31.400 --> 01:33:35.400]  And the browsers could simply think about a simple scenario, right?
+[01:33:35.400 --> 01:33:38.400]  Who can operate this log?
+[01:33:38.400 --> 01:33:40.400]  CAs.
+[01:33:40.400 --> 01:33:42.400]  Who else?
+[01:33:42.400 --> 01:33:43.400]  The auditors.
+[01:33:43.400 --> 01:33:44.400]  Huh?
+[01:33:44.400 --> 01:33:45.400]  The auditors.
+[01:33:45.400 --> 01:33:46.400]  Anyone could operate actually.
+[01:33:46.400 --> 01:33:52.400]  There is a criteria that you have to adhere to if you're operating your own log server.
+[01:33:52.400 --> 01:33:54.400]  But today, it's not just the CAs.
+[01:33:54.400 --> 01:34:04.400]  Actually, it's interesting to note that the biggest logs are actually run by Google, Cloudflare.
+[01:34:04.400 --> 01:34:06.400]  And there's one more.
+[01:34:06.400 --> 01:34:15.400]  So any large provider or CDN or browser vendor, content provider can run these logs.
+[01:34:15.400 --> 01:34:17.400]  And the browsers could simply say, you know what?
+[01:34:17.400 --> 01:34:25.400]  I'm only going to check or trust your cert if it appears in three out of the five logs.
+[01:34:25.400 --> 01:34:26.400]  Why three out of the five logs?
+[01:34:26.400 --> 01:34:29.400]  I mean, you do want to give browsers a bit of freedom, right?
+[01:34:29.400 --> 01:34:33.400]  Not all logs could have been updated at the proper time.
+[01:34:33.400 --> 01:34:37.400]  But by now, ensuring that, let's say, for instance, you pick five logs, which one would you pick?
+[01:34:37.400 --> 01:34:38.400]  You'll obviously pick your own one.
+[01:34:38.400 --> 01:34:40.400]  So Google has its own.
+[01:34:40.400 --> 01:34:44.400]  These are called certificate transparency log servers.
+[01:34:44.400 --> 01:34:46.400]  So Google operates its own log.
+[01:34:46.400 --> 01:34:49.400]  And in addition to that, maybe trust Cloudflare's log.
+[01:34:49.400 --> 01:34:51.400]  And then there's one more very sign I think operates its own.
+[01:34:51.400 --> 01:34:58.400]  And it could say, look, at the very least, I want you to have a timestamp here, a timestamp there, and a timestamp there.
+[01:34:58.400 --> 01:35:00.400]  That's pretty much how it works.
+[01:35:00.400 --> 01:35:03.400]  And these timestamps are cryptographically signed.
+[01:35:03.400 --> 01:35:05.400]  So it can't forge.
+[01:35:05.400 --> 01:35:08.400]  And these logs are publicly auditable.
+[01:35:08.400 --> 01:35:11.400]  And they're append-only.
+[01:35:11.400 --> 01:35:15.400]  You can't delete any entries from the log.
+[01:35:15.400 --> 01:35:17.400]  Those are all the features.
+[01:35:17.400 --> 01:35:19.400]  The logs are called CT logs.
+[01:35:19.400 --> 01:35:20.400]  Yes?
+[01:35:20.400 --> 01:35:23.400]  But what does it mean if the browser gets a certificate and it's not in the log?
+[01:35:23.400 --> 01:35:26.400]  Why is that not safe?
+[01:35:26.400 --> 01:35:28.400]  Because you don't know anything about it.
+[01:35:28.400 --> 01:35:30.400]  Nobody has had their eyes on the particular cert.
+[01:35:30.400 --> 01:35:32.400]  That's what it means.
+[01:35:32.400 --> 01:35:36.400]  Are the logs included in a certificate, or are you actually querying them or not?
+[01:35:36.400 --> 01:35:37.400]  That's a very good question.
+[01:35:37.400 --> 01:35:41.400]  There is something in the cert that actually tells you whether the log has been included.
+[01:35:42.400 --> 01:35:45.400]  We will see.
+[01:35:45.400 --> 01:35:46.400]  So the logs are public.
+[01:35:46.400 --> 01:35:47.400]  They're independent.
+[01:35:47.400 --> 01:35:49.400]  They're distributed.
+[01:35:49.400 --> 01:35:53.400]  It addresses many of the problems that we already encountered in OCSB.
+[01:35:53.400 --> 01:35:55.400]  No reliability problems.
+[01:35:55.400 --> 01:35:57.400]  There is no dependency issues.
+[01:35:57.400 --> 01:35:59.400]  They're not private as in they're public.
+[01:35:59.400 --> 01:36:00.400]  Anyone can query them.
+[01:36:00.400 --> 01:36:05.400]  Academics query them a lot to build all sorts of interesting statistics.
+[01:36:05.400 --> 01:36:10.400]  Assure non-repudiation, which means it's a fancy way of saying, once you've issued something to a log, you can't take it back.
+[01:36:11.400 --> 01:36:14.400]  Append only the tamper proof as well.
+[01:36:14.400 --> 01:36:15.400]  We will see how.
+[01:36:15.400 --> 01:36:20.400]  I'm going to stop here because I have to introduce this data structure called a Muggle Tree.
+[01:36:20.400 --> 01:36:23.400]  It's already great if you don't, we'll see.
+[01:36:23.400 --> 01:36:25.400]  But thanks.

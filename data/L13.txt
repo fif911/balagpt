@@ -1,0 +1,206 @@
+[00:00.000 --> 00:18.000]  So it's in the complement that is where it gets interesting.
+[00:18.000 --> 00:22.000]  By the way, non-drawal traffic basically means your private addresses.
+[00:22.000 --> 00:31.000]  So you expect that, you know, those kinds of packets do not, you will not observe that again before.
+[00:31.000 --> 00:35.000]  So the time of the role in networking is that things that you don't ever expect to happen
+[00:35.000 --> 00:39.000]  will happen roughly by 5% of the class.
+[00:39.000 --> 00:42.000]  The whole screw for any protocol is a solution.
+[00:42.000 --> 00:45.000]  50% is customer specific filters.
+[00:45.000 --> 00:54.000]  A really cool person who do not filter, they don't care, despite actually screw-crafting creating a lot of issues.
+[00:54.000 --> 01:00.000]  So I think traffic originating within the network, 65% filter before reaches a risk.
+[01:00.000 --> 01:06.000]  This is not because it's, you know, the relevant action or anything.
+[01:06.000 --> 01:13.000]  If you do this, it's basically trying to say they're trying to stay resources in their own network.
+[01:13.000 --> 01:19.000]  So basically you're trying to reduce the utilization of packets,
+[01:19.000 --> 01:22.000]  and it is being used to having a topic that you shouldn't be kept.
+[01:22.000 --> 01:25.000]  So it's in the best interest of the network to do this.
+[01:25.000 --> 01:31.000]  Again, incentive for all of these things is to improve their bottom line that will do it if it doesn't do it.
+[01:31.000 --> 01:39.000]  The key thing is that many filters are static and non-powered with prefixes because, you know,
+[01:39.000 --> 01:44.000]  if you're trying to do anything more intelligent, the problem is that how do you maintain your prefixes?
+[01:44.000 --> 01:45.000]  This is a hard problem.
+[01:45.000 --> 01:50.000]  And approximately half the plug here is specific filters, depending on who your peers are.
+[01:50.000 --> 01:54.000]  Again, based on business managers.
+[01:54.000 --> 01:59.000]  Yes, so these filters are applied on the destination IP address.
+[01:59.000 --> 02:02.000]  No, both on the destination and the source.
+[02:02.000 --> 02:03.000]  What is it?
+[02:03.000 --> 02:06.000]  You're talking about egress traffic from your own network and dropping.
+[02:06.000 --> 02:08.000]  That could be based on both.
+[02:08.000 --> 02:09.000]  Yeah.
+[02:09.000 --> 02:10.000]  Yeah.
+[02:10.000 --> 02:11.000]  Why not?
+[02:11.000 --> 02:13.000]  Oh, they're fear of dropping glitches in traffic.
+[02:13.000 --> 02:17.000]  And this is the number one concern.
+[02:17.000 --> 02:20.000]  Nobody cares about you living traffic that is illegitimate,
+[02:20.000 --> 02:26.000]  but people would complain if you drop glitches around.
+[02:27.000 --> 02:32.000]  The same thing as your member of the browser is actually complaining about back sets.
+[02:32.000 --> 02:37.000]  As long as there's no, you know, you know, the incentives are aligned,
+[02:37.000 --> 02:40.000]  and the mechanisms are designed in such that you can always point to English
+[02:40.000 --> 02:43.000]  and exactly who's causing the issue.
+[02:43.000 --> 02:45.000]  Then everything is good.
+[02:45.000 --> 02:50.000]  Modulo that, you know, the incentive is easier.
+[02:50.000 --> 02:55.000]  But also maintaining up-to-date lists are pretty high.
+[02:55.000 --> 02:59.000]  Today, you might think that, look, I'm not supposed to source this traffic
+[02:59.000 --> 03:05.000]  because of my network, or any of my customer networks do not announce this prefix,
+[03:05.000 --> 03:06.000]  so I should drop it.
+[03:06.000 --> 03:10.000]  But that business leadership could change your own app, and it does happen.
+[03:10.000 --> 03:14.000]  And so once again, you know, if you do have your routers actually
+[03:14.000 --> 03:17.000]  configured to drop certain traffic, you know,
+[03:17.000 --> 03:20.000]  changing that becomes really high, updating that.
+[03:20.000 --> 03:23.000]  By the way, network administrators are as much as possible
+[03:23.000 --> 03:26.000]  to do that when I touch router configurations, right?
+[03:26.000 --> 03:30.000]  Because most of the time, the output is that you see issues
+[03:30.000 --> 03:33.000]  that you can't do this because of those configurations.
+[03:33.000 --> 03:38.000]  So nobody wants to touch a router, especially a core router, right?
+[03:38.000 --> 03:43.000]  If it's running fine, no one's complaining you want to keep it back.
+[03:43.000 --> 03:46.000]  No incentives.
+[03:47.000 --> 03:49.000]  All right.
+[03:49.000 --> 03:51.000]  Let's reduce some more.
+[03:56.000 --> 03:58.000]  So there's a paper that I was talking about,
+[03:58.000 --> 04:01.000]  which is talking about how prevalent is a school thing,
+[04:01.000 --> 04:04.000]  and it's a passive approach.
+[04:04.000 --> 04:06.000]  So this is something that you also see.
+[04:06.000 --> 04:09.000]  The particular user is now just about, you know, writing code
+[04:09.000 --> 04:13.000]  and trying to bring down a server or trying to design equations.
+[04:13.000 --> 04:16.000]  Sometimes it involves active or passive approach.
+[04:16.000 --> 04:19.000]  You're basically trying to collect data from a vantage point.
+[04:19.000 --> 04:21.000]  Could be a router.
+[04:21.000 --> 04:23.000]  Could be a firewall.
+[04:23.000 --> 04:27.000]  Could be an IXP, like the AM6.
+[04:27.000 --> 04:29.000]  And then you get data from them, you analyze,
+[04:29.000 --> 04:32.000]  trying to get insights into what's happening.
+[04:35.000 --> 04:37.000]  So ability to schools.
+[04:37.000 --> 04:40.000]  In 2017, there was a landmark study which actually showed
+[04:40.000 --> 04:43.000]  that school thing is possible in more than 34 percent,
+[04:43.000 --> 04:47.000]  roughly about 2500 percent deficit.
+[04:47.000 --> 04:50.000]  Actually possible in 2017.
+[04:50.000 --> 04:52.000]  This was an active measurement.
+[04:52.000 --> 04:57.000]  As I said, you send a probe claiming that you are from a particular address
+[04:57.000 --> 04:59.000]  that, you know, it's schooled,
+[04:59.000 --> 05:02.000]  and checking whether it was actually being detected in the graph.
+[05:02.000 --> 05:07.000]  This was done by some good friends of mine in the US.
+[05:07.000 --> 05:10.000]  This is still the last, I think, study that was done
+[05:10.000 --> 05:13.000]  using active measurements for detecting spoofing.
+[05:13.000 --> 05:15.000]  I don't think there will be any more studies,
+[05:15.000 --> 05:17.000]  especially for detecting spoofing.
+[05:17.000 --> 05:20.000]  This was itself very hard.
+[05:20.000 --> 05:23.000]  Active measurements, especially of certain kinds,
+[05:23.000 --> 05:25.000]  are highly discouraged because network algorithms
+[05:25.000 --> 05:27.000]  really don't like it.
+[05:27.000 --> 05:30.000]  Do not even think measurements are actually considered useless.
+[05:30.000 --> 05:34.000]  A few days ago, there was even an RFC saying, you know,
+[05:34.000 --> 05:36.000]  how you're supposed to do network measurements.
+[05:36.000 --> 05:40.000]  When you send a probe, how you're supposed to immediately get to the whole world,
+[05:40.000 --> 05:44.000]  what, you know, what's the intent of that particular probe?
+[05:44.000 --> 05:47.000]  And like I told you in the last class, sometimes it's backfires, right?
+[05:47.000 --> 05:51.000]  So if you do all the things and then say, look, you know, here is live, you know,
+[05:51.000 --> 05:54.000]  I'm probing and I'm academic and all I'm trying to do is checking,
+[05:54.000 --> 05:57.000]  what do you know on benefit, whether the protocols you've deployed
+[05:57.000 --> 05:59.000]  or your network is configured, right?
+[05:59.000 --> 06:02.000]  It will still come after you and then say, all sorts of things.
+[06:03.000 --> 06:07.000]  Anyway, this paper is actually not about the ability to just move
+[06:07.000 --> 06:10.000]  and simply checking the prevalence of spoofing.
+[06:10.000 --> 06:14.000]  And these kinds of studies are easier to do because you're not trying to send probes
+[06:14.000 --> 06:17.000]  or simply saying, I have traffic, sample traffic, usually,
+[06:17.000 --> 06:21.000]  and you're trying to analyze a traffic to go out and insights.
+[06:21.000 --> 06:25.000]  It is an A as a valid source for a given IP address, right?
+[06:25.000 --> 06:28.000]  So if you could answer this question for any arbitrary extent
+[06:28.000 --> 06:30.000]  or any IP address,
+[06:31.000 --> 06:34.000]  you could actually launch a very successful stuff, even though
+[06:34.000 --> 06:36.000]  that this is really harsh.
+[06:38.000 --> 06:40.000]  For a scalp, it's easy, yes?
+[06:40.000 --> 06:42.000]  Yeah, I'll push this slide.
+[06:42.000 --> 06:44.000]  It looks like partially spoofing.
+[06:44.000 --> 06:45.000]  What was that about?
+[06:47.000 --> 06:50.000]  I don't know if exactly the fact that spoofing could mean that
+[06:50.000 --> 06:53.000]  for some cases it might, for some specific prefixes it would be.
+[06:53.000 --> 06:55.000]  That's what I would guess.
+[06:55.000 --> 06:58.000]  So the info for the previous...
+[06:59.000 --> 07:03.000]  Oh, sorry, info from the previous slide, the 34% and something else.
+[07:04.000 --> 07:09.000]  That paper is not about the ability to spoofing with the prevalence.
+[07:09.000 --> 07:13.000]  No, this one is actually, I haven't even mentioned this thing because I'm going to...
+[07:13.000 --> 07:14.000]  Yeah.
+[07:14.000 --> 07:15.000]  So this is a different paper.
+[07:15.000 --> 07:18.000]  This was a study in an August study.
+[07:18.000 --> 07:23.000]  This was from a couple of institutes in the US and the West Coast.
+[07:23.000 --> 07:27.000]  The US-enabled lab degree stands for it, and probably Berkeley.
+[07:27.000 --> 07:31.000]  And what they did was they actually wrote a...
+[07:31.000 --> 07:33.000]  It's a tool that is still widely used.
+[07:33.000 --> 07:35.000]  It's called scamper.
+[07:35.000 --> 07:39.000]  It's a trace out tool that could also be used to send some probes and all that.
+[07:39.000 --> 07:44.000]  So they did a study, which is about a hundred, to basically check.
+[07:44.000 --> 07:50.000]  Suppose I actually send probes with an address that is not supposed to audition
+[07:50.000 --> 07:52.000]  if I'm not putting in the network.
+[07:52.000 --> 07:54.000]  And you're trying to get vantage points in different networks.
+[07:54.000 --> 07:56.000]  How many networks could you actually end up succeeding?
+[07:57.000 --> 08:01.000]  And the number of vantage points that you could have with different networks
+[08:01.000 --> 08:04.000]  basically means how many networks you can scan.
+[08:04.000 --> 08:09.000]  And they scanned about 2,500 inputs, which is actually not bad.
+[08:09.000 --> 08:11.000]  But there are a lot more.
+[08:11.000 --> 08:15.000]  So in the last days on this, about the previous paper, it was almost like before.
+[08:15.000 --> 08:16.000]  Yeah.
+[08:16.000 --> 08:21.000]  This one is, the ability to spoofing is just trying to clarify that the paper that I'm going to discuss
+[08:21.000 --> 08:25.000]  in this particular lecture is actually talking about the prevalence of spoofing and not being...
+[08:25.000 --> 08:26.000]  Thank you.
+[08:27.000 --> 08:33.000]  For the stuff that's easy because that stuff record basically is, you know,
+[08:33.000 --> 08:36.000]  education institutions like us.
+[08:36.000 --> 08:38.000]  Probably have one or two colliders.
+[08:38.000 --> 08:39.000]  Typically one collider.
+[08:39.000 --> 08:44.000]  It's very easy to check whether a traffic is being spooked or not because
+[08:44.000 --> 08:47.000]  you pretty much know what your prefix is.
+[08:47.000 --> 08:50.000]  So you can easily do a gris footprint.
+[08:50.000 --> 08:54.000]  You have one prefix, but in the sense that these, you know, have one prefix.
+[08:54.000 --> 08:56.000]  It's just fairly small.
+[08:56.000 --> 09:00.000]  And it's very simple to ask, hey, you know, is this traffic in mind or not?
+[09:00.000 --> 09:01.000]  Right?
+[09:01.000 --> 09:02.000]  Then it goes out.
+[09:02.000 --> 09:04.000]  Even that some networks don't move.
+[09:04.000 --> 09:08.000]  I don't know if that means it's very easy for you to check.
+[09:08.000 --> 09:10.000]  For the transit is really hard.
+[09:10.000 --> 09:11.000]  Right?
+[09:11.000 --> 09:13.000]  So you feel a transit.
+[09:13.000 --> 09:18.000]  Figuring out exactly what traffic you get allowed to let through is really hard.
+[09:18.000 --> 09:21.000]  It's not simply a question of asking your fear.
+[09:21.000 --> 09:23.000]  What's the prefix you own?
+[09:23.000 --> 09:26.000]  What's the prefix you have to come to that?
+[09:26.000 --> 09:31.000]  And it makes it really hard because, you know, once again, your fear is tearing
+[09:31.000 --> 09:33.000]  arrangements and other networks can also change.
+[09:33.000 --> 09:36.000]  So it means you have to constantly keep updating.
+[09:36.000 --> 09:42.000]  And there is no protocol or any band mechanism for this.
+[09:42.000 --> 09:47.000]  The validity of your checks also depends on the position of the AS and the topology.
+[09:47.000 --> 09:52.000]  What I mean by that is that a network, depending on where the falls under the AS hierarchy.
+[09:53.000 --> 09:55.000]  So you do have, it's going to, it's flattening.
+[09:55.000 --> 09:58.000]  You do have some, you know, sort of a hierarchy.
+[09:58.000 --> 10:03.000]  There are networks like Dr. Tullikov, AT&T, I think.
+[10:03.000 --> 10:05.000]  I'm not sure if you didn't want to remember.
+[10:05.000 --> 10:08.000]  Anyway, there are a few networks that are called clear ones.
+[10:08.000 --> 10:11.000]  There is no clear definition for a tier one.
+[10:11.000 --> 10:14.000]  There are about 12 or 13 networks around the globe.
+[10:14.000 --> 10:17.000]  They're called into the tier one networks.
+[10:17.000 --> 10:19.000]  There's no formal strategy.
+[10:19.000 --> 10:23.000]  But informal, you could think of these networks as networks that don't pay anyone.
+[10:23.000 --> 10:29.000]  So, meaning if they send traffic to you, they don't pay you petals.
+[10:29.000 --> 10:30.000]  Nothing.
+[10:30.000 --> 10:38.000]  Then there are tier two networks, which typically to reach some prefixes, they'll get transit
+[10:38.000 --> 10:39.000]  from clear ones.
+[10:39.000 --> 10:46.000]  They're much larger than your, you know, regional ISPs, you know, for instance, let's say,
+[10:46.000 --> 10:53.000]  you know, in the same way, you know, in the same way, you know, in the same way, you
+[10:53.000 --> 10:54.000]  can't see it.
+[10:54.000 --> 10:55.000]  So, you know, there are two.
+[10:55.000 --> 10:56.000]  So, there are tier two.
+[10:56.000 --> 10:57.000]  And then the last one is tier three.
+[10:57.000 --> 11:02.000]  Tier three is basically what we refer to as the small networks that provide you internet
+[11:02.000 --> 11:03.000]  connectivity.
+[11:03.000 --> 11:06.000]  So, the ISPs at UNI have contracts.
+[11:06.000 --> 11:10.000]  And depending on where you're following this hierarchy, it might be easier to talk
+[11:10.000 --> 11:11.000]  into the fact.
+[11:11.000 --> 11:14.000]  But it's going to be in a stubs are usually very low in hierarchy.
+[11:14.000 --> 11:18.000]  You know, you pretty much depend on some of the areas you carry traffic or resume traffic
+[11:18.000 --> 11:19.000]  from all time.
+[11:19.000 --> 11:22.000]  And it's very easy for you to do this something.
+[11:22.000 --> 11:27.000]  Whereas if you're a tier one, because you've been with so many other networks, it's really
+[11:27.000 --> 11:33.000]  hard for you to figure out what traffic is allowed to pass through.
+[11:33.000 --> 11:39.000]  Because if you see a faculty who tried to see is exposed to none, that requires you to
+[11:40.000 --> 11:41.000]  do that.
+[11:41.000 --> 11:46.000]  So, for any traffic coming through that interface, the areas in every everyone, you have to know
+[11:46.000 --> 11:50.000]  every single valid prefix for every single network connected to that interface.
+[11:50.000 --> 11:55.000]  That is not just your immediate peer, could be the peer of peers or their customers and
+[11:55.000 --> 11:56.000]  so on.
+[11:56.000 --> 11:57.000]  Okay.

@@ -1,0 +1,2109 @@
+I also heard what both of us said earlier about, 
+you know, what exactly are the 
+Bailiwick rules for the DNS server, so when does 
+the DNS server accept a reply? 
+If you want to know the details of at least a 
+situation as it existed at the 
+time of the Kominsky attack, have a close look at 
+the paper called the 
+Hitchhiker's Guide to DNS Task Force. There it 
+has for all of the popular DNS 
+servers of the day, right, so bind and unbound 
+and some others, the exact 
+rules. So what is it that the DNS server will 
+accept? When will it accept the 
+authority section and when will it accept the 
+additional information that is in 
+that report? So I think that might be useful for 
+you. All right. I don't think 
+that it's referenced on the slide anywhere, 
+right, so that paper, the 
+Hitchhiker's Guide. So then maybe I'll just stick 
+it in. Yeah. Maybe if you 
+have an announcement. I was thinking about it, 
+but I'm not sure. Okay, I think 
+I just have a couple of slides on IRR. So I 
+briefly mentioned the Internet 
+Routing Registry last time. I mentioned the 
+popular Microsoft attack. I 
+uploaded these slides online. There's not much to 
+say about the Internet 
+Routing Registry except that it still exists 
+today. It's still widely used. So 
+when you actually do a holistic lookup on a given 
+address, it looks like this. 
+I just looked up the 1337 prefix. Of course, it 
+shows information that you 
+should already know. This is the prefix owned by 
+the university and so on. And 
+some of this information is basically what is 
+fetched from this IRR database. 
+It shows – there should be a data set here. But 
+anyway, some of this 
+information comes from the IRR, which is a very 
+simple database. In order to 
+announce a route today, you need a BGP speaker, 
+which is a fancy way of saying 
+you need a router that speaks BGP. You need to 
+set up an IRR object. And 
+there's also a blog post from someone who 
+recently tried to run his own 
+autonomous system. It's very nice. It's about two 
+pages long. It tells you how 
+difficult it is to run your own autonomous 
+system. At the very basic level, you 
+need an IP address prefix. You have to convince a 
+registrar to give you not an 
+IP address but a prefix. That's a bit 
+challenging. And second thing is you need 
+to have the money to run a router. And more 
+importantly, you need to have some 
+amount of clout to deal with another AS. In other 
+words, having a router or 
+having a prefix does not necessarily mean that 
+you can announce a prefix. You 
+have to figure out where to announce, who will 
+accept the announcement, and so 
+on. Yes? Will you post a link to that blog post? 
+Yeah, I will post a link. It's 
+a series of blog posts, but it's very nice. It's 
+very nice. It also talks about 
+some of the politics from different registrars, 
+who is easy, who is difficult. 
+I think in the U.S. it's much easier to run your 
+own AS because autonomous 
+systems are usually given for organizations. So 
+the question is who is 
+considered an organization? And I think if I 
+remember correctly in the blog 
+post it says that in the U.S. it's much easier to 
+call yourself an individual 
+as an organization. Whereas in Europe it's a 
+little more difficult. Anyway. And 
+you need to set up an IRR object in this 
+database. Specifically it's called an 
+IRR routing record. And this is what a routing 
+record will look like. It 
+basically tells you what is a route that you own, 
+basically the prefix that you 
+own, and origin. Origin basically is the owner of 
+that route. Here it actually 
+says AS1103 is the AS number. AS numbers are 
+usually prefixed with the two 
+letters AS. Even though the protocol only looks 
+at the numbers. And you need to 
+host this IRR record in your RIR. RIR is Regional 
+Internet Registry or TRANSIT. 
+And there are a couple of databases that are very 
+famous. One is called the 
+RADB, the other one is ALDB. So when you do a 
+host, it will specifically 
+request one of those two databases to be used. So 
+when you do a host by 
+default, I think if you do it in Europe, the host 
+utility will pick quote 
+unquote default servers to query. In Europe, if 
+you do anywhere from here, it 
+will actually query the RIPE address, the RIPE 
+status. RIPE is the, I forgot 
+what exactly it stands for, the action. But RIPE 
+is the European Authority for 
+Internet Prefixes. It's very large. It's very 
+nice actually. But you can also 
+specifically query. And it's here in Amsterdam, 
+right? So that's also... They 
+have presence in Amsterdam. Yes, you're right. As 
+I also mentioned, Amsterdam 
+hosts one of the world's largest Internet 
+exchanges. I don't know exactly where 
+the location is. At some point of time, a 
+colleague who used to be at the WU 
+promised me a tour of the Amsitz. Unfortunately, 
+he left before he could give 
+me that tour. But if you have anyone who can 
+actually show you around the 
+building, you should take the offer. It's really 
+nice. It's one of the most 
+secure facilities. Or at least you hope it should 
+be. But again, let me not say 
+too much about that. So when we look at something 
+as output, we can actually 
+see that the information comes from the data 
+that's actually there. WU has 
+still out a lot of information. If you have time, 
+you can go through all of 
+that. Sometimes it will actually spit out the 
+administrator's e-mail ID. As in, 
+if you have any complaints about a prefix, who is 
+the person to contact you? 
+These days, no one lists their e-mail address. 
+Because this used to be an easy 
+way to spam a network element. It shows even the 
+creative ways to go to spam an 
+ID. Okay, so you've registered the ASN, the AS 
+number of the IRR. So IRR's ASN 
+record will look like this. It's basically 
+saying, what is the autonomous 
+number? So the previous IRR routing record that 
+we had, it basically said, what 
+is the prefix and who is the owner? This one is 
+an ASN record where it's 
+saying, what is the autonomous number and what is 
+the autonomous system 
+number's name? And then it will give you usually 
+a couple of details about when 
+it was created, when it was last modified. 
+Sometimes, these days, it will have 
+a mailing address. A mailing address is usually a 
+front for some sort of a 
+proxy so that you can't spam them. So if you send 
+an e-mail, it will ask you to 
+do some checks so that it will verify that you're 
+not an automated bot trying 
+to send an e-mail. Once again, the whomis output 
+has these... Oh, okay. This is 
+the ASN for the record for the ASN that you own. 
+So this is the AS1103. And 
+your upstream ISP, which means a tool that is 
+providing your AS connectivity or 
+your upstream provider, they'll have another ASN 
+record in which your AS will 
+actually be listed. So this is basically... I 
+don't want to make it sound like 
+this is very similar to the chain of trust that 
+we have in BKI or the one that 
+we have in DNSF, because it's not that robust. 
+But the point is there should be 
+some sort of a chain that tells you, even if you 
+have an ASN record, who 
+provides you connectivity or who's your provider 
+or who's your people. And if 
+that doesn't exist, once again, the checks will 
+tell you that people will not 
+accept your bot. IRS still exists today. It's a 
+very new security model. It has 
+a lot of stale and missing records. It used to be 
+hosted on public FTP servers, 
+anyone can credit. And, again, there's not much 
+incentive to keep it up to 
+date, even though it is still widely used. There 
+have been some efforts to 
+clean up this IRS database because it's still 
+widely used. But it's a, you 
+know, it's a hidden mess. But it's a treasure 
+trove of data because you can 
+actually see who's updating the records, who's 
+not updating, and how much of 
+the negative information is there. Okay. Let's go 
+to something that works for 
+once. So the biggest problem in BGP is that you 
+don't have any mechanism in the 
+protocol to verify the legitimacy of an 
+announcement. If someone announces, 
+hey, I own this prefix 1337, there's no way for 
+you to ensure or check whether 
+the announcement is being originated by a 
+legitimate party. I'll be the owner. 
+We can't verify that. You can't retrofit BGP to 
+do that, right? You can't 
+actually take BGP and then change it. You could 
+design your own protocol and 
+then say, hey, this is BGP++, so to speak, and 
+that has the features. But the 
+issue there is, you know, who will deploy it? You 
+want everyone on the internet 
+to deploy. Or you want your protocol to be 
+backward-compatible. It has to be, 
+otherwise it won't work. But if it is 
+backward-compatible, once again, you are 
+stuck in this issue of incentives. Like, whatever 
+I'm doing, if it works, why 
+would I care? So you need an out-of-band 
+mechanism, and RPKI is one such thing. 
+So here is how RPKI works in a nutshell. So let's 
+go back to this illustration. 
+You know, there's an AS1103. This is CERF, you 
+know, the provider for the mean. 
+Announces a prefix saying, hey, this is who I am. 
+The idea is that, you know, I 
+mean, again, it's not rocket science. It's based 
+on what we've already seen in 
+DNSSEC and based on what we've seen in RPKI. The 
+idea is that you have a 
+cryptographic signature, unforgeable signature, 
+that's it. That basically signs 
+this announcement together. You need to sign both 
+the prefix and the 
+originator. And you need to have a mechanism to 
+ensure that once you sign it, 
+hey, is the signature a valid one? Basically, 
+there must be a mechanism for you 
+to first of all figure out who owns this 
+signature, right? And then you'll walk 
+some sort of a chain of trust to figure out, hey, 
+can I trust it? This sort of 
+record, you know, where you sign the route and 
+the origin ASN, you know, 
+generated a cryptographic signature, it's called 
+a route origin authorization 
+record, or ROA. Key thing to note about RPKI is 
+that RPKI is only trying to 
+secure route origin authorizations. What it means 
+is it only allows you to 
+check for any given prefix is the owner of the 
+prefix, as in the one who 
+originated, is that person allowed to originate? 
+That's the only thing it's 
+checking. It cannot check the path. Does that 
+make sense? What if A pushed over 
+to B, and then B pushed over to C, and B would 
+prefix that with A to A? It 
+would check that prefix against B instead of A, 
+but A won't. What I'm saying 
+is, remember that whenever you have 
+announcements, BGP announcements, when you 
+think about BGP announcements, there is a prefix 
+and there is a path associated 
+with that prefix, right? And as the announcement 
+keeps propagating among the 
+routers, among the autonomous systems, every 
+autonomous system will prefix 
+itself, or prepend itself to that AS path. This 
+is what we saw. But nobody 
+changes the origin. If you're trying to change 
+the origin, I mean, you could, 
+but if you're trying to change the origin, what 
+you're claiming is that you own 
+the prefix. That's what it means. If you're the 
+first in that AS path list, it 
+means that you are the owner of that prefix. RTKI 
+is only designed to check 
+whether the origin of a given prefix is 
+legitimate or not. That's the only 
+thing it can do. So if you want to generate a 
+signature, obviously you need to 
+have a public-private key pair, so in this case 
+the AS owns that, and then you 
+use a private key to sign it, to generate it, and 
+the public key is posted in 
+some place that I can look up and I can check. So 
+that should be obvious. Now 
+the question is, how do you verify the identity 
+of the signer? So this is, 
+again, once again, not rocket science. It's very 
+easy. Once I tell you that 
+it's a cryptographic record, you need to have a 
+set of keys. Once you have a 
+set of keys, then the question is, okay, anybody 
+can do this. How do you verify 
+the identity of the signer? Same questions that 
+we asked in DNSSEC and RTKI. So 
+you need a chain of trust, and how do you 
+establish a chain of trust? In 
+DNSSEC, what we did was that there was a 
+hierarchy that came for free. Every 
+subdomain belongs to a TLB, TLB belongs to a 
+root, and so on. So the hierarchy 
+came for free. Here, the hierarchy sort of 
+exists. The way it exists is because 
+the question is, an AS owns a set of prefixes, 
+and the question is, who gave 
+you the prefixes? Prefixes usually come from Git 
+that are allocated to you by 
+regional registries, or RIRs. Basically, the 
+hierarchy is just two-step. You 
+own a prefix, your prefix must have come from 
+either another network or from a 
+regional registry, and the registry basically is 
+your trust anchor. So if 
+you're in Europe, right, NCC will be your pen and 
+so on, so to speak. And RIR 
+will, so it's the same thing, right? So RIR will 
+have a record that actually 
+tells you, oh, it's fine, you know. So you 
+basically query the public key, and 
+then there must be a mechanism by which you can 
+query whether that public key 
+is indeed owned by this AS. Just like in WebPKI 
+and DNSSEC, you know, once you 
+go to the trust anchor, there's no more checks 
+for it, you'll have to take the 
+metrics from it. Yes? How many RIRs are there? 
+Five. It's not as bad as in, you 
+know, the WebPKI or DNSSEC, you know, there's not 
+a lot of authorities, very 
+few actors. That is not going to change anytime 
+soon. But RIRs are not the only 
+organizations from whom you can get an address 
+prefix, right? The reason is, if 
+you are as old as, let's say, MIT or HP, right, 
+these organizations at one 
+point in time, they actually were allocated slash 
+aids. This is IPv4. Long 
+back, we thought that, okay, it's fine to give 
+institutions like MIT a slash 
+aid. Who cares? We have a lot of IP addresses. 
+But these days, IP address, v4 
+address is a commodity. It's a very pricey one, 
+right? It's as expensive as 
+buying real estate in Amsterdam. In fact, it 
+could be pricier depending on the 
+prefix you're looking for. And so, there is a 
+market, although one shouldn't 
+exist, right, because IPv4 is being phased out, 
+so you want to move to v6. But 
+there is a very thriving market for selling v4 
+addresses. So there are IPv4 
+resellers, so to speak. So that could create a 
+couple of levels of clarity. But 
+once again, it's not anywhere as close to the 
+WebPKI of the DNS server. So 
+within these levels of hierarchy, the person who 
+got the address based on the 
+RIR assigns it themselves, and then... There must 
+be a mechanism by which you 
+must be able to discover these chains. Otherwise, 
+having an assigned 
+certificate doesn't have any function. And do 
+RIRs still have any IPv4 
+addresses to give out? Oh, they do. They do. Even 
+today, they do. But the pool 
+is coming down, you know. They keep saying... 
+Every once in a while, you have 
+this announcement saying, oh, we've run out of 
+v4. Not technically true, but 
+they don't want to be out of v4. So there is very 
+less incentive for v4. So you 
+need to have a strong reason. What's the cheapest 
+slash v4 I could buy? I don't 
+know. It's a good question. You should figure it 
+out. So I'll link to this blog 
+post. Maybe there are some numbers there. I have 
+kind of the inverse of his 
+question. What are the more expensive prefixes 
+within the same... Obviously, if 
+they're the same length, is a certain prefix more 
+desirable than another one? I 
+don't know. It depends on... So I think price is 
+typically based on size. And 
+these days, the size of the prefix that you can 
+get, v4 prefix that you can 
+get, is very restricted. If you ask for a really 
+large prefix, regardless of 
+how much you're willing to pay for it, it will 
+raise a lot of red flags. Today, 
+if you want a large IPv4 prefix, that is usually 
+not what we're facing. 
+Occasionally, depending on the prefix you're 
+looking for, I mean, unlike 
+license plates, there's no vanity here, right? 
+There's not much you can brag 
+about. Those days have long gone. Like the 
+Cloudflare... Yeah, so... Okay, 
+I'll... Maybe there are a couple of use cases for 
+bragging. But those are very 
+few. And Cloudflare will do... So Cloudflare 
+actually wrote a paper saying how 
+not to... How you could reuse as many v4s as 
+possible. Because a v4 that they 
+hold on to is... It's very small. And it's very, 
+very expensive. Okay. BGP has 
+got nothing to do with... Yes, did you call? 
+Registries fall under the 
+authority of ICANN, or is it another 
+organization? Or are they completely 
+independent? What's the organizational structure 
+there? That's a better... I 
+mean, ICANN has probably...
+
+I don't know more about these politics than I do. 
+ICANN still has control over 
+a lot of things, but I think for all purposes, 
+practical purposes, RIRs are 
+autonomous. Do they have a subset of the IPv4 
+space they can give out? Yes. Who 
+gives them that? They already have an allocation 
+given to them. There is no 
+more allocation of v4s yet happening. Oh yeah, 
+but they have to get that 
+allocation from... they can't always 
+independently decide to give out 
+whatever... So that came initially from ICANN. I 
+don't know if ICANN still has 
+control over the v6 or how exactly that is done. 
+That's a very good question. I 
+don't know. There was actually a proposal to... 
+This was two years ago. Maybe 
+Bert knows more about this. There was a 
+discussion of whether ICANN should 
+still have control over prefixes because it was 
+based in the US and people had 
+very mixed feelings about what kind of authority 
+the US government could have 
+set on these allocations. But I think it's still 
+with ICANN. But it's a very... 
+RIRs today... What to say? There's not much 
+politics at that level. Once RIRs 
+start allocating, that's where things start 
+getting messy. Anyway, certificate 
+databases are outside of BGP. BGP has got nothing 
+to do with BGP. BGP does not 
+even know anything about these certificates. This 
+verification validation that 
+we are talking about has got nothing to do with 
+BGP. Certificate databases are 
+outside of BGP, same as with IRR. IRR is also a 
+third-party thing. But unlike 
+IRRs, which could be maintained by pretty much 
+anyone, and there were some IRRs 
+that, like I said, were hosted on FTP servers 
+that some of you might find a 
+fact because the passwords are easily guessable, 
+but RPKI is not that bad. 
+Another way to think about it is that RIRs act as 
+CAs and also as trust 
+anchors. So how does this thing work? So you have 
+a router, obviously you own a 
+prefix, and you want to secure that prefix using 
+RPKI. Basically, you want to 
+ensure that tomorrow, whatever Pakistan Telecom 
+does, I keep coming to that, or 
+let's say it's an Indian Telecom, just to be 
+fair, you know, Bharti, Airtel, or 
+Tata. So whatever anyone does, even whether it's 
+intentional and you don't want 
+them to announce your prefix, or if they do, you 
+want neighboring agencies not 
+to accept that. So how could you do that? Well, 
+so you have a router, you're 
+advertising your prefixes through that router to 
+your audience, and you have to 
+run what is called a validator. You can think of 
+it as a software that runs in 
+a commodity server. It's irrelevant how you 
+actually do it. But ideally, you 
+want that validator to be very close to your 
+router. And the validator will 
+periodically contact the RIRs. It has to contact 
+all five RIRs because the RIRs 
+are independent databases. Each one will maintain 
+a separate set of RPKI 
+objects because, obviously, they each have their 
+own prefixes that they're 
+trying to distribute. And depending on who gets 
+the prefixes from them, they'll 
+register the RPKI objects with them. RPKI objects 
+basically mean they'll 
+register their hash or their public keys and so 
+on. And there's a simple 
+protocol between the router and this validator. 
+For the most part, this 
+validator will not actually listen on any public 
+IP. You won't be able to 
+query, you won't be able to see it. That's for 
+obvious reasons. You want to 
+hide this as much as possible. This is not 
+something you want exposed. It's 
+only business as two things. It interacts with 
+the router. It tells something 
+to the router. We'll see what it does. And it 
+actually fetches these RIRs. It 
+queries these RIRs. So when you get a new route, 
+observe that you're not 
+talking about packets. When a router is trying to 
+figure out how to route a 
+given traffic as a packet, that's not when RPKI 
+comes into picture. RPKI only 
+comes into picture when you're trying to accept 
+an announcement. That should be 
+obvious. So when you get a new route 
+announcement, what you do is basically use 
+a protocol to ask the validator, is it valid? If 
+it is valid, then it basically 
+tells you yes or no. And how does it do it? It 
+basically checks against all 
+five. So it basically says, okay, I'm going to 
+take a look at the signature 
+that you have. I'm going to see which one of 
+these databases declares that the 
+signature is a valid one. You must have from one 
+of them. So basically, this is 
+your walking on the chain, one-step chain. And if 
+there is a proper one, it 
+basically says yay, otherwise it says nay, and 
+you're done. A route origin 
+authorization looks something like this. A common 
+system sign is a ROA. A ROA 
+should contain every sub-prefix, every prefix of 
+your own, goes without saying. 
+The prefixes that your network owns could be more 
+than one. And they don't 
+always have to be overlapping or contiguous. They 
+could be a disparate set of 
+prefixes. You could think of yourself buying 
+something in 2020, and then three 
+years later, you realize that you want more, you 
+buy another prefix. They need 
+not be contiguous or adjacent. And you want to 
+put them all together and then 
+sign. This is your property, so to speak, and you 
+want to claim that you have 
+ownership of them. Interestingly, and this opened 
+a lot of security issues, 
+you'll see why. Prefixes do vary a lot. So we 
+saw, for instance, that you 
+remember the AS-7007 incident, right? The very 
+first prefix hijack incident 
+where an AS tried to disaggregate prefixes and 
+accidentally leaked that to the 
+entire world, right? But there are reasons why 
+you do want to disaggregate, 
+because disaggregation gives you control over 
+specifying where traffic enters 
+your network. Sometimes you want to do 
+aggregation, which is you have a bunch 
+of contiguous prefixes, you want to aggregate 
+them together. Why? Because you 
+want to save space. But you don't want that much 
+control over specifying how 
+traffic enters. So in order to provide for 
+disaggregation or aggregation of 
+prefixes, RTKI has the ROA objects have the 
+facility for you to specify a 
+range. So you could say, look, my prefix is 
+130.37.0.0, and then what I can do 
+is I'm allowed to specify as large a prefix as 16 
+and as small as slash 24, 
+because that gives me flexibility. Because if you 
+only specify 16, RTKI 
+validations are based on exact length, right? So 
+if you claim that, look, I'm 
+the owner of 130.37.16, it protects you from 
+someone doing a sub-prefix hijack 
+against you by announcing a slash 24. If someone 
+announces a slash 24, the 
+validator, when it actually compares an 
+announcement with the RTKI object that 
+you have, will say, look, no one is allowed to 
+actually advertise a slash 24 
+because a slash 16 is owned by someone. But if 
+you do want to have the 
+flexibility to disaggregate, then you need to 
+specify a max length attribute, 
+which is basically saying, I own slash 16, and 
+the max length is 24, which 
+means that I can break that 16 all the way up to 
+a 24. It's obvious that if you 
+do this, then it means that you are basically 
+saying that every single 
+sub-prefix under slash 16 all the way to a 24 is 
+a valid announcement. Also, 
+it's like a double-edged sword, right? Meaning, 
+if you do a 16's height of 24, 
+it means that I own 16. And every single 
+sub-prefix under the 16 all the way to 
+the longest one being a slash 24 is still a valid 
+one, as long as it carries a 
+signature. Okay? So it prevents prefix and 
+sub-prefix hijacking, but again, 
+with the caveat that it only checks for origin. 
+So you have to keep that in 
+mind. So it still does not prevent AS in the 
+middle attacks, which means that 
+if you're careful in how you try to do hijacks or 
+sniff on the traffic, you 
+could still get away with it, and there's nothing 
+that RTK can do to protect 
+that. There are other issues. This is something 
+that may not be obvious, that 
+even if someone were to announce an announcement 
+that actually does not 
+accompany with a signature or actually it's a 
+wrong announcement, it's an 
+invalid announcement, it's still difficult to 
+enforce a route or an AS to do 
+something about it because the network using RPKI 
+and the certificate authority 
+as in the regional internet registry or your 
+trust anchor need not be the same 
+jurisdiction, so to speak. There's technically 
+nothing that prevents you from 
+having an autonomous system in the US or as in 
+having your customers in the US 
+and getting a prefix from Brian. You have to show 
+some, it depends on different 
+RIRs, you need to have some presence of your 
+organization in Europe or 
+something like that. But as long as those things 
+are valid, your actual 
+customers could be actually in the US. So which 
+means that if you do something 
+really funny and someone wants to shut down, 
+withdraw your prefix or basically 
+prevent you from announcing the prefix, you can't 
+really do that because RIRs 
+are sitting in Europe, so jurisdictions don't 
+exactly overlap. And it has come 
+up in a couple of cases that they wanted to do 
+something and the RIRs were 
+doing anything. So that's the high level overview 
+of RPKI. Yes? So what you 
+were saying at last was that some AS could not 
+sync all your traffic because 
+EGB will verify with the RIR, which is in maybe a 
+different jurisdiction. We 
+will see. So we did a study on trying to see who 
+adopts and who does 
+validation, as usual. But for once, I'm going to 
+give you an answer that's in 
+the positive. RPKI is widely adopted and it looks 
+like people are doing well. 
+What I want to correct about what you said is 
+that as long as every AS in the 
+Internet runs a validator and the validator is 
+keeping itself up to date and 
+does the check, you could run a validator, but 
+you do not do any checks. But if 
+you're already like a country that has control 
+over their AS, you can also let 
+them, couldn't you just say, if we publish this 
+route and sync all it, then 
+accept it? Accept the... You could. Okay. You 
+could. The funny thing is this. 
+So suppose your validator tells you the 
+announcement is invalid. What does the 
+router do? So there are two options always, 
+right? There's a soft fail and 
+there's a hard fail. The hard fail would mean the 
+router simply says, I'm not 
+going to accept this announcement and drops it. 
+And soft fail is basically 
+accepting it. What do you think they do? They 
+probably accept it. Yeah. At 
+least... We did this in 2018, 2019. At least in 
+2019, there was a huge debate 
+about whether they should implement a hard fail. 
+But today, I think they're 
+moving towards a hard fail, which means routers 
+will stop. The reason why you 
+can't do a hard fail, especially with RPCI, is 
+that unlike most things, I mean, 
+for instance, when you don't accept a 
+certificate, you can configure it. The 
+control of overriding the check is with you. You 
+could install a different 
+browser or you could pass a flag for Chrome to 
+say, ignore the certificate 
+errors. I know what I'm doing. In Firefox, it 
+will post a warning and you can 
+say, ignore access. Unlike that, if RPKI... 
+Everyone implements RPKI. Everyone 
+slowly starts implementing RPKI. And implement 
+hard fail, you don't even get 
+the route, which means that there's nothing you 
+can do. Route is the basic 
+thing. After that, once you have the route, then 
+you can think about 
+applications, security of endpoints, and all 
+that. If you take the hard fail 
+approach here, it's not just one user. An entire 
+community of users could 
+suddenly lose visibility How often is it that an 
+AS has only one link to 
+another AS? That's a very good question. To 
+repeat the question a slightly 
+different way, every AS has to be connected to 
+another AS or either gets 
+connectivity or peers. How often it's the case 
+that an AS only peers with one? 
+There are lots of ASs. So when an AS peers with 
+only one other AS, it's usually 
+referred to as a stub AS. It has a separate 
+meaning. There are lots of stubs. 
+University networks. Almost all university 
+networks are stub ASs. You typically 
+have one connectivity. There are very few 
+universities where you have multiple 
+connectivity. Even beyond universities, there are 
+lots of small networks for 
+whom one peering suffices. So there are lots. I 
+would say a few thousand. Even 
+if you have multiple providers, that still 
+doesn't give you as much resilience 
+as you think it does. Keep in mind, ultimately 
+what designs resilience in the 
+internet is if you have completely separate paths 
+between two endpoints. This 
+is why I said you have to be very careful about 
+traceroute outputs. When we 
+discuss a crossfire attack, you can't really look 
+at the links and then say, 
+oh, I'm going to inundate the link because that 
+link is not exactly a physical 
+one. It's a logical one. There was a fire 
+accident long back, almost 15 years 
+ago in Boston. You can look up the Boston tunnel 
+fire. There was a tunnel. I 
+think there was an accident. We caught fire. The 
+interesting thing is that in 
+the US, fiber optic cables between routers 
+usually run by the side of the roads 
+or rail networks. So when this tunnel caught 
+fire, it actually damaged a 
+conduit that was running through the tunnel. Now 
+Boston is a hub for many large 
+companies and a lot of them actually pay a lot of 
+money to have connectivity 
+with multiple providers. Why? Because if your 
+business relies today, everyone's 
+business relies on having good internet 
+connectivity, you want to make sure 
+that no one can accidentally or intentionally 
+bring your network down. So you 
+pay money to have multiple networks. So people 
+have paid money up to AT&T and 
+Verizon or Cogent to get multiple connectivity. 
+But what they failed to verify 
+was where the cables were running. So regardless 
+of how many networks they were 
+paying money to, all of the networks were running 
+the cable to a single conduit 
+that was running through the tunnel. So it didn't 
+matter how much of resilience 
+you had on paper. Physical connectivity was just 
+that one conduit. And finding 
+these conduits and figuring out true resilience 
+is very hard. We don't have the 
+tools to do that. Network providers do have that 
+information, but they won't 
+tell you because it's their best interest not to 
+reveal that. Okay. I'm going 
+to quickly go through RTKI adoption. It's a study 
+that I was part of. The only 
+one so far that I've ever done that has a 
+possible result. The title of the 
+paper was is RTKI is coming of age? It's 
+basically saying that we are actually 
+moving towards an environment where we could 
+implement heart fails. So this is 
+one of the very early work that said that we 
+should actually think strongly 
+about dropping announcements that are invalid. So 
+I'm not going to go through 
+all the results of the study because it's very 
+easy to follow. And this is also 
+something that's easier for you to do, for anyone 
+to do, because you don't need 
+special access to get these ROA records from 
+different IRs. The protocols are 
+very well defined and the database access is 
+actually open to the public. So if 
+you know a bit of Python, you can pick up a bunch 
+of libraries and do this by 
+yourself, which is really nice. Most networking 
+research is like that. As long 
+as you reasonably good at one or two languages, 
+then a bit of domain knowledge 
+will get you a long way. So we analysed ROA 
+records. We analysed BGP 
+announcements from 3,300 BGP collectors. BGP 
+collectors is a fancy way of 
+saying there is a server that actually is 
+connected to a router and so the job 
+is to look at the announcement and see if it's 
+invited to a lot of people. 
+There's lots of collectors that are out there. 
+There's a famous project started 
+well before I started doing computer science by 
+the University of Oregon in the 
+US. It's called the Route Views. And as the name 
+implies, it gives you a view 
+of all the routes on the internet. Periodically, 
+they basically have a bunch of 
+these servers running in different networks. They 
+collect the logs and then 
+they dump it into a file. It's a huge archive, 
+but it actually tells you what 
+routes are available on the internet. It's very, 
+very interesting. Okay, so the 
+validator software, I think there's a bunch of 
+them. These days, Rust is the 
+coolest one, so there's a couple of them in Rust. 
+And there's Go. And the nice 
+thing is that this is called relying party 
+software. It downloads and validates 
+the RTK object. This is what is running in the 
+validator. Write's RT software, 
+relying party software, is also available as open 
+source on GitHub. So it's 
+very nice. You can download it and check it. It's 
+good because they want people 
+to have more eyes on it so that they can get 
+security on it.
+
+It converts them into validated row of payloads, 
+VRPs, if there's a VRP it 
+basically says an AS and a row of prefix. It's 
+always a row of prefix even if I 
+say a prefix because RTK is only about route 
+origin validation. There's a 
+prefix lint and a max lint. Sometimes a prefix 
+lint and a max lint are exactly 
+the same. But if the AS wants a little more 
+flexibility, you'll see a larger 
+prefix lint and a smaller prefix lint. A smaller 
+prefix lint means a larger 
+network and a larger value of max lint means a 
+smaller prefix. There are some 
+details about what we collected. I've already 
+told you that I collaborate a lot 
+with Archimax and we have a lot of data from 
+Archimax. So this is another thing 
+that systems are very good at. Like I said, 
+systems have thousands of servers 
+and different networks, so it's very easy for 
+them to collect this beautifully 
+beautiful network and dump it in one location. So 
+as you can see, Archimax has 
+a very rich viewpoint. This is very hard to get 
+for end users like you and I, 
+but modular net at best is easy. These are the 
+number of records that we 
+obtained. They don't look that very interesting, 
+but in terms of the percentage 
+of ASs, it's still good. By the way, in the 
+Internet, networking researchers 
+usually get excited when a protocol is getting 
+implemented by at least one 
+person with ASs. It still is a lot. And depending 
+on what the AS is, it could 
+mean millions of users. If the one person, for 
+instance, contains a larger 
+protocol than 8080, usually the people are very 
+happy. These are some of the 
+largest networks. So WriteNCC, almost all of the 
+credit for RPKI adoption 
+should go to WriteNCC. Because number one, 
+they've been the most vocal 
+supporter for RPKI from the beginning. They 
+actually co-wrote some of the RFCs. 
+And not just that, they actually published some 
+of the earliest relying party 
+software and put it on GitHub so that other 
+people could use it. They had free 
+sessions for administrators, network 
+administrators from around the world to 
+tell them how to configure RPKI, how to run your 
+validator, if you don't trust 
+their code base, how to run your own, and so on 
+and so forth. All for free. So 
+it's really nice. So there's this plot of the 
+paper. You can take a look at it. 
+It's a very easy paper. Measurement papers are 
+usually very easy. So you have a 
+bit of background, and once you go through the 
+background, it's plot after 
+plot. So it's easy to follow. This one is 
+basically showing the date. We did a 
+multi-year study. And this is basically showing 
+different... Each y-axis is 
+showing... The first one is showing the number of 
+VRPs of validator build-up 
+papers in terms of the IP prefixes. These are V4. 
+We didn't do any V6 at that 
+time because V6 was still... For a lot of these 
+years, we only had any V6. So 
+there's one reason why we didn't do V6. And this 
+one is showing the number of 
+ASFs. So that's a major device. It's still small, 
+but it's actually growing 
+pretty fast, as you see. Right NCBC is 
+specifically... If you look at it, it's 
+growing really fast. APNIC is Asia-Pacific. 
+LATNIC is... I forgot. Latin 
+America. Right is Europe. And then there's Asian. 
+Latin America. And then 
+there's U.S., sorry. North America, as you know. 
+APHRINIC is Africa. So five 
+RARs. This one exists today, and there... That 
+actually holds the RPKI 
+database. Okay. Sometimes mistakes happen. So you 
+see a spike here, and then it 
+drops. Mistakes. So that's something that you 
+need to be careful about. Because 
+there's only five RARs, any mistake will show up 
+as a huge drop. So there's not 
+much surprise here. So there are pros and cons 
+here. So if any of these RARs 
+make a mistake in their database, pretty much 
+RPKI goes down the drain. But as 
+long as they're doing things right, then you get 
+security. Lots of security. 
+This is showing DGP announcement code by VRP. The 
+Akamai data only starts from 
+here, because we don't have any data from this 
+point onwards. It's another way 
+of saying it's only by 2017, Akamai thought that 
+it was interesting to look at 
+RPKI announcements, because that's when things 
+started getting a lot of 
+adoption. It actually starts as early as 2011. 
+But around 2015, 2017, things 
+started getting better. The build is very 
+positive. There's some more details 
+about adoption, but for the most part, it's 
+pretty good. Nothing like we have 
+seen before. You know how long we've been 
+complaining about V4 running out of 
+space and arguing for V6? When was IPv6 
+introduced, or started getting 
+deployed? I'm sorry, what? In the late 90s? I 
+think at least 15 years, more 
+than 15 years. I think 90s is actually correct. 
+Yeah, that's what he said. And 
+it's still, I think, two, three years ago, they 
+passed single percentage 
+adoption, right? So I think until then, you know, 
+like I told you, it's no 
+joke, we get excited when you show two percent 
+adoption. When it was six 
+percent adoption, which was still when I was 
+finishing grad school, people were 
+very happy. They were like, oh, IPv6 is going to 
+take over the world. And I 
+think right now we are about 11 or 12 percent, if 
+I remember correctly. But 
+maybe the numbers are changing fast. One of the 
+things that is actually 
+threatening the, not threatening, impeding the 
+adoption of V6 is the V4 market 
+that I talked about. It was 1995. 1995? Yeah. 
+Okay, thanks. And we're still, 
+you know, there's a lot of traffic now going over 
+V6. So in terms of adoption 
+of V6, the percentage is still small. But in 
+terms of traffic over V6, it's 
+really high. How could that be? I'm sorry, what? 
+Yeah, who in the cool kids do 
+you think? Google? What's the other one? 
+Facebook? Yes, yes. Actually, the 
+first one is Facebook. But whether you believe it 
+or not, Facebook actually was 
+one of the prime movers of V6. How you look at 
+it, they move a lot of junk, 
+right? A lot of traffic. So cat videos and stuff, 
+yes. Does the fact that it's, 
+like, fewer... We can take a break for five 
+minutes. I was going to say, does 
+the fact that it's fewer organizations and less 
+traffic make it more deceptive 
+that IPv6 is more adopted than it actually looks 
+like? It depends on how you 
+look at it. So, for instance, if I tell you that 
+RTKR is used only by a few 
+networks, or a few services, so those few 
+services can be most traffic, then it 
+doesn't look that good. You don't really run 
+these measurements from your 
+laptop, you know, so you have servers. And then 
+you change the MAC address of 
+your server, the firewall or the switch. You can 
+configure the switch to say, 
+this MAC is not supposed to be used. That's easy. 
+Same way, you know, for 
+instance, I use detect power poisoning or 
+spoofing in a network. It's very 
+simple to configure a rule these days saying, 
+this is not supposed to happen. 
+So, you have very simple rules. So, yeah, if you 
+change MAC address, then they 
+know that. They'll come after you. So what we 
+used to do, what's a common 
+practice is, before we run measurements, what we 
+do is, there are a couple of 
+servers that I own, from which, you know, we 
+launch these measurements. We 
+always do, they keep the servers the same 
+regardless of which student runs the 
+project, so that admins can point out, ah, this 
+is a notorious problem, right? 
+And we also run a web server on that particular 
+IP address, a port 80, not a 
+port 40, as in like a very simple HTTP web 
+server. Because whoever is on the 
+other side, for instance, the network 
+administrators don't like measurements. I 
+mean, they don't want to see things, they don't 
+want to see, for whatever 
+reason, they consider it as a nuisance. And so, 
+when you see your logs, 
+depending on how informed of a network admin you 
+are, when you see something is 
+in your logs, you'll be like, oh, what is this 
+TCP packet, or what is this ping 
+packet? So you want to look at the source 
+address, and then usually what you do 
+is you put the source address in your browser. If 
+you put an address in your 
+browser, you know, it looks for the port 80 or 
+port 443, so by running a web 
+server on that particular IP address, by giving 
+them what project we are 
+running, you know, they'll not complain. Usually 
+the opposite thing happens. 
+Because we ran this, you know, we have this very 
+simple HTTP page that says, 
+oh, you're looking for, all we are trying to do, 
+and this is what we did, we 
+said, oh, it's a very simple scan, and all it's 
+trying to do is it's trying to 
+do an HTTP handshake. So it fetches the base 
+page, and it's not even fetching 
+the entire page, it's just fetching the headers. 
+Why is that interesting? Well, 
+one of the HTTP response headers basically tells 
+you what server stack you're 
+running. And by looking at that, I could infer a 
+lot of things about the 
+software behind the scenes. And that's of 
+tremendous interest. So we put up 
+this web page, and then we ran this, and some of 
+the complaints that we got 
+were ridiculous. There's a network operator who 
+claimed that by going to the 
+web server and fetching these headers, we have 
+made them incur a costly 
+bandwidth expense. But this was nothing. But 
+you're just fetching the headers 
+one single time. Yes. That's like, what, 200 
+bytes per second? I mean, every 
+day. 200 bytes per day. Exactly. But this is 
+nothing. I have friends in Germany 
+where this issue takes a completely different 
+form. People have tried to sue 
+some friends of mine, saying, oh, this 
+constitutes a privacy violation. What? 
+But it's hilarious. So if you don't put any 
+information, sometimes you can get 
+away. But if you don't, then your own network 
+administrators don't like you. If 
+you do put up, then sometimes you encounter 
+unwanted... But someday, I'll put 
+up this, and then I'll post a link on the site. 
+It's hilarious the kind of 
+responses we get. By the way, the interesting 
+part is the complaints that are 
+coming from some of the biggest networks in the 
+world. You would expect that 
+someone who's the network admin for, say, a large 
+network like KTM knows when 
+they're looking at a ping probe what that ping 
+probe would mean. And some of 
+the claims that they have in their email 
+complaints, it inspires no confidence. 
+You can share some of those. Yeah, that's what 
+I'm saying. I'll try to put it 
+up. There's actually a paper about some of these 
+complaints that people have 
+received. Network measurements could be construed 
+as abusive, as a nuisance, 
+because it does... You could actually, arguably, 
+depending on how large the 
+network is, you could pose a small amount of 
+threat because it's still a load. 
+These days, if you know the tools of your money, 
+you could increase the load on 
+their servers, on their routers, let's say by up 
+to 1% or 2%. That still is a 
+big thing. So they have a right to complain, but 
+again, it depends on what 
+level you start complaining. So when you look at 
+these claims, especially 
+people, when they're asking you to pay money, 
+that's where you trust your 
+assumptions. Anyway, RTKR validation. I'm going 
+to quickly go over them again. 
+I'll introduce you to both later. RTKR was 
+introduced in 2008, but you see the 
+graphs that I showed you only start from 2011, 
+because that's when deployment 
+actually began. And it's the same paper. The VTT 
+announcement validity. So I'm 
+showing the VRP. For instance, AS1103. Again, we 
+use VRP. It looks something 
+like this. It will say AS1103. This is the origin 
+of the owner. It will say the 
+prefix. You don't see the slash notation. That's 
+because the network part is 
+here. And the prefix size is actually what 
+follows. It's a 16 and 16, which 
+means that VU is claiming that... I don't know if 
+this is what VU is 
+announcing. I don't even know if the VU prefix 
+actually supports RTKR. I don't 
+know. But suppose it supports it. It looks 
+something like this. Because 
+education institutes usually, based on 
+subnetworks, you don't need to 
+disaggregate. You don't really care. Because 
+disaggregation comes into picture 
+only when you're thinking about fine-grained 
+control over the traffic. So 
+suppose I pair with AT&T. I pair with KPN. I pair 
+with Deutsche Telekom. And I 
+have a large slash 16. And I'm paying a lot of 
+money for, let's say, the 
+Deutsche Telekom. Usually it's very expensive. 
+Compared to the other two, what 
+I could do is I could break my large prefix into 
+smaller ones and only 
+announce, let's say, the smaller one to Deutsche 
+Telekom. So this is how you 
+control. You can't typically control what 
+networks will accept your 
+announcement because you don't have control over 
+that because it depends on 
+their VGP process. They could have simply a local 
+preference value that's 
+saying, you know what? Whenever I receive an 
+advertisement from Deutsche 
+Telekom, I'm going to accept it. They could have 
+that. So you can't control 
+what people accept, but you can control what you 
+announce. When you announce a 
+slash 16, you don't know for sure whether the 
+slash 16 that you announce via 
+AT&T, is that what someone else will accept or 
+whether the one they announce 
+over KPN, is that what they'll accept. But what 
+you do know for sure is if I 
+announce a slash 16 through AT&T and a slash 24 
+via Deutsche Telekom, Deutsche 
+Telekom can't send me anything more than the 
+slash 24 because I didn't announce 
+a route. So that's how aggregation and 
+disaggregation works. So you already 
+know this ASN draw a prefix, the prefix... Oh, 
+it's slightly off. So if the 
+router gets an announcement that says this is a 
+prefix, this is the size, this 
+is the AS, this is valid because it matches all 
+the values in. If it gets 
+something like this, by the way, AS1103 is still 
+allowed to announce this 
+because the slash 24 is actually a subnet of the 
+slash 16. So this is a term 
+that you might have already encountered. So this 
+is a supernet of this or this 
+is a subnet of this. But this will actually fail 
+in RPKI because you don't have 
+the VRP action. In VRP's max length is actually 
+16, not 24. Because the 
+comparison is always with the 16. This one is 
+also invalid because the AS 
+doesn't match. So if some other AS, let's say 
+1104, announces a slash 16, slash 
+16 matches, the prefix matches, but the AS number 
+doesn't match. So that's also 
+invalid. This one is unknown because AS1103, you 
+have it in your VRP. This 
+prefix, oh wait, why is it unknown? Oh, the 30 
+and 37. So this is 37, this is 
+30. Unless there is another VRP that actually 
+claims that slash 16 as theirs, 
+you can't really say anything about this prefix. 
+Just because you can't find an 
+RPKI object that corresponds to an announcement 
+doesn't mean that it's invalid. 
+So usually we put it in the bucket of unknowns. 
+So this is what I said, routers 
+really can't drop it because that's scary, that's 
+dangerous. But is this 
+propagated? Is this one propagated? Today it is 
+propagated, it's still 
+propagated. Because just because it's unknown you 
+can't really drop it. But 
+different networks could have different behavior. 
+RPKI is not part of BGP. So 
+the correct answer to your question is BGP will 
+propagate it, but you are 
+allowed, technically speaking, as a network 
+provider to say that my validator 
+claims that this is not known. I don't have a VRP 
+supporting it. So you could 
+drop it, but no one will. Invalid, maybe people 
+will drop it, I think some 
+networks do drop. Unknowns, no one will drop. A 
+lot of networks don't support 
+RPKI. This is again a timeline which is showing 
+percentage of unique RPKI 
+invalid advertisements. Invalid basically means 
+that we are legitimately wrong. 
+So initially large fractions of announcements are 
+invalid, approximately a 
+fourth match the ASM but not the RPKI. This is 
+something that you were supposed 
+to expect, right? Any protocol that gets 
+deployed, there will be a lot of 
+configuration errors. There's a famous saying in 
+networking, almost 80% of the 
+time we spend time in trying to fix the 
+configuration errors. Only 20% of the 
+time we don't do anything useful. That's still 
+true today. Most of networking 
+research is about trying to troubleshoot an 
+outage, troubleshoot an issue, and 
+pinpointing the root cause of that issue. If you 
+have great solutions for that, 
+because this is a distributed problem, and it's 
+trying to troubleshoot 
+something in a large distributed system, that's 
+really hard. We don't have 
+visibility to every aspect of the system. If you 
+have a great idea, you can 
+publish it, or even better, you can launch a 
+company and make money with it. 
+Somewhere along the line, of course, things 
+improved due to education and 
+awareness. This is basically almost all of the 
+right NCC efforts. Like I said, 
+they did a lot of hand-holding to different 
+network providers throughout the 
+world. That's why you have the sharp decline.
+
+further increases in invalids. This is also 
+partially because IXP started 
+adopting RPKI. IXP, like I said, you can imagine 
+this to be like a cafe where 
+network providers go and deploy their routers so 
+they could peer with each 
+other. AMSIX is one of the largest IXP. IXP 
+stands for Internet Exchange Fund. 
+AMSIX is one. London has one. There is a very 
+large exchange called DKEX, which 
+I believe is in Frankfurt. That's another large 
+one. IXPs are just a hub for 
+networks to peer with one another. But they could 
+run a validator. So IXPs, if 
+you think about it, logically speaking, this is 
+an IXP, right? So if you have a 
+room like this, you secure it to a point that no 
+one can, because it has to be 
+in a secure facility. Physically, you secure 
+access to this premise, and then 
+what you do is you buy one of the most expensive 
+switches that you can offer. 
+You put the switch in the middle, routers go all 
+around the switch, and 
+basically, routers plug into the switch, and you 
+are just configuring in the 
+switch who is allowed to exchange traffic with 
+whom. It's a layer two fabric, 
+okay? So they're all in the same subnet, all the 
+routers. But that does not 
+mean that everyone exchanges traffic with 
+everyone, right? Exchanging traffic 
+with one another basically means that you're 
+paying money, right? Someone has 
+to pay money to someone. So exchanges are not 
+free, but the IXP facilitates for 
+you to do the exchange. So IXP, you pay a fixed 
+fee every month or every year. 
+It's a reasonable amount, and IXPs actually, this 
+is how they run, right? So 
+IXPs, in order to increase, make it, incentivize 
+networks to come to their IXP, 
+they'll do one of the other things, right? So for 
+instance, they'll say, ours 
+is the most secure facility. People do care about 
+that. Ours is cheaper, or it 
+provides, we provide 24-7 service in case your 
+router goes down, you'll have it 
+rebooted and things like that. One of the other 
+things that they started doing 
+towards like 2017, 2018, they said, look, we have 
+a switch. There's nothing 
+stopping us from, you know, building, deploying a 
+server close to the actual 
+gate. Every announcement that I receive, I'm 
+gonna check whether that is valid. 
+If it is not, hopefully you'll drop it, but at 
+least I'll alert, right? And so 
+there are companies that, again, nobody drops 
+things. Dropping packets is 
+usually not a good thing. In this case, you're 
+dropping announcements, so 
+that's even dangerous. But what they did was 
+this. They built up a service, I 
+forgot which one did it, but they built up a 
+portal that network providers 
+would actually look up, and in that portal, what 
+they did was, it's like a wall 
+of shame, right? So they keep updating, you know, 
+which prefix was invalid or 
+which prefix was unknown, right? And it was for 
+all network providers could 
+see. So this kind of shame does work, you know, 
+and it did help. So not as much 
+as the wipes efforts, but still helps, yeah. So 
+you can actually offload the 
+RPKI to an ISP. No, no, no, it's not offloading. 
+This is like a value-added 
+service that they provide, right? So it's like 
+saying, look, by the way, if 
+you're peering at my network, you know, you can 
+rest assured you're never gonna 
+see an announcement that's invalid. And you're 
+like, oh, that's great, which 
+means that I can slack on my intimidation. That's 
+pretty much what it's done. 
+So this is more about, like, is it still possible 
+to get started as an IXP? 
+Like, you have no ISPs, like, hooking in, and 
+then, like, is there a minimum 
+amount? Because if you're an IXP and you get one, 
+you'll just have one ISP. The 
+first one is all that, first, well, not one, 
+first few is all that matters. But 
+if you start an IXP, first of all, you need to 
+find a location. It all boils 
+down to simple economics, right? So why do IXPs 
+exist? Because if the AMSICS 
+one doesn't exist, think about it, AT&T peers 
+with KPN. KPN is a very large 
+network. AT&T peers with KPN and AMSICS, okay? 
+You can actually go to AMSICS' 
+webpage and it'll actually tell you what networks 
+are there. It'll also, you 
+remember last class I said there's something 
+called a looking-glass service. 
+Once you figure out what networks are there, you 
+can figure out, AT&T has a lot 
+of looking-glass servers, KPN has looking-glass 
+servers. You can hop onto one 
+of these looking-glass servers and see who you're 
+pairing with. And looking at 
+the peers, you can actually figure out, are they 
+pairing at AMSICS, okay? So if 
+not for AMSICS, AT&T or KPN had to lay a fiber 
+from wherever they were. 
+Probably AT&T was somewhere in, I think there was 
+one in Paris or close to 
+Paris. Someone had to, one of these networks had 
+to lay a cable all the way 
+from Paris to Amsterdam. It's expensive, right? 
+And like I said, in the US, 
+it's extremely hard, not to mention it's got so 
+much politics, right? Because 
+the right to dig a hole for a laying down a 
+conduit by the side of the road, 
+he's smiling because he probably knows what I'm 
+saying. And getting that right 
+is extremely hard, okay? Sometimes you might have 
+to negotiate with the local 
+government. And you might think municipalities, 
+local governments, they would 
+be happy to give you access to it. No, no, no, 
+not in the US. I mean, Europe is 
+not that progressive as well. There are countries 
+that would, for good reasons, 
+they'll say, look, how about we lay the conduit? 
+The government lays the 
+conduit. You basically just provide us the money 
+to lease the conduit for a 
+year and a half, right? That seems to work well 
+in theory, but sometimes what 
+will happen is that people sign an exclusive 
+access to a conduit. Because if 
+you are AT&T, again, let me not pick AT&T, let's 
+pick some other cogent, let's 
+say, a level three. If you're a large network, 
+you have money, right? There are 
+only two things you can do, right? Either you 
+always innovate at a pace that 
+your competitor cannot catch up with, or what you 
+do is you try your best to 
+make sure that you slow them down. And 
+unfortunately, a lot of networks do the 
+second half. So they'll get exclusive access, or 
+in the US, what they do is 
+they, anyone who digs the first conduit usually 
+enjoys a lot of privilege, 
+right? So one of the biggest problems in the US 
+is the poll fees. So whoever 
+puts a poll on, they lease the land from 
+municipality, what they buy from the 
+municipality, and then they own the poll and the 
+land that sits on it. After 
+that, they can charge whatever they want to 
+whoever wants to carry on cables 
+next to them. So often you're dealing with the 
+cable provider, the telephone 
+provider, needs to pay the power company for 
+access in line. And the power 
+company is like, well, we rated this poll to hold 
+20 times the weight of any of 
+your cables because we're a power company. So 
+you're going to pay for some of 
+that capex. Yeah. For a long time, and again, the 
+US has had a very notorious 
+president in the past, but before the Trump got 
+control of the country, there 
+was this discussion about regulating the internet 
+as a public utility. Because 
+if you do that, correct me if I'm wrong, the US 
+law states that you can't, 
+regardless of where you are, as long as it's in 
+the United States, the 
+government has the obligation to provide you 
+service. And they can't 
+discriminate, they can't do all these neutrality 
+rules, they can't set caps, 
+there must be some basic guidelines deployed. It 
+looks like it's going to make 
+some progress and eventually it'll happen, but 
+again, the four years. The 
+details of this are very complicated because so 
+common carriers in the US are 
+complimented under a specific title, the Civil 
+Rights Act, which does not 
+guarantee that service has to be available. It 
+guarantees that everywhere 
+service is available, you cannot improve that 
+service until equal service 
+exists. I see. Okay, sorry. Thanks for that. They 
+would be obligated to build 
+out service to everywhere within their 
+jurisdiction until such time as equal 
+service is achieved and then they can improve it. 
+So I don't know if many of 
+you might have followed Google's efforts, right? 
+To pay fiber optic cable, I 
+think it started in Kansas. It started in Kansas, 
+Overland Park, Kansas. So I 
+think at that time it was about one gigabit per 
+second. And you can actually 
+easily search this online. The reaction from some 
+of the network providers were 
+hilarious, right? They resisted, right? They 
+fought with, you know, some of the 
+claims are like how it hurts the economy because 
+Google is making it faster and 
+providing cheaper services. It's hilarious. I'll 
+say one more thing and then 
+we'll switch topics. So I'm very interested in 
+trying to find out, you know, in 
+terms of research, what it takes to lower the 
+latency between any two arbitrary 
+points in the internet. And I've done a lot of 
+work at this. And one of the 
+things that, you know, I did a few years ago was, 
+you know, this was a 
+multi-year effort. We tried to see, could you use 
+microwave networks to 
+actually transmit packets between two locations? 
+Okay. This technology existed 
+in the 60s, but it has improved quite a lot. And 
+by the way, why microwave? Why 
+not something else? The point about microwave is 
+that if you transmit a signal 
+from one point to another using microwaves, 
+assuming, you know, it has to be a 
+straight line, you know, visible to each other. 
+But if you do this, the 
+advantage you get is that you get to transmit 
+packets between those two 
+destinations at the speed of light. That's the 
+best you could do. Okay. Now you 
+wonder why you care about that. Latency matters. 
+Latency is one of the hardest 
+things to improve, and it matters a lot. So you 
+could ask the question, right? 
+So today we have the internet. It seems to work 
+reasonably well. The question 
+is, how slow is it? You could measure it in one 
+of many ways. One of the ways 
+that we did it was we said, look, you know, we'll 
+take any two locations in the 
+world, right? I have a server here, let's say 
+somewhere in the US. I have a 
+server somewhere here. And you pick arbitrary 
+servers and you can plug into it. 
+And you simply do, send a probe from one server 
+to another. Simplest probe 
+could be a ping, could be something even simpler 
+than that, right? You could 
+write your own custom protocols, but you know, 
+it's a very small packet. All 
+the endpoint is doing is just replying to that, 
+just a simple echo protocol. 
+And then what you do is you simply say, okay, And 
+then what you do is you 
+simply say, okay, you know, I know these two 
+locations. I can compute what is 
+the fastest time doing, you know, that I could 
+send data over between these two 
+locations. Question is, how far am I, right? And 
+you can also say, look, if I 
+transmit signal over fiber, fiber optic cable is 
+glass. So glass refractive 
+index is slightly higher than air. Air's 
+refractive index is one. So when 
+signals travel over glass, the refractive index 
+of the medium causes the speed 
+of the data to slow down. So it's about 33% 
+reduction, right? So if you have 
+two points, instead of transmitting over the air, 
+if you use fiber optic cable, 
+you're already incurring a 33% slowdown, okay? So 
+we also computed saying, 
+look, for those two locations, I'll figure out if 
+a fiber conduit exists 
+between those two locations. That's very hard, 
+but we did find that. And we 
+could say, suppose you have a conduit, are we at 
+least close to the limits 
+possible with the fiber conduit, right? We're 
+very far. So we're about like 
+anywhere between, in the best case scenario, 
+we're about 30 times off from the 
+lowest possible latency that we could achieve. 
+And sometimes it could be two 
+orders of magnitude higher than what we could 
+achieve. And this is what we 
+observed. And so we looked at microwaves. Why? 
+Because like I said, microwaves 
+have improved a lot. And more importantly, if you 
+look at, there's one 
+particular corridor in the U.S., I call it as in 
+like one particular location. 
+This is one in Chicago, all the way to New 
+Jersey. That particular pathway had 
+improved over a period of, let's say, 10 years. 
+The latency had dropped by, you 
+know, closer and closer. And right now it's 
+operating almost near the speed of 
+light. Who cares about, you know, someplace in, 
+you know, New Jersey has a big 
+battery in the U.S. New Jersey and Chicago, maybe 
+not many. The reason why that 
+particular corridor improved was because of stock 
+exchanges. Chicago Mercantile 
+Exchange and the New Jersey Stock Exchange and 
+these were connected using 
+microwave. There's a book about it. If you 
+thought that, you know, you have, I 
+mean, in general, we shouldn't think that we have 
+any advantage over high 
+volume or high frequency trading companies. But 
+if you look at the networks 
+that they're using, there is no chance, right, 
+you know, the general public has 
+any edge over them. And what I mean by that is, 
+by the time, let's assume that, 
+you know, in Chicago Mercantile Exchange where 
+you have information about a 
+particular stock, it could be, you know, details 
+about the number of orders or 
+demand for a particular item. And you know that, 
+you know, let's say, you're 
+trying to execute a stock purchase or a sell 
+order based on that information in 
+New Jersey, okay, imagine that every time you try 
+to execute that trade, the 
+high frequency trading entities or the 
+organization, which are anyway issuing 
+orders in bulk and the volume matters because 
+matching happens based on volume 
+too. But ignoring that, they will receive, 
+typically, as in when I say 
+typically, 99.99% of the time, they will receive 
+this information at least two 
+milliseconds before you. And the two milliseconds 
+matter, okay. So, we tried to 
+design a network to try to see, you know, how we 
+could design a network using 
+microgrids, which is very interesting, but in the 
+process of doing it, we 
+wanted to see towers, so he was mentioning. And 
+because towers actually, you 
+know, once you figure out, for instance, if you 
+own a piece of land, somewhere 
+between this line between Chicago and New Jersey, 
+okay, and you, you know, you 
+put up a pole, okay, and the pole is such that it 
+somehow makes the, you know, 
+the distance of the straight line between New 
+Jersey and Chicago, you know, 
+even straighter than what it already is, then you 
+can make money. And I'm not 
+kidding. There was one piece of land, somewhere 
+in the middle of, I think, 
+Illinois. Nothing in, you know, you know, as far 
+as your eye could see. It was 
+barren land with one pole, okay. It sold for 
+close to, like, $17 million in a 
+small stretch of land, not very large piece of 
+land, all because of that one 
+pole, because it reduced latency by a factor of 
+0.05. Yes. I have a very good 
+friend who works at one of these sectors because 
+he really knows what the lies 
+on the exact corridor you're talking about, and 
+he was telling me a story about 
+how there, in New Jersey, there is identical 
+exchanges. There is one exchange 
+in, like, data center A, and then there's data 
+center B and C next to it. And 
+data center C is, like, literally across the 
+street from data center B, but 
+space in data center B is enormously more 
+expensive, because the radio wave 
+hits it one and a half microseconds before data 
+center B and C. There is a 
+segment of network in the south of UK that uses 
+what is called a hollow fiber. 
+So it's like fiber optic cable, except that the 
+middle of the fiber is hollow, 
+right? And so, so basically, you get the 
+protection of fiber, because microwave 
+is really bad, right? You know, if there is a 
+cross link of, you know, some 
+leaves in a tree, you know, that affects 
+microwave, rain affects microwave. So 
+there's also companies that do free space optics, 
+like lasers, that has other 
+advantages and disadvantages. It's terrible when 
+it's falling, right? But 
+again, reliability is an issue, but these 
+companies will pay anything, even if 
+there is a loss of, you know, you remember TCP 
+loss you were talking about. 
+Even if there's a loss of 40%, okay, which means, 
+you know, 40% of the time, 
+the microwave packets will get dropped. They 
+don't care, because at 60% of the 
+time, if you can get ahead of the market by five 
+milliseconds, it matters. When 
+I actually came to Amsterdam, it was very funny. 
+Someone figured out that, you 
+know, when I, you know, they put up my page and 
+all that. There's a company 
+here, a few blocks down the road, Jump Trading, 
+or something. Octifer. Huh? 
+Octifer. No, not Octifer. I think it's called 
+Jump Trading, and I didn't know 
+this. So I, you know, I was approached by someone 
+who actually told me about 
+this Holofiber. They said that, you know, we're 
+already using up this Holofiber 
+in locations here, and there was also one 
+particular location, small segment, 
+like 20 kilometers or something in France. This 
+Holofiber is still 
+experimental. And they said, could you actually 
+help us, you know, design a 
+couple of links so that, you know, we could 
+reduce latency by some margin? And 
+the price that they were willing to pay for that 
+is phenomenal. No, no, this is 
+something, you know, very serious, right? So if 
+you could reduce latency by 
+even one, I mean, one millisecond is huge. By a 
+few tens of microseconds, you 
+could easily make hundreds of millions of 
+dollars. Right? So keep thinking 
+about it. Anyway. The specific wrong is, and 
+specific basically means that if 
+your max length, as in, if your advertisements 
+are narrow or smaller than what 
+is allowed, then that is also wrong. Missing max 
+length, as in the computers, 
+they try to, we don't know what max length is, 
+and then, you know, they 
+configured it wrongly so that you have these two 
+issues. Wrong ASN 
+announcements. So this is something, you know, an 
+ISP, you know, gives out 
+prefixes or, you know, provides transit to 
+multiple other networks, right? Not 
+just users. And sometimes they can actually 
+misconfigure things because they're 
+confused which network is what. Sometimes 
+networks change hands, change 
+organizations. And because of this, again, 
+nothing to do with, you know, 
+anything technical, but because of policies or 
+business arrangement changes, 
+you know, lots of errors could happen. And some 
+of these errors could take a 
+long time to fix. There was once a study that 
+showed that, you know, that 
+looked at every single well-known bug in the 
+Linux kernel and tried to see when 
+was the earliest time, you know, they would spot 
+it in the code base. And it 
+showed, like, some of the bugs had remained in 
+the kernel for, like, eight 
+years or something like that. It was ridiculous. 
+Similarly, in networking, you 
+can always ask, I mean, this is a little more 
+embarrassing because knowing that 
+a problem exists, how long does it take to fix 
+it? Sometimes it takes quite 
+long. 17 months or so. Okay, so mismatches 
+between ASNs and the 
+customer-provider relationship. Yeah, people 
+forget to update their ASNs and 
+their ROAs, just like IRRs. The reason why IRRs 
+are stale is because when 
+you're pairing.
+
+you don't have any incentive to update the IRR. 
+Same way, I mean, again, there 
+is no hard fail, so there is no incentive for you 
+to do. Okay, let's skip 
+through these. Okay, these are all just showing 
+different kinds of 
+announcements. And the mistakes happen depending 
+on the AS that commits a 
+mistake. You don't get one or two prefixes that 
+are affected, you get thousands 
+of prefixes because the ROAs actually are 
+encapsulated or combine all the 
+prefixes that you own. This is showing the 
+lifespan of other mistakes. Some 
+things last for over a year. It's very hard to 
+say when you have an invalid 
+announcement whether this is really a hijack or 
+not. And especially when you're 
+an academic, you wanna be very careful about 
+where you point fingers. So we 
+found something in the paper has some interesting 
+details about it that some 
+actually think it looks like an attack and some 
+question it. Anyway, but there 
+are more details in the paper I'd like you to 
+take a look at it. But long story 
+short, RPKI is quite widely used. It's quite well 
+getting adopted. It shows a 
+lot of promise. It only does all the invalidation 
+in bad facts, so it still has 
+issues. Someone could still take over that and 
+there's nothing you can do. 
+Let's quickly cover spoofing. I'm not gonna get 
+into the details. This is also 
+about the study that I was not part of. Although 
+it comes, I wanna discuss 
+spoofing in the context of BGP because knowing 
+BGP, knowing RPKI, it helps you 
+think about spoofing reasons. Spoofing is the 
+number one reason why most 
+attacks exist. So for instance, today, if you are 
+thinking about DDoS attacks, 
+amplification attacks, reflection attacks, they 
+all exist because an attacker 
+is able to masquerade as someone else and send a 
+request, right? Or have the 
+responses go to someone else, right? And those 
+all happen because you are 
+trying to send traffic pretending to be someone 
+else. The question is, why is 
+it so hard for, if I'm the network and I have an 
+attacker inside my network 
+trying to send a packet to my network, to someone 
+else, so that the response 
+
+from that entity goes to the victim, why can't I, 
+as the packet goes out, take 
+a look at the packet and say, this cannot be true 
+because I don't own this 
+address, right? It's as simple as that. If you 
+could do that, if every network 
+would do, this is called egress scheduling, 
+right? As a packet ingresses my 
+network, I do a simple check to see, is this 
+address owned by me? If it is not, 
+I drop it. Similarly, you could do ingress 
+filtering. As a packet enters my 
+network, and I try to see, is this something, you 
+know, towards my, any of the 
+prefixes that I know? Or, you could also ask the 
+question, as a packet 
+ingresses, you could say, I know the link over 
+which this packet is coming, 
+right? And I know that particular network, and I 
+know what that network is, 
+which prefix that network owns. So if this packet 
+is not legitimate, you could 
+drop it. So you could do ingress filtering or 
+ingress filtering. If you do any 
+of those, the internet would be a far safer 
+place, but there is a negative 
+result here. There is no spoofing filtering, 
+nobody does. The question is why? 
+Again, this is very simple. An attacker tries to 
+send, you know, here it says 
+
+the attacker's address is 1.2.3.4. This network A 
+knows that this can't 
+possibly be true, right? You can't send a packet 
+from within that network when 
+the author fixes this. The question is why not 
+restart it? This is ingress 
+filtering, and the borrower out there does it, 
+it's called ingress filtering. 
+There's a lot of work on that spoofing. How 
+prevalent is spoofing? There's a 
+study, it shows that, you know, in 35% of the 
+networks, you know, networks 
+worldwide, you could spoof any address you want, 
+nobody would care. The only 
+networks that usually do spoofing, spoofing 
+filtering, are very small networks 
+like education institutions, corporate networks, 
+because they're liars, because 
+
+they want to make sure that, you know, they don't 
+do anything that'll make 
+others point fingers at them, right? So there is 
+this paper that is written by 
+some of my very good colleagues. What they did 
+was something different. They 
+said, look, you know, forget, you know, 
+prevalence of spoofing and all that. 
+The question is, who does any sort of spoofing 
+and why is it so hard, right? So 
+they tried to actually come up with a few 
+approaches by which you could figure 
+out whether a given packet and its address, 
+whether it's spoofed or not, and 
+then they tried to see how much of a difference 
+and then they tried to see how 
+much of, what's the volume of spoof traffic that 
+exists? So in general, you 
+want to do packet filtering and regress. 
+
+Typically, whenever you want to do any 
+sort of filtering, you always want to do it as 
+early as possible, right? 
+Because any time the packet spends in your 
+network and the packet, if you say 
+the packet has no place in the network, it means 
+that it's already, you've 
+already spent money carrying the packet. So the 
+earlier you drop, the better 
+you are. Um, filtering requires prefix lists, 
+right? So BGP has a mechanism by 
+which you could say, you could implement what is 
+called as ACLs, right? Access 
+Control Lists. If you don't know what that is, 
+you could simply think of, you 
+know, setting filters in a router. So it simply 
+says, you know, if the packet 
+doesn't belong to any of these prefixes, drop it. 
+But the problem is that 
+there's no reliable automatic mechanism for 
+creating these lists, right? Now, 
+how do you create a list? How do you know what is 
+not allowed and what is 
+allowed? What is legitimate, so to speak? Are 
+spoofing attacks relevant? So 
+they did this study. So there is a huge mailing 
+list, strongly recommended not 
+to subscribe to it. It's, you know, a public 
+mailing list, anyone can join. 
+It's called NAML. It's also a large organization, 
+North American Network 
+Operators Group. And this is where, you know, 
+it's like one place where all 
+network operators actually, you know, discuss 
+different things. And it's 
+usually, you know, the volume of the interactions 
+is very high. But the nice 
+thing is that you can actually go, you know, 
+sometimes post simple questions 
+and they'll answer. You know, you'll get answers, 
+you know, from the horse's 
+mouth, right? So you can ask questions like, hey, 
+you know, how likely is it 
+that, you know, you will see spoofing attacks, 
+meaning attacks where you don't 
+for sure the packet is legitimately spoofed. And 
+they did this study and what 
+they found is 70% of the network operators 
+suffered spoofing attacks. 70% 
+worldwide. And 50% complained to peers about 
+filtering, right? Again, notice 
+that they're saying, you know, go to the peers, 
+and then they complain, saying, 
+ah, when you load this packet into my network, 
+this is not nice. This you will 
+see almost all the time. Nearly a quarter of them 
+do not check the validity of 
+source IP addresses, as in IP, you know, traffic 
+that is originating in their 
+network, they don't check. Filtering more common 
+at the ingress than at the 
+egress, which is really interesting.
+
+Yes. How 
+would you be sure that, if you 
+have, how would you be sure that the packet in 
+effect did originate in your 
+network, but how do you differentiate between 
+that or if it's transmitted 
+through your network? Because if it's transmitted 
+through your network, you can 
+very well have an IP that's somewhere else. 
+Excellent, excellent question. 
+You've hit the nail on its head, which is why, 
+you know, it's very hard, which 
+is why nobody does it. Filtering more common at 
+the ingress than at the egress. 
+
+The 70% filter, well-known, should not be routed 
+to ingress. Now, there's 
+something, it's called a bogon, okay? The term 
+that they use is called a bogon, 
+and it means these are addresses or prefixes for 
+which no route exists, okay? 
+
+If you, the way to think about it is this. If you 
+take a look at all prefixes 
+all around the globe, from the outer region of 
+the globe, you compile a list of 
+prefixes. As you get more and more prefixes, you 
+can keep aggregating them into 
+larger and larger amounts. If you had 
+advertisements for every single address 
+or every single prefix, what you will end up with 
+is 0.0.0.0.0, right? Because 
+you keep aggregating everything, you cover the 
+entire E4 space, but that won't 
+happen, because there are ranges that are 
+private, which you didn't see in the 
+internet. Obviously, there are ranges that, you 
+know, are not supposed to be 
+advertised, or no one has advertised, or no one, 
+you know, they're not 
+allocated, things like that. So, there are a set 
+of addresses for which you 
+generally, you know, don't have any routes. These 
+are called bogons, there's a 
+list. There'll never be an, some are reserved, 
+some are experimental, so you'll 
+never see that. And this list is very small, 
+often very small, and well-known, 
+and the list doesn't change, okay? So, if you're 
+wondering why 70% filter 
+well-known, this thing, that's because that list 
+is very small and doesn't 
+change. It should not be out there, that means. 
+20% like customer prefixes, 
+
+customer-specific filters, meaning if you have a 
+network and you have large 
+customers, no one cares about end users, large 
+customers of, you know, an 
+education institution or a corporate network, 
+then you know that prefixes get 
+well-defined, and you actually implement filters 
+for that. Some persons do not 
+filter, when I say do not filter, they won't, no 
+matter what you do. Let's go 
+over a couple of more things from last time. 
+
+Filtering strategies with egress, 
+26% filter non-routable traffic, makes sense if 
+you try to egress traffic that 
+is non-routable. 50%, once again, is 
+customer-specific, this is the easiest 
+thing to do. 24% do not filter. Concerning 
+traffic that are originating within 
+the network, 65% filter before it reaches egress. 
+
+Now, the question that you 
+asked, how do you differentiate between traffic 
+that is originating in your 
+network versus transit? Depending on the kind of 
+network that you operate, 
+there is a way to differentiate it, right? So for 
+instance, it'll become 
+obvious when I go further, which I don't have 
+time for this particular lecture, 
+depending on how large your network is, how many 
+customer networks you have, it 
+becomes easier or difficult to figure out what is 
+exactly the prefix that you 
+want. So for instance, if I own a prefix, let's 
+say it's a slash 80, okay? And 
+I haven't given out that prefix or any part of 
+the prefix to anyone else, okay? 
+
+Which means any traffic that I'm getting from the 
+interfaces that are connected 
+to my peers, I can easily differentiate that from 
+my peers. Whereas if I have 
+given out a part of that slash 80, let's say a 
+couple of slash 16s to some 
+other network, that announcement might come from 
+maybe one of my peers because 
+BGP is a gossip-based protocol, so you'd never 
+know. So now you're suddenly not 
+sure, okay, am I allowed to announce it? Is it, 
+am I allowed to drop it, 
+unblock it, and so on? But in general, if you're 
+a transit network, right? 
+Looking at the interfaces that you have connected 
+to your peers, you really 
+can't say much about what is allowed traffic and 
+what is not allowed. Because 
+if you're a transit, it means that, you know, 
+you're in the unfortunate state 
+where if you drop traffic, someone is gonna point 
+fingers at you because people 
+are paying money because you're a transit 
+provider. And it's really hard for me 
+to say, looking at the traffic, is that network 
+allowed to originate that 
+traffic? Because we don't know who its customers 
+are, who their customers are. 
+If I receive a packet that says 1.2.3.4, it could 
+be that my neighbor owns that 
+prefix, or the neighbor's neighbors own that 
+prefix, or so on and so on, right? 
+And doing this sort of transitive check on who 
+owns that prefix is really hard. 
+RTKI helps to some extent, but not so much. We'll 
+stop here, we'll continue 
+from here the next time. Thank you. Thank you. 
+Oh, I want to make a quick 
+announcement. Oh, it's the domain that you asked 
+a question for. Yes, could you 
+give me two minutes? Just wanted to make a quick 
+announcement. For the exam, 
+there will be about 28 questions. Yes, there will 
+be 20 questions, same format 
+as your quiz. The current quiz is slightly 
+different because I want to make it 
+easier to score points. I think they're all basic 
+questions this year. But for 
+the exam, there will be 20 questions of basic 
+level, which means they'll carry 
+one point each. There'll be four questions at 
+intermediate level, they'll carry 
+two points each, and four more at the advanced 
+level, they'll carry three 
+points each. So you have to score, I think the 
+threshold is 5.1, for the final 
+exam. So it means you have to score 22 points, 
+which means you have to, at the 
+very basic level, I expect you to clear all the 
+20 basic questions and one of 
+any other levels. I don't know what's the format, 
+are they the easy ones, 
+multiple choice, or? All of them are multiple 
+choice. Oh, the whole thing is 
+multiple choice, okay. Everything is multiple 
+choice.

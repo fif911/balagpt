@@ -1,0 +1,1841 @@
+So the quiz is a slightly easier version of the exam.
+So as I look at your performance and I'll calibrate the final exam.
+But I think so far when I looked at the performance, I'm not sure how many of you have taken the
+quiz.
+I don't know the numbers.
+I think you have a fairly high number if you scored 90% in a battle.
+It's really good.
+So I don't want to give out too many questions, but do pay attention.
+I'm not going to discuss the answers for the questions, but if you have any doubts about
+things, you can always approach me a bit.
+But I think more or less the quiz will follow the same pattern.
+Three, easy.
+Maybe two, intermediate.
+One, advanced.
+Do pay attention to these quizzes.
+Do take them seriously.
+One of you asked, oh, am I allowed to keep my notes open?
+Even if we were to stipulate some things, there's no way for us to check.
+So do whatever you want to.
+But just be truthful to yourself.
+If you can't pass these quizzes, fairly certain you will not be able to pass the final exam.
+And you have to pass each and every quiz.
+I think there's a cut off.
+So keep that in mind.
+No exceptions to that rule.
+So we started a new topic last week.
+We started discussing what web PKI is, what are the different certificates are, where
+do they come in picture.
+But of course it was just the basics.
+So the fact that you should know that there's a certificate behind the scenes when you go
+access a content behind HTTPS.
+And you should know a little bit about the process by which you get the certificates.
+Now we'll get into how they're validated.
+We'll look at some ways we can check whether the certificate is still valid.
+If not, what do we do about it.
+Most of, again, what you were saying, this holds true for most of the security protocols.
+There's not much rocket science here.
+If you know one technique with small variations here and there, you could pretty much guess
+what some other area would look like.
+You'll have to verify whether a certificate is valid or not.
+So obviously there is a chain of...
+So we briefly saw a screen shot where you saw that there's a chain of hierarchies.
+Obviously in order to validate what you do is you have to...
+The server certificate is all the way at the bottom.
+It's been issued by a certificate authority.
+In short, we call them as CAs.
+But typically the root CA, there could be a number of CAs for delegation purposes.
+And by the same logic, you could also have intermediate CAs.
+You could have a hierarchy of structures.
+This is more for a convenience.
+So you don't want a single CA at one particular location or jurisdiction
+being in charge of rolling out all sets.
+So you fan out the responsibilities to other CAs.
+Keep in mind that there's a lot of legal constraints here.
+So for instance, let's say for whatever reason you want to revoke a particular certificate
+or stop a website from using a given certificate.
+You do want to ensure that the cert was actually issued by a CA in that particular geography
+who has jurisdiction or power to revoke such things.
+There's a little bit of politics or geography that comes into the picture here.
+But anyway, if you see this hierarchy, this is mostly for convenience.
+There is no reason why a CA to serve a certificate can't be just one particular name.
+So this is just convenience.
+A client could be a web browser, typically.
+What does a client need to do here?
+The current behavior would be you validate this entire chain.
+So the way you validate it is opposite to this particular hierarchy.
+So you start with a deep or server set that has a public key.
+There is an issuer signature.
+You basically verify that issuer signature corresponds to the public key of the intermediate cert in this case.
+This will have another signature and so on and so forth.
+The last one at the root cert, everything stops.
+So you take the root cert at face value.
+So that's why the auto stops there.
+Do you even have to verify the root public key with its own signature?
+No.
+You don't do anything with the root.
+The moment you see a root, it stops there.
+This is more like a sanity check.
+I'm not sure if clients or any browsers would do it.
+But anyway, let's not even get to that.
+How do browsers even walk this chain?
+So that's another question you have to ask.
+In DNS, we have a similar chain and the resolver's job was actually to walk.
+There's a subtle difference in browsers.
+So browsers are actually provided this entire chain.
+When you go to a website, browsers are typically provided with this entire chain.
+The browsers don't do this walking the chain when you actually go to a website.
+It's a slight difference.
+What do you do for checking certificates?
+There are two things.
+You want to check whether something is revoked or something is expired.
+One is easier than the other.
+It should be obvious.
+Which one is easier?
+Exploration.
+Yeah, exploration.
+Sorry.
+Because it just involves you checking the dates.
+Validating a chain of trust.
+Yeah, so there are, you know, browsers these days are very smart.
+So the checks that we will see right now, they're very basic.
+You hope that your browser does it.
+There's a site, I think the link should be obvious.
+So there's a, I don't know if the site is still up.
+It used to be called badssl.com.
+And the nice thing about the site is that they generate different certificates
+which are broken in all sorts of ways.
+And one way to check, assure yourself, is to actually, whatever browser that you use regularly,
+use the browser to go to this website and then try to see what it does for different URLs.
+Each URL is named in a way that clearly tells you what is broken about it.
+You could do this test.
+So most of what you see is expected and correct behavior and I hope that's what you see.
+When we did this study on how browsers actually do this checking,
+this was I think like six, seven years ago.
+Most of what you expect browsers not to do, mobile browsers do.
+Because on mobile phones, lots of vendors including Apple and Google,
+they decided that look, what matters more is performance.
+So I would rather load a site faster than do all these checks.
+Not joking. This is seriously what they decided.
+But I think things have changed right now because as we have more and more
+sensitive transactions or valuable transactions happening from our mobile phones,
+things have changed.
+If the root is untrusted, as in the root search is not in the root store,
+this typically shouldn't happen. If it happens, just walk away from the site.
+You don't want to use the site.
+Occasionally you do see these things happen because some CA does something notorious
+and they get revoked from the project.
+There was a famous one in the Netherlands called the Digi Notar.
+You can look up history on it.
+Digi Notar was a certificate authority. They were compromised.
+When I say compromised, what happened was someone had access to the private keys of the CA.
+Once you have that, then you can create all sorts of havoc.
+You can issue, for instance, certificates for whoever the clients of that particular CA are.
+For instance, if Google actually acquired their server search from Digi Notar,
+what you could do is you could issue your own certificate claiming that this is Google and so on
+and use that certificate to render whatever content you want.
+Your browsers won't be able to say that you're different.
+This is exactly what happened.
+I think there was a user from somewhere in Iran who actually found out there was something suspicious
+about Gmail and then reported it and one thing led to another
+and they found a massive issue with Digi Notar.
+I think the CA was taken over by the Dutch government
+but I think eventually they shut it down because things went out of control.
+You're smiling. Do you know more than I know?
+No, it's just funny.
+Very sad.
+Anyway, if you have an untrusted root, it will tell you clearly.
+I think these days they actually give you a little more information.
+But anyway, this is not something you want to do.
+Self-sign sets, once again, you hope that you don't see this at all on the internet.
+It usually happens only when you're running your own web server on your laptop for testing purposes.
+There was an incident actually, although one time, I forgot it was Facebook or some other company,
+a famous content provider when they launched a new service
+and fortunately all the self-sign certificates that are using the testing environment got released in public.
+But again, what does this mean today, modern browsers?
+They'll actually spit this out, meaning they'll just simply say I'm not going to go to the site.
+Chrome is very, very restrictive about it these days.
+Expedition check, that's very easy.
+In general, you can think about the lifetime of a set in two ways.
+One is the duration for which the certificate is actually active.
+Typically, there's something called a fresh timeline and a live timeline.
+What these things tend to align perfectly,
+this is basically saying the certificate is issued at time t0,
+it is valid up to some time tn.
+You expect that the time during which the certificate was actively used in the internet is a subset of this.
+Typically, there's a bit of a gap because by the time the certificate is issued to you
+and when it gets deployed, there might be a slight delay.
+That's why the live timeline is a little aligned to the right.
+There's also a bit of a gap at the end
+because you don't want to wait until the last second before a certificate expires.
+You want to roll back or you want to replace it a little bit more.
+This is ideally what you want to see.
+This is great. If this happens, everything is fine and dandy.
+What about this one?
+Not good.
+Yeah, because you're using the certificate beyond its expired date.
+This is bad.
+There is an example for this in the bad SSL site that I told you.
+If you go there, it will tell you that the connection is not private and so forth.
+There are lots of other ways in which it could be broken.
+For instance, a chain could be broken somewhere in the middle.
+It will generate a different error.
+If a certificate has been revoked, it will generate a different error.
+What does it mean when you're using it after it has expired?
+It means that all bets are off.
+Somebody else could be hosting the website instead of Google itself for instance?
+Yeah, could be.
+Although most educational institutions, if you pay attention,
+many educational institutions unfortunately are quite slow to upgrade their process.
+There are two institutions, especially in the Netherlands,
+which didn't update their certificates for a period of six months.
+You can figure this out online.
+But these things happen.
+Why do these things happen?
+Because you have to pay people to keep these things up.
+Yeah, it's a manual process.
+Bottom line is whenever you have a manual process, these things tend to happen.
+Keep in mind this was the only reason why Let's Encrypt started.
+They said, look, at the very basic, you need to have DB sets.
+There's no reason whatsoever today that you should be serving content over HTTP.
+If you see content over HTTP, I think the Chrome cannery, for instance,
+it wouldn't allow you even to load content over HTTP.
+It will say, are you sure?
+Do you really want to read this?
+There's no reason, but saying that is one thing,
+but allowing people to enable user certificates is another thing.
+Let's Encrypt basically started with that.
+Basically, they said, look, the reason why certs are not being used
+is because people are lazy or this process is error-prone.
+Let's automate it.
+For Let's Encrypt-enabled sites,
+typically the software agent will take care of automatically renewing it.
+I think by default, you're given DB sets for two years, and they'll renew.
+Exploration check is very simple.
+You take a look at the date, and then you try and see whether...
+I should check this. I forgot.
+Take a look at the date, and then try to compare it against the current timestamp.
+Yes?
+Is there any limit on how long a cert can be valid,
+or is it dependent on how sensitive a website is?
+Excellent question.
+What do you think?
+You ask the question.
+Somebody else has to answer.
+Take a guess.
+The CA won't issue longer than a certain period?
+That is one thing that could happen.
+If you didn't hear the answer,
+the answer was the CA could mandate a period.
+Why would they do it?
+They don't want their CA to be bound to some kind of security scandal?
+Excellent answer. Liability.
+How do you decide this period now?
+There is an alternate answer to that one,
+but how do you decide the timeframe?
+Maybe it's based on their own certificates that they used to...
+What are these sites carrying?
+Public keys, right?
+What sort of technology do you use to generate the public key, private key pair?
+Yes?
+Maybe they select the time based on how hard the...
+Exactly.
+How do you know how hard it is to break the key?
+Which algorithm it used to make.
+There is a conference, RSA for instance,
+named after the three pioneering cryptographers.
+They have this conference every year
+where they try to encourage people to break the latest and greatest algorithm.
+Basically the key bit length keeps changing.
+They issue recommendations on what is really good.
+In the US, the National Institute of Standards and Technology, NIST,
+issues an advisory every year
+saying what's the bit length that you have to use.
+Same way for ZSK, KSK also, they actually issue these things.
+Pretty much any critical infrastructure these days
+does their best job to abide by these advisories.
+CA basically want to hedge against those things.
+Whatever is the...
+For instance, today, the standard is you use 4,096 bits.
+I think it's something like that.
+Then what you do is the expected duration for breaking that.
+Let's say it's a couple of years.
+CA's time frame would be less than that.
+Are CA's allowed to significantly deviate from this?
+Is there one CA that's like,
+oh, we offer more secure certificates
+and we refresh them every two days or whatever?
+That's a very good question.
+Two answers I can give you.
+Things are changing.
+Actually, things have been changing for a while.
+Nowadays, CA's are pretty much standard in their expiry dates
+or the strength that they provide and all that.
+We'll come to that in just a while.
+But in general, CA's don't deviate much.
+It's also because of economics.
+It's easier and simpler to do this process
+and you don't have much incentive to offer more value added services there.
+You have, okay.
+Revocation checks are easier.
+No, I'm sorry.
+Revocation checks are slightly different in the sense that
+the time frame for a cert could actually get shorted by a process.
+Typically, you revoke because you suspect something's gone wrong.
+The certificate should no longer be used.
+There is a process for revoking it.
+When you revoke, the idea is that the alive time frame for a cert
+actually stops by the time you actually revoke the cert.
+Revocation cuts short the lifetime of a cert
+and your expectation is that the actual use of the cert
+abides by the new fresh period.
+It's a little harder to control
+because it depends on how you actually figure out whether something is revoked or not.
+It's okay because it's not like a time stamp.
+There must be a process by which someone tells you
+whether something is still active or revoked.
+This is really bad for obvious reasons.
+At least, Safari, when I did check this,
+it actually tells you when a certificate was revoked.
+If a connection is not secure,
+it actually does tell you why it is not secure,
+in which case, in this case, it tells you the cert was revoked.
+A question as hard as a browser determines the certificate is revoked.
+What do you think it will do?
+It's probably in the chain one level or another level.
+Chains actually tell you whether the cert that you obtained
+is from a legitimate authority.
+Revocations are slightly different.
+Let's keep this in mind.
+You can look at a cert by itself
+that tells you whether the certificate is expired or not.
+That's just looking at the time stamp.
+Then the next question is, is this chain even a legitimate one?
+How do I know it's a legitimate one?
+I know who the root CAs are.
+The certificate either was issued directly by one of the root sets that I know,
+when I say I know the browser knows or the operating system knows,
+or it has to be one of the intermediate CAs,
+which in turn has been approved by the CA.
+That's the chain of trust.
+Revocation, on the other hand, says, look, everything is fine.
+Certificate is not expired.
+Certificate does have a valid chain of trust,
+but I want to know if the certificate is still considered active or valid.
+That's slightly different.
+How does the browser do it?
+How do you think it will do it?
+Revocation lists.
+Where do you get that?
+You have to contact some external entity to get a list.
+How do you know who to contact?
+How do you trust that person?
+I guess also certificates.
+Also certificates?
+I would say you ask the authority.
+How do you ask the authority?
+How do you know who to ask?
+Does it say in the cert?
+It says in the cert.
+Why do you want the mechanism?
+This is called an in-band mechanism and an out-of-band mechanism.
+In-band mechanism basically says,
+the protocol, whatever you're using,
+or the means,
+the whole idea here is that we use certs to encrypt or secure our communication.
+Wouldn't it be nice if that cert already tells you,
+hey, by the way, if you're worried about the validity or whether I'm worried or not,
+here is a URL that you can check.
+By providing that URL as part of the cert itself,
+you ensure that no one can pamper that.
+This process is once again changing, but let's see how it works.
+Again, chain of certs.
+You already know this picture.
+We talked about replication.
+Let's peek into the cert.
+If you take a look at the cert, again, the interface might change depending on what browsers you use.
+But if you scroll down all the details, you will find something like this.
+This is one of the most widely used,
+or unfortunately the most predominant way in which revocation information is broadcasted.
+Every cert will tell you, hey, what is the...
+These are called extensions.
+You can think of it as attributes set in a cert.
+One of the attributes basically tells you,
+if you want to know if I'm valid or not, you can go check this list.
+Now, having said this,
+if I ask you what is the CRL value,
+or what does a certificate revocation list URL for a root cert look like,
+what would be your answer?
+Now that you understand what a CRL is,
+it's a URL that tells you a list of certs that have been revoked.
+We haven't gotten into details, but having said that,
+if I ask you what will be the value of this URL,
+and what will this URL look like for a root cert,
+what's the answer?
+A list of public keys.
+Okay. What else?
+Could it be itself?
+Does that help?
+No, because I don't know if you trust yourself.
+Have you a list of CAs?
+That's very interesting, but it will not have anything.
+Why would it have anything?
+I'm sorry?
+Yes. The root sets are actually hard coded.
+They're baked into your browser, baked into your operating system.
+So how does it matter?
+Whatever list you have, certificate revocation list,
+if the root set has been revoked,
+the only thing you can do is wipe your browser,
+or wipe your operating system, and install a new one.
+That's the only thing you can do.
+Yes.
+Browsers are doing this, right?
+If a CA gets compromised or something, they do...
+CAs do get compromised, so what do you do?
+Browsers issue security updates, key security updates,
+and then pray to God that every user updates.
+Do root CAs often get removed,
+in the sense that if I have a laptop that's 10 years old,
+and let's say that I have an operating system,
+will the browser still work?
+We'll get to this question, but in short,
+root CAs, again, we all should pray that root CAs
+don't get revoked every now and then,
+don't get removed from certain data stores, so to speak.
+But it does happen.
+I think in the last five, six years,
+I think two root CAs, notorious ones,
+have been booted out.
+But these things are usually very public, right?
+Most of you, observing that you're all attending network security,
+I assume you read at least a couple of technical websites,
+like RS-Technica or WIRED,
+you will hear if a root CA has been removed.
+This is one of the reasons why you need to install security updates.
+Yes.
+These certification and co-occupation lists,
+they are pipeline extensions?
+Yes, yes, they are.
+There is also, if you scroll down further,
+you'll also see this very nice, but unfortunately not used,
+protocol called online certificate status protocol.
+So you'll see another URL, you'll come to this.
+It's a very nice one, I like it, but unfortunately it's not used.
+It's a protocol that tells you, you could check this.
+But you'll see why you have two mechanisms,
+what are the pros and cons.
+So there are two ways.
+One is a CRL, one is OCSP.
+CRL is the standard today, whether related or not.
+Changing the mindset of a lot of websites takes a lot of muscle, right?
+So unless you're Google or Apple or Microsoft,
+it can't do anything, right?
+Okay, so what does a CRL contain?
+It's a list, it's a certificate revocation list,
+so it's a list of revoked certs, that's it.
+Certs usually, the way you identify a cert is,
+it has a very long serial number,
+and the list basically contains a list of serial numbers.
+Here is the serial number of a particular cert,
+it's really long, usually in hexadecimal format.
+And the CRL list will have additional details, right?
+Issue a signature, issue a distinguished name.
+It's a fancy way of saying it's the company
+or the fully qualified name of the company
+that's actually publishing the list.
+When was it issued and so on,
+because CRL lists do keep changing.
+The next update and revoked certs, right?
+So it will tell you when is the next update,
+this is how your browser knows,
+hey, I already checked,
+because a list URL itself can't change, right?
+Because it's encoded in the cert,
+so only when you change the cert, it can change.
+So one way of figuring out when should you check next
+is by using next update, right?
+Again, this is a standard mechanism, right?
+If you're as old as me,
+and then you still use RSS and Atom feeds
+to read different blogs.
+There is another mechanism, similarly.
+There's something called an ETag
+that tells you when was something last updated.
+And if you pull content,
+and you see the time still hasn't updated,
+then you don't pull again, right?
+So the same mechanism.
+This is another reason why you should keep your clocks
+and your machine synchronized.
+I mean, for most of us, we run PTP,
+or not PDP, NTP, or some version of NDP,
+or something similar that keeps our clocks synchronized.
+But if your clocks are not synchronized,
+something interesting is going to happen, okay?
+Someone asked about the lifetime of certs, right?
+How long do you issue?
+One other way of thinking about it is
+that you typically want certs to be really, really short lifespans.
+Why?
+If they get compromised, they're not in use for long?
+Yeah.
+As simple as that.
+But there's an issue with that.
+So someone did an experiment to try and say
+how small these certs could be.
+There is a lot of actually push or support
+for keeping certs just valid for a few days.
+Because if they're only valid for a few days,
+it's highly unlikely anyone will even have the incentive
+to try and break it, okay?
+A few days is not much, okay?
+If you're still able to compromise a certificate
+within the span of a few days,
+then there are other things you should worry about, right?
+Because the computation power you should have
+in order to do that tells you so much about the attacker.
+So that's not the kind of attacker we're worried about, okay?
+But there was an issue.
+Actually, Google and some academic researchers
+from academia, they did this study,
+and then they figured out that, said, let's do a study.
+How do you figure out how short the certs can be?
+Well, it depends, first of all,
+on how accurate users' clocks are, right?
+Because if our clocks are, let's say,
+what do you think, how inaccurate do you think
+the clocks on our computer systems are?
+Meaning, if I tell you the reference time right now
+is, let's say, 4 or 3, okay,
+how sloppy can the clocks on your computers could be?
+What's your estimate?
+As in per day, how many seconds does it take?
+Right now, if you check, yeah.
+How far can it go?
+A couple of minutes.
+A couple of minutes. Oh, my God.
+Microseconds?
+Huh?
+Microseconds?
+Oh, no, no.
+No.
+That's the topia.
+It doesn't have to be.
+Microseconds, you know, see, look,
+any time you hear words like microsecond and nanoseconds,
+that's very specific, right?
+Within a data center, within routers,
+those things can happen.
+Microsecond resolution, it's impossible to get out
+on the Internet.
+Minutes possible, but I like your guesses.
+I know some of the digital watches have, like,
+one second over a three-month period,
+and in margin, so it can go up and down.
+Seconds can happen.
+Seconds is very typical.
+Minutes, not so typical.
+You wish that it doesn't happen.
+It does happen.
+Days, you hope it doesn't.
+You don't see that, but it does happen.
+Months, you wouldn't believe me, but it does happen.
+Years also happens.
+The years, probably something went pathologically wrong.
+Months, once again, you know, some bug or some issue.
+So let me ask you a slightly different question.
+You run a server.
+The server runs an NTP daemon.
+If you run them, most versions of Linux
+does the meaningful thing, which is run an NTP daemon, right?
+Behind the scenes, NTP is a network time protocol,
+talks to a bunch of servers, right?
+Publicly well-known servers, and then tries to synchronize.
+Now, let's ask ourselves the questions.
+The NTP daemon tries to go fetch the updates.
+It doesn't receive the updates.
+So what does the operating system do?
+Your internet connection is fine.
+OK, let's keep this in mind.
+Let's say I run a very notorious organization.
+I run a public Wi-Fi.
+You all connect to my Wi-Fi.
+I configure my Wi-Fi to drop NTP packets.
+What do you think your operating system will do?
+It just continues.
+Huh?
+Just continue.
+Yeah, it should continue.
+That's a meaningful thing.
+But what does it tell the user?
+Oh, I wanted to say maybe it accepts packets
+from other interested servers.
+Yeah.
+How secure is NTP?
+Well, yeah, that speaks volumes.
+But what do you think the operating system
+will tell the user?
+Nothing.
+It tells you nothing, right?
+It'll run fine, as in your operating system
+will blissfully be ignorant of the fact that NTP is not running.
+Once again, there's been a lot of pushback
+against the default behavior.
+But this is something to keep in mind, right?
+Don't think about your laptops.
+Don't think about your servers.
+I assume that at least a reasonable chunk of you
+run at least one or two smart devices at home.
+Don't be embarrassed.
+It's OK.
+We all do mistakes.
+I have tons of things that connect to the internet
+that they shouldn't.
+But it's out of convenience, right?
+Sometimes I like the convenience.
+These things also have a small microprocessor running.
+Do you think they're on NTP?
+Now, if you're wondering why should they run,
+you should ask yourself the second question.
+They do get updates, right?
+I mean, sometimes.
+I mean, most of them don't.
+But they do pull data from the internet.
+You hope that they're actually pulling data over HTTPS.
+If they're not, then that's another issue.
+But if they are pulling data over HTTPS
+and they don't have a synchronized clock,
+what bets can you actually make?
+They can't do revocation checks.
+They'll happily pull data
+under whatever crap set is being used.
+So unfortunately, and these things happen even today,
+I know for sure my TV doesn't update, right?
+It doesn't do any sort of replication check,
+which is very sad.
+But they actually tout that saying,
+hey, you have a smart TV which has a built-in browser.
+Yeah, shouldn't even try and use those browsers.
+This is another annoying thing.
+Notifications like these are why people
+don't do security updates, right?
+But anyway, so roots don't have any CRLs, right?
+Even if they have, doesn't have any value.
+You should check if roots have CRLs.
+Yes?
+How many, like how often do certificates get revoked?
+And from this, it seems like you're pulling
+all the revoked certificates.
+What does your browser really use to cache them?
+That's an excellent question.
+Browsers do have different,
+browsers have different mechanisms.
+And I think Firefox, there are command line utilities
+by which you could query the database that Firefox uses.
+For Macs, I think there's a keychain, Apple keychain.
+You can actually check the list of,
+it doesn't tell you where the revoked certificates are stored,
+but every browser has more or less slightly different mechanisms.
+But ultimately, there is a small database running in your thing
+where everything is cached.
+So there's a CA, it publishes its list,
+your browser every once in a while based on the next update.
+If it's a well behaving one, it'll pull the CRLs.
+It contains all revoked certificates issued by the CA,
+which is actually a nice thing.
+Can someone tell me why?
+You might discover another one that hasn't been.
+Okay, no, no, think about it in a privacy perspective.
+Oh, you don't know exactly what CA you're doing the check for.
+Yeah, right.
+So again, multiple ways to think about it, right?
+So you should always be skeptical.
+If someone provides you a service by which they say,
+you know what, you could check whether a particular set is expired or not.
+It's great.
+But then the disadvantage is that the CA can now figure out,
+or any person along the path, depending on how,
+whether the request is encrypted or not,
+can figure out what you're trying to do.
+Okay, downloading all revoked certificates to check the status of one.
+There's a latency penalty.
+So of course, you could cover that by caching things.
+Again, caching, one providing a level of indirection,
+two common solutions to most systems problems, right?
+Lists could be quite large.
+There's a bandwidth issue.
+Now, this might look very trivial and silly, right,
+that I'm even mentioning this.
+But trust me, mobile phones for a long time refused to update CROs
+because they don't have downloaded ones.
+You know, why would I download it again?
+You might think, oh, I would want it to download.
+But go back, let's say, five years, ten years ago.
+If you're going around on a 4G or 3G connection or LTE,
+you don't want to download a huge CRO on that connection
+because there's a cost involved.
+So again, you might say the user might be okay.
+But how do you ask the user whether it's okay or not?
+If you are, let's say, Google or you are Apple,
+you provide the operating system that pulls the frequently updated CROs and so on.
+What would you do?
+You'll normally think, look, users don't know what I'm trying to do.
+All they know is if I use an iPhone and then I roam around,
+my bill seems to be much higher than when I run Google's phone.
+So these are all the kind of decisions that they make, unfortunately,
+on behalf of all of us.
+Mobile phones and tablets, there's an energy cost as well.
+That is fast disappearing these days.
+One might even say that it has disappeared.
+There is a very nice alternative to CROs, which is the OCSP protocol.
+It's basically a service provided by the CA itself
+to check the status of a certificate.
+So you can, for instance, query the serial number.
+It's like a REST API.
+You query the serial number, it tells you whether it's revoked or not.
+All of these, you can actually write a very simple shell script
+to do these CRO checks or OCSP checks.
+If you do something like this, it spits out a lot of things.
+At the end of the output, you'll see something like,
+oh, the certificate is good or not.
+If it says good, everything is good.
+If it says bad or not okay, which means something is wrong.
+I don't remember if it actually provides a reason
+for why a certificate was not okay.
+When you do the OCSP check, just like the CRL,
+you want to tell the caller when the status might get updated again.
+And so there are also this update and next update fields.
+Again, well-known battle-tested techniques.
+Okay, so cert is good.
+Oh, it says here, cert is good.
+It tells you when this update was generated
+and when the next update is expected.
+Each query validates one certificate.
+The call blocks or delays transaction.
+There's a latency issue.
+Reveals browser behavior to CAs, not just to CAs,
+to actually pretty much everyone along the path,
+depending on the protocol needs.
+This is another issue, right?
+So Firefox actually publishes what is called telemetry data.
+It's actually public.
+You and I can actually go query this data.
+As of 2020, actually, 7% of the query is timed out.
+7% is a lot, by the way.
+Again, don't look at the percentage.
+Think about how many millions of users it translates to.
+And again, so there's a reliability issue, right?
+This is a service, again, to keep in mind.
+This is a service that tells whether a certificate has been revoked or not.
+It's valid or not.
+And what studies have found out is that 7% of these fail as of 2020.
+Maybe it has come down to 5% or 3%, but that's still not acceptable.
+Why is it not acceptable?
+Simple guesses.
+Yeah?
+Probably because it's not transparent to the user.
+Yeah, so what do you think the browser will do?
+What do you think the browser will tell you?
+If it makes an OCSB request,
+and the answers to these questions should become obvious by now.
+What do you think the browser will do?
+If it makes an OCSB request, doesn't this even answer?
+Nothing.
+It just moves on.
+This process is called soft fail.
+There's something called as a hard fail in soft fail.
+Hard fail, and this is a very common term that you actually encounter in networking,
+maybe also in systems.
+A hard fail basically means that after encountering a failure,
+a well-defined failure, you don't move forward.
+Status is halted.
+The system will barf some output and then crash, or it will stop functioning.
+Soft fail, on the other hand, takes a look at the error,
+maybe puts a notification somewhere, or sometimes even not,
+but just continues working with diminished capability.
+For browsers, yes?
+Does the browser even retry?
+When the server is done, what can you do?
+Browsers usually don't retry.
+Why?
+Latency issue.
+Every time you retry, there is an RTT.
+There is an RTT you incur.
+Why would browsers do?
+The fact that they even do the first time is great.
+Again, it's just a question of what is the image that they provide.
+Someone was asking me a similar question a couple of lectures earlier.
+Always keep in mind, if a browser actually fails to show a website
+because the cert failed, because the OCSP failed,
+it's not the browser's fault, the CA's fault,
+that the OCSP server was not running up,
+but your browser doesn't show a page,
+it can't tell you that the certificate is not valid
+because a check hasn't happened.
+The only thing it says is something went wrong,
+and it shows you a blank screen.
+What is your immediate reaction?
+Refresh.
+What then?
+Access anyway.
+I'm sorry?
+Access anyway.
+Access anyway.
+But you can't because the browser won't allow you.
+Use another browser.
+See, that's the issue,
+which is why they actually don't show you failures.
+We don't have a way to attribute errors to the actual entity
+that is generating them.
+So what you simply do is you simply say,
+the user maybe doesn't care,
+maybe the cert is still okay,
+and then you show the content.
+What if OCSP query fails?
+Does the cert fail?
+Art fails.
+So here is another way you could solve this.
+So again, security people, they talk hard about this.
+They say, ah, you know, there's an issue here.
+Nobody wants to, first of all, this process fails,
+so it wasn't still bad.
+Plus, nobody wants to go to the CA
+and then keep declaring to them
+what websites you're actually going to,
+which is a terrible design.
+But ultimately, keep this in mind.
+So any time you go to a cert,
+I'm sorry, any time you go to a server,
+when the server actually gives you its cert,
+why can't it actually attach the OCSP response?
+So this is OCSP stapling.
+Just as the name implies,
+it's imagined as if the response,
+OCSP response is being stapled to the cert and given.
+So which means you remove car, the picture,
+and instead of doing,
+instead of the client fetching the response,
+it requires stapling basically includes
+the response of the leaf cert.
+It's only for the leaf cert, but that's okay.
+But the idea here is that by enabling stapling,
+you're basically removing an extra step.
+So instead of the client or your browser
+going and then checking with the CA,
+it gets it for free.
+You have to be a bit careful about
+signing this response, timestamping it,
+but those are easy in order to ensure
+that the server doesn't give you a stale response
+because that doesn't help either.
+Well, what does this process solve
+in terms of performance? Yes?
+There's a privacy issue.
+There's a privacy issue, definitely solved.
+In terms of performance?
+One query to the LSEP list.
+One query.
+So as in if this was a separate query,
+you say one RTD, let's say.
+RTD between you and the CA, which could be large.
+Okay, that's a very good point.
+And also you are not...
+In terms of bandwidth?
+You don't have to get the whole list?
+OCSP has got nothing to do with the list.
+People?
+It adds bandwidth if you check it for every thread?
+That's an interesting, awesome response.
+Why? Why would it add bandwidth?
+So there are two ways, right?
+Either the server tells you,
+staples the OCSP response, or you go fetch it.
+So, yeah.
+If the website does it, it's not required to do.
+Yeah, the client is not required to do, yes.
+But okay, let me rephrase the question.
+What is the bandwidth saving for the client?
+You could say it removes the overhead from...
+Let's say the overhead in terms of RTD, yes.
+Arguable, but yes.
+But it will probably increase it, right?
+The bandwidth?
+Yes.
+There will be no change.
+Yes.
+Maybe in terms of timeout situations,
+like in clients on the request?
+That's a reliability, yes.
+Reliability improvements, yes.
+Privacy improvements, yes.
+Performance improvements, if the RTD is really bad.
+Because CAs have no reason
+why they should deploy servers close to you, right?
+The fact that they even operate really high.
+Can't the server then also catch the OCSP?
+Which is why I rephrased my question,
+saying what is the bandwidth saving for the client?
+Servers can cache.
+The clients, they can always cache,
+but they can also cache the OCSP response.
+So the total doesn't change
+because all the other clients can get the same...
+Oh, you have to be careful.
+Total does change, right?
+Meaning there is a bandwidth saving
+as far as a CA is concerned, right?
+So instead of having one million requests,
+now you might have like 10,000 requests.
+So be careful, right?
+These are the ways in which I can ask questions.
+So pay attention to what segment.
+For the client, usually it doesn't make a difference.
+Don't think about caching,
+because nothing has changed in terms of client caching,
+whether you do OCSP requests or OCSP stately.
+Yes?
+I'm just wondering if the server itself
+says the OCSP response cannot tamper with that somehow,
+or is it...
+Ah, you have to be careful, right?
+When the OCSP response is still signed.
+Oh, right.
+Right.
+I mean, otherwise you wouldn't trust it.
+One thing you might actually notice
+is that the CRL list, for instance,
+is actually an HTTP URL, not an HTTPS one.
+Does it really matter?
+The client only has to send one request
+instead of two, right?
+That's an RTT argument, yeah.
+That's what I said.
+Performance in terms of RTTS,
+performance in terms of bandwidth, no.
+There's no improvement.
+Because you anyway have to download the response,
+no matter whether you get it from the CA or from the server.
+How does it matter?
+Like, perhaps you don't have to negotiate the SSL.
+You have to do a little...
+Once again, an RTT argument.
+What if I tell you that the protocol is a zero RTT one?
+No, but I mean, like, you do have to spend
+a little less bandwidth if you use one connection, right?
+Not RTT.
+Now you're getting into very specific things.
+Don't you elaborate?
+I do buy where you're going with this,
+but could you elaborate?
+Why would you save bandwidth
+if you use a single connection
+where there's multiple connections?
+Yeah, just like one LO, one server LO.
+Okay, let's ignore the handshake.
+Not sure.
+Because a handshake is basically a question of RTT, right?
+Which is why it's...
+Handshake is just RTT.
+Handshake has got nothing to do with bandwidth.
+I mean, the bandwidth savings there is like...
+Query also takes a bit of bandwidth.
+No, the way to think about it
+is that if you say that, look,
+having one connection actually improves things,
+that means that you're actually looking into...
+You're thinking about TCP, right?
+As the connection progresses,
+TCP's estimate of the window will keep changing,
+and if it's stable enough,
+it means that it can actually pull
+a lot of content in one go, right?
+So that applies, but it's always enough.
+Operating systems do remember last congestion windows.
+So when you use PTI,
+you typically use asymmetric crypto,
+which has larger messages than symmetric crypto.
+Yes.
+Couldn't you make the argument
+that if you set a request to a CA
+that you could there use symmetric crypto,
+whereas with the server implementation,
+you would need asymmetric and hence a larger message?
+I'm not sure if that is true.
+I'm not sure.
+Maybe we should discuss that offline.
+Yeah, yeah.
+It's a good way to think about it.
+Okay, extension for supporting multiple status exists.
+You could staple multiple.
+Meaning, stapling, when it was introduced,
+it was only for the leaf set, right?
+And then the question is,
+do I need to have to go check the other ones?
+But then there is extension
+to actually support multiple statuses.
+And then, of course, stapling didn't stop
+because whenever you introduce something,
+what is the incentive for anyone to use it?
+Nothing.
+So nobody used it.
+So then they introduced must staple, right?
+So you as a certificate owner
+or the CA can actually mandate that,
+look, for the certs that I issue,
+must staple is actually a mandatory thing.
+Must staple basically says that
+if a server actually issues a set
+without the OCSB response, do not accept it.
+Once again, you can't enforce this behavior.
+Browsers have to do it.
+Did you mention the bandwidth saving for the client?
+Did you explain that?
+Yes.
+What it was?
+I didn't completely catch that.
+What is the exact thing there?
+The OCSB response,
+whether it is delivered by the CA or the server,
+it's the same.
+So there's a no?
+No.
+Oh, so there's no business?
+Okay.
+Almost a trick question all along.
+From the client's perspective, none.
+Okay.
+From the server, from the CA's perspective,
+there is a lot.
+All right.
+So that's why I said
+you have to walk through the segments
+and then be careful.
+The devil's always in the details.
+So for instance,
+I could also ask you questions based on,
+you know, for instance,
+if I change the entire OCSB protocol
+to happen on Unity, right?
+Just to take away the concerns about TCP and all that.
+Then, of course, the question changes a slightly different,
+takes a slightly different shape.
+Again, make sure you understand the basics
+and then you can work out from,
+given the context of the question,
+you can build on top of that.
+Okay.
+Client must not fetch the OCSB response.
+In must table, what happens is that
+you're basically telling the browser
+that if you ever go to the CA,
+the CA will give you nothing
+or there is no reason for the CA to do it.
+And the CA will still do it
+because the CA can't check who's querying.
+But the main point is the browser shouldn't do it.
+If the server did not give you an OCSB response table,
+then you shouldn't do it.
+It's basically protecting the privacy of the users.
+Server doesn't table, reject the server,
+solves a soft fail problem, right?
+Because it now,
+basically it's like trying to provide a mechanism
+to assign blame, right?
+As long as you design a protocol
+where it's very clear when something goes wrong,
+who's to be blamed, it'll be great, right?
+When that distinction is not clear,
+then you run into problems.
+I'll stop here.
+Maybe we'll take a five-minute break and then resume.
+Yes?
+The server's like, by this, OCSB must table.
+Like, are we using OCP?
+OCP must table?
+Good question.
+We'll come back to that.
+That's a good question.
+I'll give one more minute.
+People are still joining.
+But anyway, I think we can stop.
+I'm going to walk through a study
+that Michael Albrecht and I did some time back.
+It's my own paper.
+I'm going to gloss over the details
+and just focus on the high-level bits.
+There's a lot of measurement work
+that look at security protocols, right?
+You don't need to know a lot of things.
+If you know a few basic protocols, a few tools,
+and you're good at some scripting language
+or some programming language,
+then you can write actually very strong papers,
+publishable material.
+It's quite easy.
+Networking, the one advantage is that it's very easy
+once you have some basic understanding
+of how things work.
+This is a very simple study.
+It's about revocation checks.
+You already know what they are.
+And in this paper, what we did was,
+again, do read this paper.
+It's very easy to read, even though it's one of the papers,
+so it sounds a bit weird to say it.
+But I think it's a very simple paper to read.
+So it's basically looking at significant revocation
+in practice, right?
+So analyze the revocation process and shed light
+on the behavior of website administrators.
+Looks at the behavior of website administrators,
+certain authorities, clients.
+Now, whatever I'm going to say, when was this study?
+2015, so it's old.
+In today's day and age, 2015 is probably things
+not worthy of recollecting.
+So hopefully the situation has changed,
+but whatever I'm going to say shouldn't surprise you, right?
+Expect the abysmal.
+What did we do?
+We basically did a whole IPv4 HTTP scans.
+How many of you have heard of a tool called ZMap?
+Awesome.
+For those of you who don't know,
+there used to be a tool called Nmap.
+It's a very simple scanning tool.
+You run it.
+It tells you who's listening on what port.
+The Zmap is basically Nmap on steroids.
+So they basically found a bunch of ways
+in which you can speed things up.
+I mean, I'm trying to belittle the word,
+but it's not what I want to do.
+But they found some clever hacks
+by which you could do fast scanning.
+And it reduced the, for instance,
+using Zmap you could scan almost the entire IPv4 space
+in 45 minutes.
+That's quite a lot.
+Please don't do it.
+At least if you want to do it, don't do it from the VU, right?
+Not in the campus network.
+You will be stopped.
+The admins will know what you're doing.
+Within 45 minutes, though?
+That's a good question.
+Why are you asking this question?
+Yeah, at least, yeah, don't attribute,
+don't, you didn't hear it from me.
+Well, the disclaimer is the following, right?
+So I have a, I mean, I had a bachelor,
+and he's still working with me.
+The bachelor student basically ran a Zmap scan.
+Unfortunately, right during the time of the scan,
+there was, again, I can't go into much detail,
+there was an attack that looked like it was trying
+to gain entry into the HR system of another university
+that is close by.
+Maybe close by.
+And then, you know, people just flagged us by saying,
+ah, the VU is attacking another academic institution.
+It didn't make news because it was not true.
+My student was not doing anything like that.
+Definitely, I wasn't thinking anything like that.
+But it's unfortunate.
+So I'm notorious now.
+Okay, so what we did was we used a Zmap-like tool,
+or a Zmap variant.
+We did a full IPV for scans, roughly weekly.
+There were in total 74.
+This is a measurement, right?
+So this is what we used.
+When you do an HTTP scan,
+what it means is we're trying to pull the set, right?
+So we have 35.5 million unique SSL sets.
+Many are invalid.
+These are self-signed certificates on Wi-Fi routers.
+Some Wi-Fi routers do respond when you scan from the outside.
+Why should they? I don't know.
+They did respond.
+And they have self-signed sets.
+Great.
+Yes?
+So in this study you're querying all kinds of IPs, but not necessarily domains.
+Yeah, we're scanning anyone who's listening on port 443.
+That's an IPV for address.
+Now, why would a router have an HTTP set at all?
+Maybe from its admin page, or its config web page.
+Why would the admin page be listening on a public IP?
+Actually, there are good reasons.
+There's maybe one reason.
+If you forgot to configure something and you're away from home, you want to remotely log in, do this.
+Now think about this.
+This one is using self-signed set.
+How confident are you it does anything meaningful over that interface?
+Or how secure it is.
+Unfortunately, this is a feature that's gaining quite a lot of prominence.
+I have no clue who these people are who try to manage their Wi-Fi routers remotely.
+It's a terrible idea. Don't do it.
+Oh, by the way, if you are in the US, I'm really sorry for saying bad things about the US.
+But if you're in the US, again, you can Google this out.
+There are ISPs that actually give you Wi-Fi routers when you get the connection, just like it's here.
+And one of the nice features that you get is you can store the password with the ISP.
+Just in case you forget, they can actually help you with it.
+Again, I don't know how great that is.
+Then at the time of this paper, we had 222 root sets.
+Not a joke.
+On the root server, the macro is because at that time, we were all using Mac.
+Of these 222 roots, now this is important.
+222 root sets means that at least 222, at most 222 CAs.
+That should raise alarm bells.
+But the reason I'm saying at most is because ACA can have multiple sets.
+But it's still alarming.
+And these translate to roughly about 2,000 intermediate sets.
+Think about root sets, and there's a bunch of intermediates.
+It looks like there's a huge fan out.
+We gathered 5 million valid leaf sets, and this is what we will talk about.
+99% of them use CRL. This you can check by yourself.
+95% of them use OCLB.
+By the way, in order to do this particular scan, all you have to do is two things.
+One is you need zmap.
+You spend 15 minutes, you'll figure out how to run it.
+Maybe another 15 minutes to figure out how to evade admins.
+And then it takes 15 minutes to learn how OpenSSL, a tool that actually ships by default in Linux, how it works.
+I showed you a bash script, and that takes 10 minutes to write.
+And then you can extract different parts.
+You don't have to write fancy C programs, you don't have to learn how to parse sets.
+It'll be great if you don't, but you don't have to.
+The bar is quite low for these sets.
+So, first question is, are there sets that use neither?
+Unfortunately, there are. There is a small person.
+About 4,000 sets.
+Again, two ways to look at it.
+Very small fraction, maybe you don't have to worry.
+But there are still 4,000 sets.
+Who knows what they're running.
+They have no CRL, no OCSB.
+How do you check the revocation for these?
+You can't.
+So these are certificates that can never be revoked.
+Great.
+Intermediate sets, 98% of them use CRL, 48% use OCSB.
+18% of intermediate sets use neither.
+That's bad.
+It goes without saying.
+Fraction of fresh sets that are revoked.
+These are all certificates, these are EV sets.
+Remember EV sets?
+DV, OB, EV.
+EVs are expensive.
+Extended validation is very expensive.
+I think probably around 600 euros or something like that, if I remember correctly.
+And this is a per year or something like that.
+The longer the lifespan you request, the more money you pay.
+And there's also still a limit on how long it can be.
+So this is all sets and fresh sets.
+Something seems to have happened here.
+A lot of them got revoked.
+Again, just to recall, revoked basically shortens the lifespan of a set.
+So significant fraction of certificates were revoked.
+9%, 6%.
+By the way, this is fractions.
+Very small.
+If you're wondering what happened, that's the Hartley vulnerability.
+So this revocation is okay.
+If you remember the Hartley vulnerability, there were lots of keys that were presumably taken over by compromised.
+And so you do want to revoke the sets.
+Because you no longer use the sets.
+It doesn't mean that someone has compromised your set, but the odds are pretty likely.
+But in any case, what you would expect is the set to be revoked.
+Fraction of alive sets that are revoked.
+This shouldn't happen.
+So this is still a fraction, so maybe it's a bit hard.
+It's still low numbers.
+An absolute value, it's still pretty high.
+Alive, basically, this is okay.
+Just to remember, this one shouldn't happen.
+So about 0.6%.
+Site administrators took the effect of revoke the set, but failed to update the service.
+This is really bad.
+Again, manual process, no one wants to do it.
+Even if there are jobs on the line.
+Fraction of servers that support OCSP stapling.
+This is before my staple, if I remember correctly.
+Showing no reason at all.
+So I think this is for, I don't remember this exact class, but I think what it means is that the number of requests made by one particular browser or client.
+Fraction of servers observed to support OCSP stapling.
+Unfortunately, I'm not sure how to interpret this one.
+If you can look up the details in the paper, I'm really sorry.
+I don't remember this one.
+Server observed to support.
+Okay, not sure.
+That's more.
+OCSP stapling, you already know what the process is like.
+Illustration should serve to help you to recall.
+Let's see.
+So in stapling.
+That doesn't happen.
+Okay, certain servers will staple only if a fresh is used in cache.
+Just trying to think.
+I'm not sure.
+Unfortunately, not sure.
+That's what I initially thought, but this is not probability.
+That looks like a CDF.
+I'm not sure.
+So it looks, I mean, yeah, I'm really sorry.
+I don't want to say something that is wrong.
+You can find this graph in the paper and the caption should fill you all in.
+Status of the PKI when it comes to supporting OCSP must staple.
+So we did another study.
+Again, pretty simple.
+I don't think I'll ask any questions about this one.
+So I'll mark it as an optional one.
+The same thing.
+So analyzing the behaviors of website administrators we saw, we can ask a certificate of parties and clients.
+I think that's the next slide deck.
+So let's look at C as in clients.
+This is CA behavior.
+You can look at the size of the CRL that tells you a lot about how many sets are getting revoked.
+So this is basically showing a CDF of the CRL size.
+Size is an X axis.
+That's a CDF across all the CAs that we observed, all the 220 oddish.
+If you adjusted by, you know, the raw size does not give you, in some sense, it's a bit misleading, right?
+Because the size of the CRL obviously depends on how many sets a CA is actually issuing.
+If a CA only issues one set, just making up numbers, and it revokes that one, that will be 100%.
+Why?
+If a CA issues 1,000 sets and it revokes two, it's a much smaller person.
+So basically what you then do is you could do a weighted fraction.
+If you adjusted by weight, then you see roughly, you know, the median size is 50 kilobytes.
+I think this is in response to the total number of sets and whatnot.
+What is CDF?
+Cumulative distribution function.
+Basically that's a way of saying you calculate for each of the values in the X axis,
+you calculate the probability that they could happen, and you sum up the probabilities in increasing order.
+So there are very large CRLs which are problematic, right?
+Keep in mind the cost of bandwidth, latency penalties, and so on.
+So CAs can issue multiple CRLs, and so these unique CRL numbers in this particular column
+tells you for some of the very famous CAs.
+I'm just trying to think if any of them have been revoked.
+I'm not sure about Starcom anymore, I don't think it is there.
+And also GlobalSign, I remember, or something.
+So Talk is still there, Talk Consulting, VeriSign, Komodo and GoDaddy, they are still very, very famous, very large.
+I do think Starcom and GlobalSign are not there, but I could be wrong.
+You can check this.
+I definitely remember something about Starcom.
+So these are basically telling you how many unique CRLs they have.
+Why would they have a number of different CRLs?
+Yeah, I mean, it could be, I mean, the size of the CRL actually changes over time,
+because you don't have to keep accumulating all the CRLs.
+Okay, let me stop there.
+So if you actually publish a list of all revoked certs, in principle, that list should keep increasing in size, but it doesn't.
+Why?
+You don't have to actually talk about the revocation status of an expired cert.
+So in principle, the size of the list doesn't increase.
+So the number of unique CRLs could be large because of other reasons.
+I mean, these could correspond to different servers, so maybe some load issue comes into picture,
+or it could be because for the different intermediate CAs that they delegate responsibility to, they might have a different set of lists.
+So that could be there.
+I don't know.
+Certainly problematic, actually.
+CAs can issue multiple CRLs.
+This one is actually talking about, it's very hard to summarize this picture, but in one word, I have to say this is really bad.
+You don't want to see cross signs here.
+I don't have the time to go over all the details, but what I just wanted to say is that these are different desktop browsers on the columns.
+These are a list of mobile browsers.
+Don't even look at them, they're bad.
+And this one is basically saying for different kinds of tests that we did.
+So for instance, if I take this line, it says CRL, meaning we were trying to test whether browsers are actually fetching the CRLs.
+The first one that says, okay, if they're revoked or unavailable, do they actually do the check?
+Oh, this is intermediate.
+For certs that have one intermediate, there are certs that have more than one intermediate CAs.
+For a leaf cert, if it is revoked, do they actually use the protocol?
+I think this is about OCSP, if I remember correctly.
+So Chrome basically took the stand that we will not do any OCSP checks unless it's an EV cert.
+Which is great, actually, because Amazon, banks, pretty much online shopping and banks will use an EV cert.
+But for anything else, it doesn't really matter if the cert got revoked.
+Google wouldn't care.
+This is still true, by the way, today.
+Firefox, on the other hand, is very nice.
+Whether it was EV, TV, or OB, they didn't do OCSP.
+Just good, at least consistent.
+You know, you can look at different browsers.
+I forgot, why am I hiding Safari?
+I don't know, maybe it was bad.
+But in general, you don't want crosses here.
+You want the browsers to actually go check the sets.
+But forget all of this, because it might be a little hard to assimilate.
+But look at this one.
+This was 2018, by the way, so five years ago.
+Then you can make up your mind about what browsers are doing on the mobile phone.
+These hyphens are, I think, sock fails or something like that.
+I don't know.
+Oh, non-linear certificates, again, basic things.
+Oh, there were some interesting things.
+So request, I think this was on OASIX, yeah.
+It's also a bit bizarre that browsers on different operating systems would do different things.
+I mean, it's not about rendering we're talking about.
+We're talking about a security check.
+And it annoys me to no end that they would do this.
+Why?
+Respect, revoke, staple.
+It means that if a stapling actually tells you the certificate was revoked,
+for some reason, whatever, Chrome 44, when we checked that particular version,
+OASIX, it still would accept it.
+It was great.
+Is this functionality promoted by the operating systems?
+Do you have?
+That's a very good question.
+That's a very good question.
+What do you think is the default?
+Maybe there is a slide that I say it.
+Let's see.
+On Mac, when we did the study, OCSB responses were disabled by default.
+Thank you.
+Why not?
+I don't remember on Linux or Windows.
+For whatever you say about Microsoft, there's a lot of good things that they have done.
+I don't know what was their stance here.
+I don't think we tested any IE browsers at that time.
+But they did take at least a good stance when it comes to some of the security issues,
+as long as it was not pointing at them.
+No, the default behavior, to answer your question, was always that.
+Sometimes they incorrectly trust OCSB responses with unknown status.
+Sock fail, right?
+If an OCSB status comes back and then simply says unknown,
+why unknown?
+Then the browsers would happily accept it and then show you the website,
+without even any warning or anything.
+Again, keep in mind, about six or seven years ago,
+or maybe even longer, my recollection is six or seven years ago,
+browsers used to change the color of your URL bar,
+location bar, in response to what kind of search screen you're using.
+It's a visual indication saying that, hey, you're using Amazon,
+you want to see a big green bar, so you rest assured that the entity is legit
+and you can spend, I don't know, thousands of dollars on Amazon.
+But browsers actually fought for this, for reasons unknown, to remove this.
+Because the reasoning was that a visual queue does not suffice.
+Users should do more.
+But anyway, so there are some more very obvious behaviors that you can observe.
+Safari, Firefox, does not request OCSB staples, great.
+So when you ask me, what does operating system do?
+You can do system-wide behavior for Mac OS at that time was best at that,
+which means that you don't do anything.
+By the way, best effort, whenever you hear the word best,
+it's not a positive thing.
+IP, best effort delivery, means it won't do anything.
+Send a packet, if it doesn't go through,
+it'll still keep sending it without doing anything about it, for a good reason.
+Anyway, native browsers do not check for, there's nothing that needs to be said.
+This is abysmal.
+You shouldn't trust your mobile browsers.
+This picture has changed a bit, but again, it doesn't look so pretty.
+There was another follow-up in 2020, if I remember correctly.
+Half of these crosses have gone, these cross marks have gone, still half remain.
+Maybe you could do a check and then check.
+But this was tested five years ago, and there were four and five?
+Yeah, maybe.
+And there were eight and nine were already there.
+In 2020, there was another study, which also shows half of the cross marks still remain.
+You could do again and then hope for the best.
+Google is dead against OCSB, so they won't do it.
+Just backing up a little bit, could you enumerate the reasons why a certificate gets revoked in the first place?
+It could be because of a number of reasons, but the basic one is
+because you think that something has been compromised and you want to revoke it.
+It's as simple as that.
+We believe that, for instance, if you realize that someone has gained unauthorized access to your server,
+the first thing you do is, if that server is my web front-end and there are certs in there, you'll probably revoke it.
+So it's kind of the first response button for...
+Yeah, it's also the safest thing to do.
+You can't trust a cert anymore.
+In general, you don't leave credentials.
+If there are credentials on a machine and someone has taken access to it, you don't do it.
+There's a famous incident of a very famous Indian software company publishing its credentials to Amazon.
+It's Amazon infrastructure.
+I don't know if you remember this.
+It just reminded me of this.
+What happened then?
+Someone actually wrote to the company saying, hey, by the way, in your Git logs, I can see your credentials
+and I can access your entire infrastructure.
+Yes?
+Was it what?
+No, this is a much larger one.
+I don't want to pick the name because it sounds very bad.
+You can Google this out.
+Search this.
+Google uses a slightly different mechanism.
+It doesn't use CLLs.
+Why?
+Because it's Google.
+I said it in a very bad way, but I am annoyed by a lot of things that Google does.
+They were one of the primary reasons why a CSP was not deployed or didn't gain major adoption.
+They had good reasons, but refusing to do a CSP just looked like a lame one.
+Google uses something called a CLL set.
+And the idea is the following.
+A CLL set is similar to a CLL in that it is a list.
+But it's actually proactively shipped to the browser.
+Not all browsers.
+This is Chrome we are talking about.
+So Chrome will every now and then will contact Google servers and then obtain the CLL set.
+Why is it called a CLL set and not a CLL?
+Because it's a set of sets, as in list of unique things.
+The question is what does a CLL set contain?
+It contains a subset of...you heard me right.
+It contains a subset of revoked sets in the CLL.
+Why a subset?
+Yes.
+Maybe faster?
+Yeah.
+This is exactly Google's response.
+Why would you download a subset and not the CLL?
+Well, it's faster.
+Think about users on a mobile connection.
+Don't you want them to spend less money?
+Yes.
+Great.
+What subset did they download?
+Their own.
+They're not that bad.
+They've ranked websites.
+Figured out which are the high-value websites.
+I'm not kidding.
+This is exactly the reason that they put it.
+Figured out high-value websites.
+How do you figure out high-value websites?
+I don't know.
+They use some function that told them...
+Page rank.
+Huh?
+Page rank.
+Yeah.
+It could be.
+I don't know.
+They didn't reveal their secret sauce.
+Chrome still does it, by the way, for all the people at home.
+The idea was that if you download frequently small amount of sets, that's actually better
+because you save bandwidth and you're secured against most of the websites that you will
+go to.
+That's good.
+That is exactly what Google did.
+They're size-capped CLLs.
+In order to cap them, you have to figure out who to remove, and they have a function.
+You could ask how effective are CLLs.
+I think in the paper we mention a bit...
+So this is a fraction of CLL entries, CLLs entries in CLL set.
+As in...
+I forgot what this is.
+Reason code.
+It doesn't actually make much sense.
+Anyway.
+What it is saying is 80 percent...
+I mean, there's a very small percentage of what you actually find in CLLs that appear
+in CLL sets.
+CLL sets are really small.
+It's in kilobytes in size.
+Very frequent, but questionable.
+It still uses it.
+There's a paper that some of my collaborators wrote.
+I'm not part of it.
+As in the team of people who are looking at browser revocations, certificate revocations
+and studies, they followed up with a very nifty tool, which now ships with Firefox,
+by the way.
+It's called CLLife.
+The whole idea that you can't download CLLs because they're large, unfortunately it's
+true.
+As in, you incur a lot of bandwidth.
+This is a terrible idea.
+As in, why would you trust Google to figure out which websites should be included in the
+CLLs or not?
+That doesn't seem like a nice thing.
+Instead, what they did was they used a very simple data structure called Bloom Filters.
+I don't know how many of you know Bloom Filters?
+Awesome.
+One of the coolest data structures that I know of, that and Fibonacci Heaps.
+How many of you know Fibonacci Heaps?
+Awesome.
+How do you know?
+I think we covered it in one of the operating systems.
+Or they mentioned it.
+They might have mentioned it.
+I've seen it mentioned before.
+I think they had it at Algorithms Data Structures.
+It was mentioned at one point in the curriculum.
+You should take a look at it.
+It's a very beautiful and simple data structure.
+You might have actually heard it when you think about Dijkstra's shortest path.
+The running time of Dijkstra's shortest path is usually not that great, but you could reduce
+it by using Fibonacci Heaps instead of a priority queue.
+Things that I still remember from my undergrad days.
+But anyway.
+So, CLLite, you can actually check this.
+I'm not going to question you based on this.
+It's a very nice paper.
+This is from my co-collaborators.
+It actually ships.
+It's a working product that actually ships with Firefox today.
+It does something similar to CLL set, but it doesn't actually choose what sets you pick.
+The idea is, again, I can't explain without explaining the data structure.
+But it's very easy to make the CLLs very compact.
+And it's actually written by an undergraduate student and it's actually shipped to Firefox,
+so it's nice.
+Yes?
+One question still about that.
+So what Google did is they just took the whole CLL list and they picked a bit of high value
+domains of that and they said, okay, this is the CLL list.
+So the other domains that would probably be revoked, you wouldn't even hear of if you're
+using Chrome.
+Could they not have done something like what we had earlier?
+I can't answer what they couldn't have done.
+No, but I mean like, would it be a solution to do like, where we had something like a
+hashing and then you would see, look at the beginning of the hash and then you can then
+retrieve a subset that contains what you're looking for.
+Hashing doesn't work like that.
+You have to, or at least regular hashes don't work like that.
+You need something called as a locality sensitive hashing in order to do the kind of things
+that you're talking about.
+Those are not cheap.
+I'm talking about something with buckets or something.
+I forgot what exactly it was.
+The what?
+The page DNS.
+The page DNS maybe.
+Something like that.
+But that still doesn't tell you which cert has been revoked.
+So you're making the, the whole reason was that they didn't want the browser to do any
+lookups.
+Right?
+So you want to, the Chrome browser, they want to make sure that it is fast.
+It doesn't do any CRL checks or OCSB checks.
+How do you make sure you do that?
+Well, you could turn off revocation checks forever.
+That would be terrible.
+But what they did instead was they said, okay, how about every now and then you, you assimilate
+a small amount of CRLs, right?
+And this is their browser, right?
+Chrome is their browser.
+And they could have servers that keep shipping these updates, right?
+And you can actually run Wireshark, run your Chrome browser.
+You could see the CRL set fetches, by the way.
+Again, I don't remember the frequency at which these things, but they should be very infrequent,
+right?
+You know, probably once in a day or something.
+But they'll do this.
+CRL sets.
+But hashes don't give you that because a hash only tells me some things are compressed together
+or some things fall in a bucket, but I don't know which one is in the bucket.
+One question about OSCB stapling.
+Yes.
+So that was, I think you mentioned somewhere they made it mandatory in a way or tried to
+do that?
+Because, yeah, nobody would staple because they're like, oh, why should I care?
+So in order to force the servers to staple, then you've made your OSCB must staple.
+Okay.
+And then if something is OSCB must staple and it doesn't include it, that was also what
+they say, right?
+Browsers should not go and fetch it.
+Right.
+But if something, someone should not.
+Should not.
+If someone staples it, if someone staples their server, I'm okay.
+Yes.
+Okay.
+So what they say is that you're instructing the browser to not fetch it because if the
+browsers do it, they reveal your browsing behavior in a CA.
+Yep.
+Again, should not.
+That must not.
+So there's a lot of questions.
+So maybe I'll start with this and then I'll continue next week.
+There's a lot of questions that you probably have about CAs.
+Some of you asked, why do we have, what if the root CA gets compromised?
+Why do we even have so many root CAs?
+Right.
+It doesn't make much sense.
+And whatever root CA does something nefarious, right?
+Could they do?
+Well, there have been examples.
+Certificate transparency was, I mean, Google is not that evil.
+Certificate transparency was one initiative, lots of Google engineers spent their time
+on.
+It's a pretty nice one.
+It's the sort of like the standard today and we have walked through what it means.
+At a high level, what you have to keep in mind is it's about certificates and transparency
+basically is trying to say, wouldn't it be nice if all of us know exactly the set of
+certs that every CA has issued?
+Okay.
+How does this help?
+Well, if you have lots of eyes, you know, looking at a particular data or an audit log,
+then maybe not you and I, but someone else will figure out if something is wrong.
+That's the whole idea.
+And if you're wondering, hey, that shouldn't work, I mean, how does it work?
+A lot of things in the Internet actually works because, you know, people have public access
+to a data set and the chain works very well with the Internet, right?
+A lot of people complain about a CA or an ISP doing something wrong.
+It does work.
+Again, because it affects their bottom line.
+Okay.
+So anyone can sign any domain, any CA can sign any domain and you know, you might sometimes
+see this kind of thing as in multiple CAs could sign a given set.
+And the reason why I wanted to show you this is because chain of trust does not mean a
+single chain of trust.
+Keep that in mind.
+It could be multiple pathways.
+As long as one pathway is valid, the browser can check the set.
+The reason why these things can also happen is if because a CA is getting rolled out or
+a CA is just getting started, it wants to ensure that it doesn't have enough servers
+or it doesn't have the capacity to scale, so it doesn't, let's encrypt it initially
+when it was starting out.
+Some of the search would be cross signed by another one.
+Ah, finally, I have a slide about, puts Netherlands to shame a bit.
+Digi Notar was actually a wake up call, right?
+So Digi Notar was a very large CA.
+You could, I thought I put the URL.
+This article should still be online.
+Basically, Digi Notar was compromised and the hacker or the hackers or nation state,
+depending on which you believe in, they issued multiple rogue sets.
+Rogue sets basically means once you compromise a CA, you can pretty much issue a set for
+any of its clients.
+Because keep in mind, you've compromised the root CA, which means that you've compromised
+the ultimate, you know, the trust anchors in your chain, which means you can create
+whatever chain you want, right?
+And your browsers will be forced to accept it because they're like, ah, I want the chain.
+Looks good.
+I'm good.
+Okay.
+Digi Notar is not the only incident, but the one incident that actually affected quite
+a lot of organizations because if you look at the list of sites that were compromised,
+many included development websites.
+So it gained a lot of notoriety.
+I think there was also some Dutch government websites or institutions that it took down,
+but anyway.
+What if CAs go rogue?
+You cannot revoke root certificates.
+You cannot.
+So keep this in mind.
+So regardless of how we twist the question, the question is about revoking root sets.
+You can't.
+You could remove them.
+It's hard to remove CAs from the root store, but you could still remove them.
+And the only way, for instance, we're using Chrome.
+This is another problem.
+You use Chrome.
+You use Firefox.
+Each one comes with its own root store.
+So that presents complications.
+There are articles.
+Google's the famous one usually.
+They're very loud about banning some CAs.
+Ah, it will do.
+StartCom.
+StartCom was recently removed.
+Yeah, 2017.
+And look at the subheading right.
+It says, when Chrome 61 is released, the Chinese CA will be completely blacklisted, which
+means that it won't be in the root store, which means if you're using Chrome, if the
+website is using a search signed by that CA, it won't work.
+There's a lot of these articles you can look at.
+Certainly get transparency, says the following.
+I'll explain the high level thing that you need in detail.
+So you have a CA that's issuing a bunch of certs, but every time it's issuing certs,
+what if we force it to push it to a log?
+You create a log.
+And the idea is that if it's a public log, that anyone can access it, as in including
+you and I, maybe it creates incentive for people who want to check the behavior or monitor
+the behavior of CAs to take a look at the log and then say, you know what?
+That doesn't look right.
+For instance, if a CA accidentally issues a cert with a very weak key or a wrong method,
+you could say, hey, that's not right.
+Or it makes a typo in the website name or the domain name.
+Somebody could point that out.
+It has happened.
+So the idea is that even if people don't do it out of public good, which is hard, but
+at least you will monitor your own domains.
+So if I tell you that, look, any cert that has ever been issued is in this database,
+what's the minimum thing you would do?
+If you are running a website, you'll say, I want to make sure my domain is protected.
+So I'll keep pulling the database to say, has any cert been issued with my domain in
+it?
+Because that shouldn't happen.
+At least I hope that makes sense.
+So the question is, you know, the browsers, when they actually go to a website and then
+they get the cert, they can also check the log.
+I mean, that looks a little complicated.
+But the point is that the browsers don't have to do any additional check other than ensuring
+that this cert is present in the log.
+That's it.
+So certifying the transparency, what it says is if all your certs are in a log and the
+browsers actually can test easily that your cert is in the log, that already gives you
+additional benefits.
+Yes?
+Why is that?
+Because it's public, right?
+So as in, you know, if a CA actually does something funny, say for instance, you use
+Avian Amro, let's say, you know, and suddenly, you know, someone notices that, you know,
+DigiNote Avro is compromised and there's a cert issued for Avian Amro, right?
+That goes into the website, but people would alert to it saying, hey, Avian Amro is compromised
+because I see a new cert from DigiNote Art.
+That shouldn't happen.
+The only part that I haven't explained is how does a browser know that that has happened?
+We will get to that.
+But this is the whole idea.
+If you have a log and the log, you make it transparent and make it easier for anyone to log it,
+then you can have this.
+And the browsers could simply think about a simple scenario, right?
+Who can operate this log?
+CAs.
+Who else?
+The auditors.
+Huh?
+The auditors.
+Anyone could operate actually.
+There is a criteria that you have to adhere to if you're operating your own log server.
+But today, it's not just the CAs.
+Actually, it's interesting to note that the biggest logs are actually run by Google, Cloudflare.
+And there's one more.
+So any large provider or CDN or browser vendor, content provider can run these logs.
+And the browsers could simply say, you know what?
+I'm only going to check or trust your cert if it appears in three out of the five logs.
+Why three out of the five logs?
+I mean, you do want to give browsers a bit of freedom, right?
+Not all logs could have been updated at the proper time.
+But by now, ensuring that, let's say, for instance, you pick five logs, which one would you pick?
+You'll obviously pick your own one.
+So Google has its own.
+These are called certificate transparency log servers.
+So Google operates its own log.
+And in addition to that, maybe trust Cloudflare's log.
+And then there's one more very sign I think operates its own.
+And it could say, look, at the very least, I want you to have a timestamp here, a timestamp there, and a timestamp there.
+That's pretty much how it works.
+And these timestamps are cryptographically signed.
+So it can't forge.
+And these logs are publicly auditable.
+And they're append-only.
+You can't delete any entries from the log.
+Those are all the features.
+The logs are called CT logs.
+Yes?
+But what does it mean if the browser gets a certificate and it's not in the log?
+Why is that not safe?
+Because you don't know anything about it.
+Nobody has had their eyes on the particular cert.
+That's what it means.
+Are the logs included in a certificate, or are you actually querying them or not?
+That's a very good question.
+There is something in the cert that actually tells you whether the log has been included.
+We will see.
+So the logs are public.
+They're independent.
+They're distributed.
+It addresses many of the problems that we already encountered in OCSB.
+No reliability problems.
+There is no dependency issues.
+They're not private as in they're public.
+Anyone can query them.
+Academics query them a lot to build all sorts of interesting statistics.
+Assure non-repudiation, which means it's a fancy way of saying, once you've issued something to a log, you can't take it back.
+Append only the tamper proof as well.
+We will see how.
+I'm going to stop here because I have to introduce this data structure called a Muggle Tree.
+It's already great if you don't, we'll see.
+But thanks.

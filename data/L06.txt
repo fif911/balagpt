@@ -1,0 +1,2328 @@
+But no, that's what I expected.
+If there is any questions, you know,
+level of the hierarchy, this one is easier.
+There are lots of,
+I'm sure you know that there's going to be
+a nice lot of people sitting over here.
+Or I should try to put them on blockchains.
+That would be great.
+This one is important in case of a big impact
+on how many people in the group names there was.
+The second paper that I wrote,
+there's another one that tries to put the group names
+in the peer-to-peer.
+Hey, what does Cringy do?
+Obviously puts a lot of Cringy.
+Cringy responds to people's dreams.
+People just cannot easily infer what to do with the faster.
+How does this work?
+So suppose, you know, the user project in genplace.com,
+again, user project, whatever,
+doesn't do anything.
+The local resolver.
+The local resolver node.
+And again, for all of these things,
+DNS-set, DNS-curve, DNS-OH,
+pay attention to what endpoints need to change.
+For D-OH, what is the role of your local resolver?
+D-OH is DNS-OH DBS.
+Can you hear me?
+Yeah.
+Yeah.
+Okay, so let's think about this.
+In DNS-OH, yes, go ahead.
+That's a good point.
+In fact, it does, you know, in fact, it has no role.
+Because you have to figure out where those idioms are,
+and once you figure it out,
+the local resolver is not even in the picture.
+It's not even in the path of the resolution.
+Does that make sense?
+So pay attention to everything.
+So these are all the things
+that I want you to pay more attention to, right?
+Not that DNS-OH HTTP is, you know,
+means that you'll have to report properly, right?
+Even if you forget that, that's fine with you.
+But pay attention to what are the endpoints.
+So here, the focus is now on changing the local resolver.
+Why do you have to change the local resolver?
+Because obviously, somewhere,
+the translation from the domain name to pages has to occur,
+because this is one of the ones, okay?
+So let's see.
+So you basically, you know,
+the local resolver does the translation
+from netflix.com to page 101.
+You'll see how those pages are constructed,
+and how does it work.
+Well, instead of just going to that particular domain,
+you say page 101, go to the TLD,
+and the TLD will be the same page, P101, as it is.
+And then, you know, you finally go to the authority table,
+and, you know, this particular page actually provides
+a new registry for the target of the query here,
+you know, final name.
+Actually, it shouldn't be this one,
+so it should be still page 201.
+So this is slightly different from KVA anonymity,
+because in KVA anonymity,
+what happens is that you pick random domains, right?
+So which means that, you know,
+all of your queries might not go to the same TLD.
+That's another thing.
+Here, the page is actually,
+once you actually map your netflix.com
+to a particular page,
+observe that there's only a single query going to a TLD,
+which means that a TLD zone
+has somehow been split into multiple pages.
+Does that make sense?
+All right.
+How does the page work?
+Well, here is the, you know,
+high-level approach from the database in the paper.
+So you have netflix.com,
+you know, that was here as a bunch of addresses.
+And basically, what this paper suggests
+is what you could do is you could take the, you know,
+a hash, you know, this is a shadow of a physics
+of the domain name,
+and then what you do is you look at the hash output
+and then take a plus few bits,
+a few high-level bits.
+This sort of like technique where you would hash something
+and look at for a few bits of the output of the hash
+is very common in this kind of thing, right?
+You would see it in load balancing,
+you would see it in,
+I'll think about it.
+It's quite common and this is exactly what they do.
+So the idea is that once you hash,
+you know, you take a few bits
+and there will be a lot of other domains,
+random domains that will share similar high-level bits
+and then you group it together to a page.
+Now, the only thing you have to keep in mind
+for page DNS is that you have to actually pick a hash
+or you have to construct this page
+such that all of these addresses
+are actually from the same domain, so the same PLD.
+Otherwise, it doesn't work.
+Because your requests are in actually in terms of a page
+and you do need to actually ensure
+that the addresses in that page
+all belong to that PLD at the other end of the page.
+I have a question.
+Why does it have to be hashed?
+You need some way of actually grouping them together
+and this is one easy way to do it, yes.
+Also a question.
+Why does it have to be a cryptographic hash?
+Isn't that expensive?
+Eh, I don't know.
+I don't know the answer to that.
+Maybe Herbert knows.
+I don't know.
+Yeah.
+So you do know.
+Strictly speaking, as far as I can tell, it doesn't match.
+Okay.
+As long as you manage to have multiple names
+that hash through the same bucket,
+I think that's all we're up to.
+All right.
+Another way to think about it
+is that you could actually group them in a number of ways.
+What the hash allows you to do is it makes it harder to,
+it's a one-way mapping so it makes it harder
+to guess it.
+Okay.
+Yeah, but like you said, you have to group them some way.
+Could you not just group like with,
+instead of page P101, page dot com?
+Yes.
+So what do you mean by page dot com?
+So all of the domains under dot com?
+Yep.
+There are 140 million domains.
+Yeah.
+So you go ahead.
+There are 40 million domains if you go down by the first.
+That's a very good question.
+So what you're asking is how are you guaranteed
+that the hash, the first few bits,
+will ensure that these pages are manageable?
+Is that the question?
+Oh, no, it doesn't look like an answer.
+That's, if you only take the first three,
+there will be quite a few domains under that as well.
+You cannot say that under dot com there are no.
+I'm not sure I follow the question,
+but let me rephrase it.
+Let me see if that makes sense.
+So your hash, now the question is that
+how many bits of that hash do you actually get to group?
+That depends on the hash function that you use
+and also on the density of the domains.
+So I mean, what you want is you want to make sure
+that once you pick the number of bits,
+the size of your page or bucket, so to speak,
+is meaningful.
+That's one.
+And second thing, you also want to pick a hash
+such that the addresses that you initially took
+to generate the hash, it actually
+has no sort of locality, right?
+Meaning it could actually, it has a tendency to map
+all literally different domain names into one page.
+Yes.
+Would this not be worse than K anonymity
+because not all domains are equally likely?
+Like, you just get a bunch of random and then Netflix.com
+which is more likely for you to look up?
+You're right.
+Yes, it is, it's not, there are assumptions you can make
+about, okay, let me say something and then I'll try
+to define it.
+In the construction that I just gave you,
+it doesn't look like it's actually better
+than K anonymity.
+But by the way, this is anyway a way of K anonymity, right?
+An argument that I talked about K anonymity
+also applies here.
+Suppose you construct a page like this, okay?
+Forget the popularity of these different domains, okay?
+I am the name server, right?
+So you come to me and then say, I don't want a domain,
+I want a page, okay?
+The page consists of a bunch of domains
+and I still want to figure out what you're creating.
+What is one way I can do?
+Okay, suppose I give you a bunch of domains, okay?
+And let's assume that what is the TTL
+of these responses that I give you?
+Are they all the same?
+Whose control is TTL in?
+The name server, right?
+Suppose I return to you a bunch of records,
+let's say these ones.
+Each one of the different TTL now.
+What would be your following query be?
+Yeah, so given one particular request,
+I cannot actually figure out what you exactly observe.
+But if there is a high likelihood that you will actually
+repeatedly contact me, then what I can do is I can play
+with the TTLs of these domains to figure out
+how frequently some, because if I give you a series
+of requests, right, if I want to know whether you are
+indeed going to some site, let's say xyz.nl,
+I can play with the TTL of that particular domain
+and see how frequently it appears, right?
+There must be an overlap of TTLs.
+So there is an assumption that you have to make
+about the TTLs of these domains going to the page.
+I feel probably said one, right?
+I think all of them, otherwise there's no.
+Does that answer your question?
+So yeah, at a high level, it doesn't look like
+it's as good as scalar, but then there's more of that.
+Okay, let's see.
+Now, the other thing that I said is, you know,
+you have to think about who has to change,
+who needs to actually change in order to support
+any particular solution, right?
+In this case, what are all the entities that have to change?
+Every name server, so and every resolver?
+Every TLD, in fact, right?
+Because if root is not involved here,
+because it has enough mechanisms to actually
+eliminate the root level, so let's ignore the root,
+so that's why we started a TLD.
+Every TLD has to cooperate, but not just every TLD.
+Who else?
+Two parts of the equation.
+Yep?
+All the resolvers.
+All the resolvers.
+Not only the TLDs have to change,
+but all the local resolvers have to change
+in order to support your page level.
+And that's a little tricky.
+What happens in terms of a chunk?
+Okay, what is a chunk?
+The number of domains in a particular domain,
+sorry, under a TLD should change, get added or removed.
+What happens to the pages?
+They have to get reconstructed?
+Because you could say that, oh, who cares about
+the ones that are getting deleted,
+then you once again have to pay attention
+that if you're not really being careful about that,
+your page could end up with a lot of domains
+that are actually invalid, so it means
+that you're actually leaking information
+about what is the exact domain you're querying.
+So again, TLVs must cooperate in the construction of pages.
+What incentives do they have?
+I was gonna move on.
+Any questions?
+Yes?
+So just to be clear, every TLD name server
+has to map common level TLD domains
+that have the same starting bit sequence under the hash.
+Yeah, they could actually use different ones,
+so basically you want every TLD to tell you
+how they're breaking their entire zone,
+because you want those mappings,
+you want those page numbers, and so that it can query.
+Without that, it would be really hard.
+There's also other questions you can always ask, right?
+So when I talked about DNS over HTTP,
+here's one obvious question that you need to ask is,
+okay, we started with not trusting local resolvers,
+why would I trust ADNs?
+So I gave a simple argument, but the same way here,
+you could also ask, TLDs created pages,
+why would you trust the TLVs?
+Why would you trust that the pages have been done
+in this truly random fashion?
+As in, how would you audit it?
+Right, so those are all open questions.
+How long is a page?
+You can configure it, I think the paper uses
+something like 100 domains, something like that,
+128 domains or something like that.
+I don't know.
+All right, so normally what I'm doing is
+I send a request with the hashed thing?
+Yes. The hashed domain?
+Your request netflix.com, let's say.
+It will change into a request that looks like,
+I don't know, some random hash, .tlds.com here.
+The top level domain server, it has like many pages.
+Yes.
+And then it can look which page has my hash
+that I requested and it will give me that page, or?
+Not which page has the hash, which page matches the hash.
+Matches the hash.
+Yes.
+What happens if there is a set of page
+you can control it, the size?
+Let's say 100.
+What happens if a new domain maps to the same hash?
+Do you just link it in a way?
+Yeah, how do you handle the chunk?
+That goes back to the same question,
+so you have to change the instructions.
+So this is a classic problem
+whenever you use simple hashing schemes, right?
+Okay.
+So hashing is one common way, like I said,
+you could hash something, look at a few bits,
+and one common way to load balance.
+A key issue with plain simple hashing like that
+is that when the universe that you're trying to hash,
+the sample that you're trying to hash, that changes,
+then you'll have to reconstruct the hash.
+Right, got it.
+Can the TLD not simply keep track
+of which domains were hashed to what,
+and when it receives the hash request it says,
+okay, this is actually Netflix hashed.
+Can I get it?
+Can the TLD not keep track of which domains it hashed
+and what was the method to that?
+It knows what domains it hashed.
+Yeah, but so can it not know what I'm requesting?
+How?
+Because I'm not telling you,
+I'm only telling you the hash, right?
+Right, but like I, the TLD hashed it, right?
+Yeah.
+So they know like, I hashed it.
+Imagine this.
+Let's go into a hash.
+Imagine this, right?
+Imagine the class is a TLD, right?
+There are two hashes, right?
+A bucket to the left, right?
+All of you belong to one hash.
+All of the students in the site belong to one hash.
+And if I come in and say,
+I'm looking for a particular student,
+but I don't tell you which student,
+I'd say I want the left or the right.
+That's all you get, right?
+So you know that I requested left or right,
+but you don't know anything else.
+Again, there's no rocket science here, right?
+Very simple techniques, you know,
+questioning the foundations and then trying to ask,
+who can I trust?
+Who can I not trust?
+If you say you can't trust someone, how do we keep it?
+So one last technique, and I promise you,
+I won't talk about DNS again, right?
+This one is the latest one.
+It's called oblivious DNS.
+Page DNS was a very nice paper, in my opinion.
+It did spur a lot of discussion.
+It's from actually a very strong group
+that works in security from ETH.
+But although to my knowledge,
+it didn't gain a lot of,
+I would say it didn't gain any adoption,
+but it did stir a lot of discussions
+that I need to hear from standardization unions.
+This one on the other hand,
+it's also from academics, by the way,
+but this one is actually gaining a lot of traction.
+We'll see why.
+Famous picture, right?
+One last time.
+Yeah, user, sub, local, whatever.
+This is another picture,
+but I mean, I'm not showing Q&A minimization here,
+but that's fine.
+It doesn't require it.
+We talked about the deeper input.
+So let me just skip through.
+So DNS over HTTPS.
+Oh, I know why I was talking about this.
+So the problem that we started with a problem
+that anyone can observe these queries,
+so let's encrypt it.
+There are a number of ways you could do this.
+DNS over DPLS, DOP, DOH is one.
+In all of these things,
+you'll have to change the endpoints
+to support your encryption and whatnot.
+Changing all of this infrastructure is really hard.
+DNS over HTTPS tries to change
+who does the recursive resolution.
+This is the CDN, we saw this.
+But ultimately, the problem that we are trying to solve
+is the following.
+So we're trying to avoid this problem,
+the ability to link clients and queries.
+Clients is end users like you and me.
+The queries is basically the domain
+you're looking for.
+It's the ability to link these two things together
+that's problematic.
+When I say clients, IP address is false.
+So let's focus on to this particular entity,
+the local resolver.
+So what can it do?
+So basically, it can actually figure out,
+on the left side, it knows the local resolver
+is actually operated typically by an ISP.
+This is what we get for free.
+On the left side, it actually knows the IP address
+of the user that's requesting the query.
+And for the most part,
+given that there is no encryption or anything,
+you can actually see the query,
+so there is a clear link ability.
+So the question is, what can you do to break that?
+And we saw some examples,
+and one last thing we could do is, hold on.
+Suppose we take this local resolver.
+So this paper is basically talking about
+how we can actually take a look at this local resolver
+and then try to see how we can break the linkage.
+And there are two frames of the old book
+of leaving us here as an audience growing.
+One is that it actually introduces two things.
+One is you'll see there's a recursive resolver,
+there's a small change in that
+that makes it never see actual claims.
+And it also introduces new authoritative servers
+that will never see actual users.
+Now, at a high level,
+this looks like going against everything that I told you,
+which is a solution has to be simple,
+it has to change minimal amount of surface.
+This looks like it's introducing a lot more moving parts,
+but we'll see why this works
+or why this is gaining traction.
+So let's see.
+You have a user requesting netflix.com stuff,
+but let me just ignore the,
+let me just say that the first thing that we want to do
+is we change the stuff, okay?
+In particular, what we want the stuff to do is the following.
+We want the stuff to actually encrypt the credit.
+I haven't even told you how you could encrypt it
+at this point, but let's go with this, right?
+So we'll come back to the key part later, okay?
+So in this regard, it looks like it's almost similar
+to what page DNS resolvers were doing.
+Page DNS resolvers are converting a domain to a page,
+but observe that in the page DNS,
+the resolver still knows what was the IP address
+and what was the query.
+The linkability part is still numbered.
+It only addresses on path observers
+from the local resolver on.
+But here, observe that the stuff,
+the stuff is residing on your machine, right?
+And the stuff is already encrypted.
+So by this point, no one further
+can actually figure out what your query is.
+So far, so good.
+Then you send the encrypted query to the local resolver
+and let it do the resolution.
+What will happen now?
+How does it know?
+Exactly, it can't know, right?
+It'll basically say, I don't know how to parse this
+because I don't see the domain name, right?
+I can't walk through the hierarchy because I don't know,
+okay, the root I can always approach,
+but what do I tell the root?
+Okay, so let's do some work in this.
+Suppose what we do is in addition to doing this encryption,
+we attach a suffix called ODE-ness, okay?
+And then we pass it to the local resolver.
+Now what does it do?
+Yes?
+It goes to the TLD for dot ODE-ness.
+You go to the TLD for dot ODE-ness,
+but that's once again,
+it at least looks like it can do two steps, right?
+It can go to the root
+and then tell the root what TLD it wants.
+And the TLD presumably should know how to do this, okay?
+Okay, that's really cool.
+But it looks like we're complicating the picture,
+but let's walk further, right?
+So assuming that it actually reaches the TLD,
+it goes to the TLD and then says, can you resolve this?
+And this TLD is your ODE-ness name server, okay?
+Now let's see how this one works.
+And now this one, what it does is it's basically
+the authoritative for the dot ODE-ness, okay?
+And then what it can do is it can decrypt the query.
+Again, how does it, we'll walk through that, okay?
+And it decrypts the query and then it gets a domain name.
+Okay, now at this point, let's observe the following.
+The local resolver, what does it observe?
+It knows where the request is coming from,
+so it knows the users, but it can't see the domain name.
+It only knows that you requested something
+that is under ODE-ness, okay?
+What can be under ODE-ness?
+Everything, because unlike your .com.nl,
+ODE-ness is just a suffix that has been added
+to make ODE-ness work, so it means that ODE-ness resolvers
+can actually have a bunch of other things, right?
+In fact, they don't have anything.
+They actually are recursive resolvers, right?
+The fact that they actually act as authoritative
+is just a gimmick, okay?
+We'll see how this works.
+This one, what it does is once it actually
+decrypts your query, what it does is it takes this domain
+and it does the classic recursive,
+the iterative resolution that you already know.
+So it basically touches the answers and then sends it back.
+Now, if the local resolver was, let's say, you know, same,
+what I mean by that is it actually made sure
+that it is not forwarding the IP address of the user
+to this ODE-ness, then the ODE-ness only knows
+the domain name, but it doesn't know who requested it.
+It can only get the max packet
+to the local resolver, but that's bad.
+So the stuff can actually, I shouldn't have actually
+said stuff, but maybe the local resolver, sorry,
+that's unsafe.
+The local resolver observes who makes a request
+and not what the requests are.
+And the ODE-ness resolver basically observes
+what the requests are, but not who makes them, okay?
+There is a separate, so there's a lot of discussions
+about what the local resolver should reveal about the user.
+In the past, it used to be the case that the local resolver
+did reveal who was requesting the,
+who was making the query.
+Do you know why?
+Okay, ODE-ness resolver.
+Why should the local resolver ever tell any name server?
+What does the IP address
+from which the query originated from?
+Yes?
+Maybe for regional responses, or?
+Good, good answer.
+What else?
+Maybe, I think, authentication.
+Ah, I don't know.
+Could be, maybe, I don't know.
+Something more far simpler.
+They don't want to reveal the answer
+to the local resolver?
+Performance reasons, right?
+Meaning, think about it.
+When you query a domain, how many IP addresses do you get?
+Typically more than one.
+What are those IP addresses?
+Could you actually, smartly actually, you know,
+figure out which IP addresses to point?
+In fact, you can, right?
+So for instance, if I'm actually, you know,
+the authoritative for, let's say, New York Times.com,
+what could I do?
+I mean, again, hypothetical scenario, right?
+I could operate one server, given the budget I have.
+I could operate one server in New York,
+maybe one more server in California.
+Maybe for all of Europe, or the rest of the world,
+I'll just operate one in Paris.
+Now, if the request is coming in,
+and I see that, as an authoritative,
+I'll get the request,
+and I see that the IP address belongs to someone in Europe,
+it's more likely that I'll actually return them
+in the list of IP addresses,
+the first one will be the one in Paris.
+So, user IP addresses, it's, you know,
+typically the local resolvers will pass on
+some information about the user,
+because it's for performance reasons.
+There's a lot of, DNS is an overroaded system,
+there's a lot of systems that rely on these things.
+But today, typically the local resolvers today
+don't actually forward your IP address,
+they forward the subnet.
+Yes?
+Can you effectively, like, do what the VPNs do,
+where you just, like, map everyone in a given region
+to a universal regional IP address
+to be passed to the particular server,
+so they could still do the,
+prior to that?
+So the local resolvers could still act as a proxy
+for everyone, right?
+Yes.
+So you could, but there is one particular instance
+there that'll fail.
+The local resolver could act,
+so, for a given autonomous system,
+you know, let's assume that there's one local resolver,
+a bunch of IP addresses,
+then you have a primary game server,
+primary resolver IP, secondary resolver IP.
+That's two IP addresses for an entire autonomous system.
+If the autonomous system is really large,
+this local resolver will no longer can be a good proxy
+for where the actual user is.
+It's failed spectacularly in cylinder networks.
+I'm not saying it doesn't fail in other cases,
+but cylinder networks often fail.
+That's why performance sometimes is very, very,
+you know, flaky.
+Because you make a DNS resolution,
+your phone contacts in here by, you know,
+the resolver on that cylinder network
+could be quite far from where you actually are.
+It's a little known problem.
+But anyway, so far so good.
+Yes.
+I assume the ODS resolver also encrypts it
+when it sends it back, or is it?
+Yes, yes.
+Nice.
+Yeah, I've lost it with that.
+Yes.
+Okay, now let's talk about key exchange, right?
+Because that's the element in the room, right?
+So how do you get these keys?
+Because they're magically a pair of no-hairs.
+What do you think we could do?
+Don't think too smart.
+Oh, I was talking about the generation of the keys
+and how you get it.
+But how do you get the keys in the first place?
+Meaning you want to know what is a key
+with which you encrypt, what would you do?
+Preset.
+Huh?
+Preset.
+Good, but then, you know.
+Yeah.
+As for ODS?
+As the what?
+As for ODS?
+Yes.
+Overload the existing system.
+It's a key value store.
+Just like how we did for DNS key, DS key, memory, DNS set,
+it could be the same thing, right?
+You need a mechanism by which you actually figure out
+what is the public key for the ODS domain.
+And how do you do it?
+I mean, just use DNS.
+So a setback is that the resolver will know
+you're trying to do ODS, but yeah, okay, they do.
+I mean, they can block you
+other than that they can only march.
+Okay, so let's ignore the user, let's start from the stub.
+So the stub, what it does is before it actually,
+remember that in this case, from previous DNS,
+the stub has to change.
+And there is a second component that is there
+is that there is a special resolver, ODS resolver.
+Changing stub is in some sense easier
+than changing local resolvers
+and all the names of its hierarchy.
+Because stub is an auto control, right?
+You could change library.
+I could push a software update and change the stub,
+or maybe I can push an operating system up there
+and change the stub, right?
+So the stub, what it can do is it can start
+with a special dot ODS query, goes to the local resolver.
+What does the resolver do?
+It says, okay, I know how to look for the dot ODS.
+I don't know what the special dot ODS means.
+It could just look like any genuine domain name, right?
+And then it goes to your usual root name server
+that gives you the TLD and then returns,
+and the ODS server could actually return you
+to the public key.
+Now, what is clever about the ODS paper or the idea
+is that they say, you know what?
+You could do something much more fancier.
+In this case, instead of just deploying one ODS server
+that looks like somewhere in the Netherlands,
+let's assume it's in the Netherlands, okay?
+What you could do is you could do the following, right?
+You could pop up a number of ODS resolvers.
+They're just resolvers at the end of the day, right?
+They need to have a public key and private key,
+and they need to be able to return the public key
+when queried so that the clients can encrypt.
+So far, so good?
+And the advantage of actually having multiple ones
+is that you could do load balance,
+and you could do, you know,
+because there is an additional cost here
+involved in the lookups,
+you could try to optimize for that
+by deploying servers in multiple places
+and then, you know, taking one load back.
+Well, how does this local resolver design
+which one to go to?
+How do you know how any cast works?
+Maybe you'll have a bit of some other measure.
+The idea is that all of these ODS resolvers
+could have the same IP.
+So for instance, Cloudflare has a service called 1.1.1,
+or, you know, Google has this 8.8.8 quad 8,
+or in fact, there's an 8.8.4.4 as well,
+and there's a quad 9 which is operated
+by a German operator, I guess.
+It's very nice.
+And these are publicly available resolvers, right?
+And you can contact them from anywhere around the world,
+but it's not one server that's responding to it.
+It's a bunch of servers that all have the same ID.
+How do you figure out which IP you don't?
+Well, BGP takes care of it.
+We'll cover BGP soon.
+But the idea here is that BGP tells you
+what is the nearest ODS server, right?
+And then you go to that.
+And the further, you know,
+the cool thing that you could do is when you respond,
+what you do is you send an OPG record,
+but that's just a minor technicality
+where you give the name of this particular ODS server
+and a public key.
+The public key is required for encryption
+and what they say is that the name could be actually derived
+from the key itself.
+So it's self-certifying.
+That's a minor detail.
+That's not very important.
+What is cool about this is that each of these ODS resolvers
+could have different public keys, right?
+Different key types.
+You don't have to worry about key sharing
+across all of this infrastructure.
+But it also means that once you do this,
+especially the ODS query,
+something changes in the internet.
+You go to some other ODS resolver, you're screwed, right?
+I mean, you know, it can't be true.
+But that's, again, a mind machine.
+But it could actually do this
+and then from that point onwards,
+you could actually pick up the public key and then do it.
+The other thing is that, you know,
+because there's a slight, an extra exchange involved
+by deploying multiple servers,
+they take care of the performance of the network,
+which is really nice.
+From this point onwards,
+the stuff could actually say, I know the public key.
+So if I want to resolve any particular domain,
+what I will do is instead of doing the dot ODS,
+I could also attach this.
+Meaning, if I take netflix.com,
+I encrypt netflix.com using this public key, right?
+And then I attach the name of this ODS resolver
+and then put dot ODS.
+So in fact, I can ensure that this,
+eventually when this resolves,
+the final domain that I'm asking,
+it would ODS and given that there's a suffix name as well,
+you go to this particular ODS resolver.
+Yes.
+So, okay, let's take an example of netflix.com.
+Yeah.
+So you get the information,
+the public key and stuff from the local DNS.
+You get it all the way to the start, right?
+Yes.
+And then you encrypt it and then you send it?
+Yeah.
+Okay.
+Is the public key signed somehow?
+Yeah, so this is the part.
+The name is actually self-certified.
+So the local resolver can't tamper with that, right?
+So which means that this name
+is actually deniable from this public key.
+So you could actually ensure that that name is indeed
+the response to the request.
+Oh, but what you're asking is how do you know,
+for instance, the public key is in here?
+How does the DNS encrypt back to the stuff
+because it doesn't know the stuff's public key
+or if it encrypts?
+This one is plain, right?
+No, no, not here, but in the final request,
+like when you're asking for a domain.
+Ah, there's one more detail that is involved.
+So the client could actually put its public key.
+But then the local resolver also encrypts it.
+No, you can't.
+But you can't.
+No, you give the public key.
+But then we didn't know that the local resolver
+actually faked both sides.
+Oh, he's sending his public key via encrypt it.
+Okay, fine.
+Sorry, what?
+Why can't the local resolver send his own public key?
+It still has to be derivable from this one, right?
+So this name is actually self-certifying.
+The one thing the local resolver could do
+is it could also generate this particular pair,
+name and public key, and then tell the stuff that,
+you know what, I'm actually loading this resolver.
+It could do that.
+Yes?
+How often does the key exchange occur?
+Is it every query or is it every session?
+The paper doesn't mention it,
+but you could imagine doing it,
+depending on how paranoid you are.
+So you could.
+Okay.
+This is under the stubs control,
+so you could make it do it every three hours, right?
+Yeah.
+Every three hours, every four hours.
+The problem is this.
+Every time you actually send the special dot ODNS,
+you won't do that if you think that there's a chance
+that you want to go to a different ODNS, right?
+The problem is that the way the ODNS is picked
+is not in your control.
+That's up to BGP, because it relies on any CAS,
+so it requires some more changes.
+Yeah, that's it.
+I mean, what I'm saying is that even if you do it
+every three hours, four hours,
+you might still be mapped to the same ODNS.
+Yeah.
+Any CAS rules that have other problems, but yeah.
+Would it be a problem if the ODNS organization
+would be the same as your local resolver?
+Ah, yeah.
+And are there any, like, measurements in place
+to make that not happen,
+or is it something that won't be?
+Don't know.
+Don't know.
+It's a very good question.
+So, number one,
+anyone can generate this name and public key, right?
+This key pair.
+You know, not the key pair.
+This attribute there.
+The idea is that anyone can operate this ODNS resolver
+because they wanted to keep the system open
+so that anyone who wants to, you know,
+so you as a volunteer, for instance,
+could prop up this server.
+Nothing is preventing you from doing it.
+But the disadvantage is also that,
+which means that you don't know which ones to trust now.
+But there is a slight thing to note there
+that if you want to operate your ODNS resolver,
+you should still belong to a subdomain under the TLD
+on ODNS, dot ODNS.
+So there you could actually do some enforcement, right?
+You could say,
+if you're, I don't know,
+pick your favorite ISP,
+I'm not gonna allow you to operate that.
+But again, there are ways to equate it.
+This is not mentioned in the paper.
+I don't know how to do it.
+I think the paper was saying that
+they can like prevent
+or subpoenas or like worms
+at any point in the chain itself,
+but only in the long point.
+They cannot prevent like in the example
+of the multiple parts in the chain, right?
+There are of course limitations on,
+you know, for every solution, right?
+I mean, they also mentioned that they don't
+assume any collusion between the resolvers.
+You have to assume some things, right?
+Yeah, I just felt like it's a bit
+reasonable to say that,
+okay, we can prevent it but only one.
+So for instance, you know,
+each of these ODNS resolvers can be forced,
+I think we're gonna stop in a couple of minutes,
+but each of those ODNS resolvers
+could be forced to reveal their records.
+It's of no use actually.
+There's one caveat though.
+There are timing-related analysis that you can perform,
+like modulo that.
+The logs of the ODNS resolver itself
+doesn't give you much mileage.
+That's really hard.
+This is a very hard control,
+and depending on which part of the world you live in,
+you can either resist the query or you'll have to divulge.
+But again, once again, that doesn't,
+but what should I say here?
+That doesn't help much.
+Because the public key of specific ODNS
+is shared with all the people that are calling it,
+you can see that like the same domain name
+will match like, will be the same encryption
+every time it's sent over.
+So the local resolver could say,
+okay, this is being called,
+this domain name is being called a lot on a specific season.
+So it must be that domain name, I don't know.
+You could do, that's an excellent point.
+You could actually observe, you know,
+the local resolver character there.
+Local resolver is not even in the path.
+Why not?
+Huh?
+Well, local resolver knows that you are calling that ODNS.
+Oh, what you're saying is they could actually observe.
+Yeah, you could basically take the public key and do,
+you know, a hash of everything, I mean,
+encrypt everything and then observe.
+Yeah, you could do that.
+By the way, the fact that you have a public key,
+private key there, it doesn't actually restrict you
+from using the asymmetric key to exchange session keys.
+That's another thing you could do, right?
+I don't know if the data mentioned it.
+So you've got a public key, right?
+And once you have a PKI system in place,
+there's nothing preventing you
+from exchanging a session key at all by using those two.
+It's a bit more involved,
+but I don't know exactly what the paper does in that part.
+But otherwise, you can do this.
+Anything else?
+I think we'll take a five minute break
+and then we'll continue with the topic.
+But thanks.
+Thank you.
+We will come back to raw colleges and authentication.
+At the end of the day, there is a path that is provided
+by the network over which your packets go, right?
+For instance, in ODNS, we said,
+oh, somehow VGP magically gives you a path
+that tells you what is in here as ODNS as always.
+You can also question how reliable the path is.
+What if you suddenly figure out
+that whenever you send an email to your colleague at VU
+and then you realize that the packet takes off
+round a lot of power over Russia or some other countries,
+you don't want that to happen.
+Can it happen?
+Yeah, it can happen.
+I didn't mean to pinpoint Russia,
+but you can pick your favorite country.
+Raw colleges and authentication, that will be a topic.
+But now let's talk about securing the content, right?
+Somehow, magically, you have a transfer protocol
+that caters to all your needs.
+You have DNS that addresses all the security concerns
+that you have.
+The network is secure and whatnot.
+Somehow, you've magically resolved all these problems
+depending on your hands on the content.
+Now the question is, how can you secure the content?
+Specifically, what I'm talking about is secure web browsing.
+So we have a full sec page.
+And what I want you to pay attention to
+is the address bar or the location bar.
+And here, specifically, the table I'm referring to
+is HTTPS.
+So this will be a focus.
+We won't get into the mechanics of how HTTP
+is working, which is not that interesting.
+
+We'll go into the certificates of the PKI that powers HTTPS.
+SNH, as you should know, is secure.
+This is TLS, which we call SSL, which
+you were holding up this many bars.
+Why is it interesting?
+Because HTTP provides end-to-end encryption,
+which means that the communication all the way
+from your machine to the web server is encrypted.
+So an on-back observer, in-pack observer, can't do much.
+It prevents against interception,
+means dropping, and so on.
+So pretty much any website, for instance,
+given that most of the financial transactions are online,
+you're shopping, and sensitive stuff,
+most of the key transactions are happening online.
+And we want to have HTTP as actually securing
+those communications.
+And in fact, we shouldn't do any of these on actually
+should do anything online if it is not HTTPS.
+HTTP is very important.
+And it's not just about sharing sensitive information.
+It's also about preventing misinformation
+or disinformation in these days.
+So it's very important, right?
+For instance, if toolset.net was not served over HTTP,
+you could pretty much do this.
+You can infer anything you want, and there's no way to.
+This could be true, I don't know.
+But if there are things you can do, all of that's wrong.
+Last class, someone asked me a very good question
+about the NSA, and it felt very bad
+for providing a demotivating answer.
+The question was, why can't governments
+enforce the use of proper, secure procedures?
+And isn't this really important in the interest of citizens?
+Such an awesome question, but I answered it in a negative,
+saying that usually governments go the other way around,
+trying to subverse what you have.
+That's not always, right?
+So this is a similar one.
+Maybe this is something a bit more
+positive to cheer you on.
+There is something called the Internet Architecture Board,
+right?
+And the R&D frequently takes a look
+at key issues like privacy and security,
+and then they provide some recommendations,
+which the industry and US do.
+One of the things that R&D did, which was in 2014,
+but not so long ago, was that they
+said that we have to make encryption
+enough for the internet traffic, which is really nice.
+You might have heard, for those of you who use Firefox,
+Firefox and EFF were some of the earliest,
+I'm sorry, Mozilla and EFF were the earliest organizations
+to push for HTTPs everywhere.
+So they had a nifty plug-in that you
+can install to automatically change the HTTP to HTTPS,
+which broke a lot of sites.
+But anyway, it's still good.
+Today, many academic websites, it's very sad,
+but the site that shows many academic websites still
+don't have HTTP versions of their websites.
+I don't know why it's still there.
+But it's still there.
+I don't know if we should have a statement in 2014,
+so you get to push it on.
+And it actually has gained a lot of traction.
+We have HTTPs everywhere plug-in that change a lot of things.
+Browsers today don't accept HTTP connection.
+At least if it is Chrome, it will scream at you,
+which is really nice.
+A lot of browsers are forward suit.
+If you know anything about the QUIC transport protocol, which
+is fast replacing TCP, QUIC is also an internet.
+So internet is not an option.
+You can't turn off.
+So naturally, there's a lot of resistance to QUIC,
+but again, it survives.
+HTTP is guaranteed that the content is served only
+by the owners of the domain.
+Let's see how that is done.
+So I use a Mac, so I use Safari.
+And the screenshots I'm going to show you
+is the wrong page for the Safari,
+but you're interpreting my site in between.
+So this is possible for you to do with your own browser.
+So on a Mac, if you're using Safari, you can click me.
+It used to be a lock icon.
+I forgot why it doesn't exist.
+But you can actually play what is a certificate
+that a website is using, and it will show you
+something like this.
+And I want you to observe a few things.
+This is what we are going to get into.
+So the interface here says that, oh, there's
+a school site down here.
+It uses some kind of video, which has a nice, clear icon.
+And it is issued by Amazon.
+It says it expired on Tuesday, October 4, 2022.
+I told my colleagues, actually, I'd be able to say.
+I'm pretty sure they did.
+It also tells you some interesting things.
+It shows you a tree, a hierarchy, once again.
+If that rings any bell, it should
+think about the chain of trust that we talked about in DNSA.
+There's nothing fancy other than that.
+And there's a bunch of other details.
+Now, we will see what these details mean,
+and what does it mean for you as a user,
+and what kind of certificates actually provide this.
+Any questions?
+TLS handshake.
+In order for you to retrieve content from using HTTPS,
+there's TLS behind the scenes.
+Can anyone tell me what is the order in which the requests go?
+As in, what are all the different protocols
+that are involved?
+So you have a?
+PCB.
+PCB.
+And then?
+Is that the first thing that happens?
+Let's assume DNS is skilling.
+OK.
+So then, what is the first thing you do?
+Is it a TCP handshake, or a TLS handshake?
+TCP.
+Why?
+Because.
+Exactly.
+TCP, and then TLS, and then the HTTP.
+Oh, that's a good one.
+I got it correct in the first place.
+You really stared at me intently, and I was like, ah.
+It's like one of those multiple choice questions.
+So once you're sure of an answer,
+you go ahead, look at it, and move on.
+Any further information I provide shouldn't deter you.
+But sorry, buddy.
+I'll resist the evil end.
+Thanks.
+OK.
+TLS handshake.
+It's all about secure web browsing.
+So this is something that I already showed you.
+So let's see.
+Typically, this is just a brief primer.
+So whatever I'm going to say right now
+shouldn't surprise you.
+If it surprises you, it's time you actually
+refer to the material and figuring out
+how HTTP works, how TLS works.
+So your plain old HTTP is a GET request.
+Typically, a slash means that you're
+getting the content from what is called
+as a landing page or a base page.
+Basically, you need to basically index
+that HTML or save a URL.
+Of course, there's a DNS that precedes that.
+Oh, interesting.
+How many of you know what is a CNN record?
+It's Vegas.
+It's Vegas.
+And what does this one tell you?
+There's no bucket signs.
+I'm just asking simple questions.
+It's resolving whatevers at Verve and Lamar
+at Godshifter.
+OK, so you're querying www-fusac.
+And it's telling you, well, it is at the Adora.
+What am I querying it for?
+The A record.
+So you're querying for the IP that's connected to the.
+And what do you get in response to that?
+This is repeating the domain name.
+What is this one?
+Time to live, I think.
+Yeah, what's that period?
+1800, not sure.
+In a second.
+So that's half an hour.
+Oh, right.
+Yeah.
+And this one is?
+Internet.
+Yeah, it's mostly mail.
+It doesn't quite have anything to do with this one.
+Canonical name?
+Canonical name.
+And this is basically saying that this particular host name
+maps to this one.
+And then you can actually Google a little bit of information
+on what is Shifter.
+And then you get to know what that infrastructure
+is also on.
+Time to live.
+Oh, it's also interesting to note that the IP for this one
+has a different entry.
+He's an idiot.
+OK.
+So let's assume that you've got the IP address.
+And then you issue the hit request.
+Networking people love these sequenced items.
+I hate them.
+But sometimes it's beautiful.
+So there's a user.
+So the first thing you do is you need to have a TCP connection.
+Without that, you can't do much.
+By the way, this is something that you always
+have to keep in mind.
+When you use HTTP, you don't have a choice
+to respond to the TCP.
+Of course, that's changing.
+So HTTP 3 is built on power.
+UDP.
+I'm sorry, what?
+QUIC, which has UDP.
+Yeah.
+QUIC, which has UDP.
+So it's not just QUIC.
+I think there's a lot of protocols
+that are trying to in some way supplant TCP.
+And they're all built on UDP.
+But the way to look at them is that they're not UDP.
+They're just TCP in user space.
+So TCP functionality implemented on top of UDP.
+Why would you want to do that?
+Because for your use case, you might
+want to optimize the network package.
+That's a very good answer.
+But what more?
+Why can't you just release a new TCP?
+Because UDP is already supported everywhere?
+Actually, that is not true.
+UDP is not supported in many of the years.
+As in, UDP traffic in general is always considered suspicious.
+There's a lot of issues.
+But I think you want to say something else.
+I'm creating TCP with a party upgrade.
+Basically, I read it by something.
+Yes.
+Right?
+So what you probably meant is TCP already comes with a kernel.
+So if you build your features on top of that,
+you could change that at a faster rate
+than relying on the kernel upgrades
+of TCP or whatever you're planning to do.
+Anyway.
+So this is plain old TCP.
+Because this is HTTP 1 or 2.
+It doesn't matter.
+So the user, first thing you send is the SM.
+And then, you know, close the document.
+Assuming this is the IP address that it was also,
+it sends you a snack.
+And then it does that.
+By the way, today, even HTTP, your plain old TCP
+doesn't exactly work like this.
+There's a hunch about the migration.
+But this is just a problem.
+This is your TCP handshake.
+How many long trips does it take?
+This is not right.
+Now, what you could do is, in addition to sending a hack,
+you could send, you know, a client help.
+It's not very much, you know, not much.
+So basically, the client is starting
+to tell the other side, hey, I want
+to open a TLS connection on top.
+And the client is initiating that.
+That's why the client, hello, hello, why,
+is the first message.
+And it basically provides the TLS version, session ID,
+the Cypress suites, and client environment.
+This is basically, you know, jargon for saying,
+the client is saying, you know, there's
+a number of different algorithms have
+been used for the actual key exchanges and so on.
+Here are things that I support.
+Here is the version that I'm running.
+And the expectation is that the server
+will tell you something similar.
+And you can negotiate what you could do.
+Very simple protocol.
+The client's message.
+So these are actually three different messages
+from the client.
+The server's response is basically
+three different messages.
+There's a hello, there's a set, and there's a done.
+And a hello, as I said, is basically
+the server's way of saying, OK, this
+is the version that I understand.
+These are the Cypress suites that I support.
+This is my random.
+These random numbers that you see
+are also called as nonsense.
+Not nonsense.
+Nonsense.
+These are for the remaining handshake.
+So you basically use that random number
+to chain or bootstrap the rest of the computation.
+So it gives you a bit more confidence.
+The most important part is this middle one called a cert.
+That's actually the server certificate.
+That basically states to the client, this is who I am.
+And you can use this particular certificate
+to encrypt all our connections moving forward.
+And a cert.
+What does a cert contain?
+The public.
+And then the server says, I'm done with the hello.
+And then using a cert, what the client does is it does.
+You don't want to use in any public key infrastructure
+or any public key based communication scheme.
+You don't want to repeatedly use the same public key,
+private key pair.
+So what you do is you initially exchange the public key.
+In this case, you never exchange private keys.
+You exchange the public key.
+And then from that point onwards,
+what you're trying to do is you're using the public key
+and private key pair to exchange session keys,
+which is what you would use for your sessions.
+So in this case, it's something similar to the client response
+with a client key exchange.
+You can think of what is called as a pre-master secret.
+This is a minor technical detail.
+It is not exactly the actual secret key of a session key.
+It's something called a pre-master
+because it will be the actual response.
+Change Cypress pick.
+This is basically telling the server
+what is the Cypress key that you're using.
+And the last one is finished.
+So the handshake message.
+Do you have a question, brother?
+Okay.
+Can anybody read?
+No, no, no.
+It's just so small
+that I cannot be read.
+Can anybody read?
+All these people with younger eyes.
+Okay.
+So usually I always use myself as a threshold
+because my eyes are sharp.
+And so usually I ask if I can read.
+I'm really sorry.
+If I were in your position,
+I could also read it.
+I can still see as soon as the box.
+I can no longer see the back of the room.
+Anyway, continuing forward.
+Change Cypress pick.
+This is not to say that the server
+is changing the site.
+It's just a message format.
+This is what these messages are for.
+And then the server says finished.
+And this is your PMS handshake.
+How many arm trips does that take?
+Two.
+But be careful when you add these two things together.
+You understand what you should write
+so you don't want to double count.
+Also, not one more big one.
+So this hello doesn't have to be immediately next to the app.
+It could have been, you know,
+you send the app,
+wait for half an hour,
+and then you send the hello.
+It already shows that you could actually
+hack things one after the other.
+So you will see this in here at the moment.
+I think maybe I have a couple of slides.
+So then you actually send your action.
+Yep, that's in green because by this time
+you have the set,
+you have the public key that you can start.
+Oh, the second key that you can exchange.
+And you can start a complete connection.
+This is too hard to read.
+Like I said,
+the fact that I moved the hello here
+instead of drawing a separate line
+already hints at the fact that
+you could combine things together.
+Push one thing after another.
+You could do the same thing.
+You could actually move the get
+here.
+So this is called TLS fault start.
+It's an optimization basically
+instead of waiting all the way
+until this transaction completes
+and then sending your get,
+you could send your get password.
+That doesn't mean the server will start responding.
+It still will only respond after this one is done.
+It's just an optimization.
+Well, if you could do that,
+then why can't you do this?
+Well, this is called TCP fast open.
+So basically,
+there's a small change here.
+Instead of just sending this thing,
+you actually send a cryptographic
+cookie along with this thing.
+Where did you get the cookie from?
+Let me go there.
+So this was your original PC.
+You know that by now.
+But now it looks like there's a cookie after this thing.
+Where did you get the cookie from?
+From the previous session?
+Yes, that's it.
+From the previous session.
+No rocket science.
+You know, being bold to make guesses
+because most of the time you'll be right.
+So there's a SYN.
+Along with the SYN, you send a cookie.
+Where do you get the cookie?
+Oh, well, you don't get it for the first time.
+You can interact with the server.
+The server gives you the cookie.
+And then you use the cookie the next time.
+What you can do is you can send your SYN
+with the cookie.
+So the server recognizes you.
+And you can hack your hello right next to it.
+I send you the SYN hack.
+And the rest of the handshake falls.
+There's no SYN going back from the SYN hack this time.
+Going back from the user.
+I've just faded it.
+You can hack it one day if you want.
+Doesn't really matter.
+Is TLS implemented in the kernel?
+TLS implemented in the kernel.
+I don't know how to answer that.
+There's a...
+No.
+I don't like to think of TLS being implemented in the kernel.
+There's a library that provides you the functionality.
+But it's not big into the kernel.
+And the second question,
+where is the cookie put in the TCP header?
+Or is it the payload?
+This SYN cookie is actually one of the options.
+Yeah.
+So these two public keys are used to define a session key?
+Yes.
+The session key is what you use for the implementation?
+Yes.
+Why do we have to have a second address?
+Can we go to the first address?
+Which one? This one?
+Oh, this one?
+You're jumping ahead.
+This could be viewed as hello following this one.
+So you could do that, if that's what you're asking.
+There's not much semantic difference between those two.
+But what you could do is,
+if you've already done this one,
+why can't you just get here?
+Which is something we're doing right now.
+This is basically a TLS 1.3.
+So if you're using TLS 1.3,
+which most of your modern browsers are using,
+you're basically compiling a fast open and a fast start.
+I think in general it's important to remember
+that combining two things in one packet
+makes very little difference in performance.
+You're just sending bytes back to back
+and you're sending an extra header.
+So we started with this.
+We started with this.
+This is a penalty that we have paid.
+The question is, we don't want to get rid of this
+because this is nice.
+How can we get rid of this?
+We don't want to get rid of this
+because this is nice.
+We don't want to get rid of this
+How can we remove that?
+You could be a little greedy, basically.
+You can send your header immediately after the key exchange.
+Compress an IR thing.
+
+Could you do one step further?
+
+Yes, you could do this.
+This is basically saying
+I send this in with a cookie.
+Immediately send a hello.
+Along with the hello,
+I actually send to the server.
+Why wait for the server to tell me everything?
+I'll tell the server, this is my hello.
+I told you the TLS version.
+This is what I expect to use.
+By the way,
+if all of this succeeds,
+this is my get request.
+And if you do that,
+if you have already contacted the server,
+then it will work.
+Otherwise it won't work.
+Which means you are brought back to
+the one and a half,
+two RPDs that we talked about.
+But if it works,
+given that the get immediately follows
+all the other messages,
+like one packet behind the other,
+what you have obtained is that
+instead of waiting for two or three RPDs
+to send your get request,
+you have sent the get request right now.
+So you have not avoided any of the things,
+but you have avoided the round trip planning
+and actually sending requests.
+With a get, I don't think it's applicable,
+but imagine you were doing a pulse
+with some sensitive data.
+Is there a security trade-off for this?
+Where you could be sending your data
+to someone that is not really the server,
+and you don't wait for the acknowledgement
+and stuff, and this all works on me
+if you have already seen the server.
+Okay.
+It's all still in cryptos, right?
+The get.
+Yes.
+It all means that you have already seen the server
+which is where the cookie works,
+which is why the key and everything,
+the server never directs.
+What happens if the server is the same,
+the IP address is the same,
+what happens is the IP address,
+the server is the same,
+the server has changed the set,
+but that doesn't mean the communication breaks down.
+It means that you've once again brought back
+to your regular TCP deal assumption.
+This is an optimization.
+But this is what is today.
+Listen, there's one RTP.
+Okay.
+I think so.
+If you have Wireshark, yes.
+One question, it says zero RTT,
+but in the end you still need to get the reply
+that's in one RTT.
+Excellent, yes.
+What I meant by zero RTT is zero RTT to send the get.
+Right.
+Excellent.
+Any other questions?
+When QUIC was introduced by Google,
+this was, you know,
+the zero,
+the fact that QUIC's connection
+of zero RTT was one of the biggest selling points.
+I don't think maybe I should make this
+like a propaganda of mine.
+We should all talk to the full IP, right?
+Because at the EU,
+I think the firewalls do treat
+the UDP packets as dangerous.
+So it used to be the case
+that these guys have lost here.
+If you're watching YouTube,
+don't question why I'm watching YouTube in office time.
+But anyway, if you're watching YouTube,
+which the traffic, most of the traffic actually
+comes over QUIC,
+it won't work well.
+And then it'll transition to typical regular TCP.
+That's because
+the fact that the reuse firewalls
+think that UDP traffic is
+questionable.
+Which means that if you start blocking,
+that QUIC will not work.
+That's paying customers.
+Doesn't that break the vast majority of the video conference?
+It doesn't.
+So they do it in a very interesting way.
+Yes, today it'll break a lot of things.
+But there are few UDP packets that they allow.
+So for instance, it's a UDP transaction
+that is going to a named server
+that the video recognizes that it wants to get allowed.
+If you're trying to use anycast,
+it will get dropped because I remember famously
+trying to demonstrate something in front of the students
+and it failed and I kept on thinking
+what the heck am I doing?
+And then I realized that it started working
+once I changed the WiFi network.
+The WiFi, notoriously, that's the one.
+Maybe that's because it's open?
+I don't know. Yes.
+So you were talking about QUIC a lot
+Did you say in a few words how QUIC is different
+from the most optimal TLS version
+that we were talking about?
+You have to think about it
+in a slightly different way.
+QUIC has got nothing to do with TLS per se.
+The reason why I mentioned
+TLS and QUIC are probably the same symptoms
+that we're going to have.
+QUIC's handshake
+by default influences
+the encryption.
+It builds on top of TLS.
+It's baked into it.
+There is no such thing as unencrypted connections in QUIC.
+All your connections, all your traffic
+is encrypted.
+Actually, you can do this.
+Open Wireshark
+if you're using Chrome
+if you use the latest version of Chrome
+if you open Chrome
+you fetch traffic
+fetch anything that Google says
+anything from google.com
+anything from youtube.com
+maybe google docs
+if you open a connection to them
+in your browser
+and open Wireshark
+what you will see is a bunch of Unity packets
+and in fact it's interesting
+because all that you can glean
+from those packets is the Unity headers
+everything else is synced
+so that begs the question
+what can you observe?
+So then does QUIC use a different version of TLS
+on top of Unity?
+You could do anything.
+QUIC is built in user space
+so it just builds on whatever
+UDP substrate that the operating system provides
+which is one reason why QUIC
+can upgrade QUIC
+in theory fast
+so you're allowed to use
+you can use whatever you want
+whether you use TLS
+then the question
+if you're wondering
+if HTTP now runs on top of QUIC
+why would you have another TLS
+on top of this thing
+that HTTP3 is trying to avoid
+there's a lot of other things that QUIC ships with
+so the question is
+rather than trying to
+redo or replicate some of the functionality
+in HTTP
+don't you want the transporter to do it
+and if the transporter is already doing it
+what is the best way to design HTTP
+that's all what HTTP3 is all about
+some other day
+HTTP3
+it's still slowly getting deployed
+seven cents
+remember this
+focusing on this particular
+interaction
+specifically this particular message
+which contains the server certificate
+we already had a quick look
+at the server certificate
+we can go through some of the details
+this one says it's issued by Amazon
+an issuer name
+a bunch of details there
+it looks like key value pairs
+we can actually go through them
+there's a lot more information
+obviously there's an expiry date
+if you have a browser
+and if you have a laptop
+you can actually check
+what the current expiry date
+is
+this one says
+it's a certificate owner
+this is one of the common fields
+also called common name
+let's not get into that one
+basically what this one is saying
+this certificate
+is owned by a domain
+you could have multiple
+domain names
+holding onto a single set
+that is also possible
+you could also have wildcard
+that's also possible
+will we be discussing quacks
+I think it's like Mozilla
+is pushing against quacks
+I think it's like
+a type of server
+type of certificate
+that is being mandated
+that is subject to
+weaker security checks
+I have no clue about this one
+if you could send me an email
+I'll take a quick look
+ok interesting
+ok thank you
+there are different kinds of certificates
+actually there are three broad classes
+we would view them as the following
+each certificate actually tells you
+some amount of detail
+about the website
+so you have
+sorry for the accident
+you have DoV and EV
+so from the left to right
+least expensive to the most expensive
+outrageously expensive
+and the reason is because
+each certificate tries to
+verify certain properties
+about the
+the site that you saw
+vuseg.net
+it's actually a DV site
+it basically says this domain
+the certificate basically says this is the domain
+that's it, as simple as that
+no more detail
+typically your online
+shopping data that they have
+only sets
+you know what's the worst part?
+you can't actually differentiate between OV and EV
+just by looking at the set
+unfortunately it used to be
+a field of browsers
+that used to provide some signals
+but there was a strong pushback against doing this
+so today we have
+it's very hard to distinguish between these two
+so a domain validated certificate
+it verifies domain ownership
+it basically says that the server that gave you the cert
+is indeed the one that owns the domain
+that's all it says
+it's easier on it
+almost all of the websites
+including all of your spammers
+get DV certs
+because it's free, it's cheap, it's easy
+in fact
+as an attacker today
+it's very easy to get your own domain certified
+sorry, DV
+domain validated website
+in fact it's very easy to do
+I say it's low cost but it's actually to be built
+so this is easy to do
+OV and EV certs on the other hand
+require a little more effort
+they actually cost a lot
+EV certs actually cost a lot more
+than OV
+and what they do is
+OV is basically your organization validated
+and EV is extended validation
+so it's a bit more extended than organization validation
+so they do
+each cert actually does
+provide the feature that the previous one provided
+OV and EV certificates
+also do verify that you own the domain
+but they go a little further
+they check the details of the owner
+more expensive
+and when I say details
+one way you can actually figure out if it's an OV or EV
+is that if you remember how the cert
+used for vusec.net looked like
+it only had
+I think on the subject name it only had a common name
+no other details
+but for EV and DV you'll see further information
+it will tell you what the company was
+surprised that we mentioned speech addresses and other things
+and the reason is because for OV
+and EV
+for OV and EV
+you can see a little more information here
+it means that there is a lot of manual checking involved
+in fact if you
+look at the EV certificates
+you'll see that there are extensive checks performed
+on the provider
+they verify that there is an entity
+there is a server running on this particular building
+it's a legitimate institution
+it's incorporated in whatever jurisdiction
+in between
+because of these checks
+they are pretty expensive
+but again
+all your financial institutions
+online shopping retailers
+they have EV cells
+any questions?
+who decides who is allowed
+to give up these certificates?
+who is allowed to?
+to create these certificates
+excellent question
+could I create an EV certificate?
+well down to that
+we'll get to that
+but in general
+the process
+has changed quite a lot
+in the last five years
+but not everyone
+can be a certificate
+I'll give you the intuition
+but I'll cover it in depth
+we're looking at such
+because as you remember
+you could also ask a question
+someone tells me they have this set
+how do I verify this was legit?
+what do you do?
+you walk the chain
+yes, you walk the chain of trust
+then naturally the question comes
+if I walk the chain
+who is that person?
+how do you know for sure
+the top level
+is trustworthy
+it's paid then
+so if you want to run your own CA
+if you could figure out
+how to buy your way
+into getting your cert
+encoded into
+or stored into browsers
+the certificate TVs
+or operating systems
+but that process is not that easy
+but
+there's a lot of fishy things
+this is somewhat tangential
+but there's a really hilarious bug report
+in the Mozilla bug tracker
+where somebody jumps in
+and is just like hello
+I'm a representative of the government of Kazakhstan
+we'd really love if you added our cert
+to the list of root certs
+that Firefox trusts
+and everybody just follows up with
+it makes for really good reading
+please do post it
+on the discussion
+yes
+in the perspective of ABN and AMRO
+why would they want to help
+for you to use certificates
+how does that benefit them
+it's a question of trust rates
+so you want to
+how does it benefit them
+let me see
+it's
+I can't see any strong
+I don't have any other answer
+other than to say that you want to provide
+a
+credible image to your customers
+that all their communications are secure
+let me put it this way
+if Amazon were only doing DV
+I think that would be an easy target
+for attackers to break
+because anybody could get that DV
+whereas getting an EV is a bit hard
+so that's one
+and second thing is that it also provides a trustworthy
+so we went to the point of actually
+validating that this is indeed the authentic
+entity
+it's more of like
+from the SQL's perspective
+this is more
+there's a long discussion
+especially on the Chrome
+mailing list
+about
+actually I don't think it's true
+Firefox used to have a visual display
+in the browser
+in the address bar
+if it was a DV
+it would only show the lock icon
+if it was an EV it would turn
+the first part of your
+URL bar green
+indicating that it was very strong security
+it was a nice thing
+but Google shot it down
+for a good reason
+even though it looks a bit counter-intuitive
+the argument was that
+for users to just look at certain colors
+to be perceiving the thinking that the communications
+security want them to do
+there's a lot of ways in which that could break
+including the example that he was talking about
+just because the site is actually served by
+under an EV
+doesn't mean that it's legit
+and we'll see actually
+I'll show you examples
+of famous certificate issuing
+entities having been compromised
+why go through the trouble
+why can't you do sub-scientificates
+these are technologies
+your browser will
+simply scream at you
+and simply
+sort of
+but I hope you understand what you mean by
+technology
+a server can simply say
+I am very loud
+what's the easiest thing you can do
+if you install actually a server on your machine
+or nginx
+typically as part of the installation procedure
+they'll generate the self-serve
+so you can do some testing
+other than that
+they usually don't serve any purpose
+you can try
+but yeah
+if this was the case then basically
+the reason why you need a chain of trust is because
+you want somebody more trustworthy
+to certify that you could be trusted
+and then you keep going to the chain
+until you come to a trust anchor
+and then the server can say I am going to give you a case value
+ok, any further questions?
+we are covering one more topic
+and then I'll stop
+how many of you have heard of Let's Enter?
+fantastic
+this is
+a really nice
+so it's a free
+automated open-sided authority
+it started with this idea
+that look
+there is no reason
+why any website should be
+using HTTP
+like HTTPS should be the norm
+but if you want to make sure HTTP is the norm
+you need to provide a way
+to which people could get sets
+and part of the reason why
+a lot of websites
+again this is back in the old days
+probably not even obvious
+part of the reason why
+it took a little bit of time
+for people to catch on to HTTP
+was because cost
+the ability to configure it properly
+so Let's Enter came up with this idea
+that look, if domain validation
+is all that is being done
+that could be automated
+and it's very simple to automate it
+and let's do that, and if you could do that
+and in fact they did it
+on most Linux packages you have this tool called
+HATME
+what the Let's Enter folks came up with
+an HATME protocol and an HTTP client
+you run the client and it will automate the entire
+certificate acquisition process
+Let's Encrypt is also a certificate issuer
+so of course there is a contract with their server
+to get the set, so it's really easy
+there is no reason anymore after Let's Enter
+to make a picture of why
+sites would sell HTTP content
+but again
+as with everything else, if you ask
+you automate this, what stops
+an attacker from propping up a website
+that's running on HTTP, there's nothing
+anyone can guess
+okay
+so there's, you don't have to
+read this paper, this is one exception
+there's actually talks about
+the history of Let's Enter
+it's a very nice read
+a lot of people involved behind the scenes
+it started out
+it has also a bunch of really cool
+security features
+a beautiful paper, I encourage you to read it
+but it's not required
+okay, so
+the mission of Let's Encrypt was to make it
+possible to set up an HTTP server
+and have to automatically obtain
+a browser trusted certificate
+without any human intervention
+the human intervention
+was the one that complicated things
+and this is also something
+that you would see repeatedly
+in different protocols
+the reason why DNSSEC failed
+at least in the initial stages when I did the study
+in 2017, was because whenever
+you wanted to actually use DNSSEC
+on your domain, you had to take the hash
+of the public key, remember?
+your domain had to change
+the record with your parent domain and so on
+and the DDS key upload
+was not automated, or at least it was broken
+and that's why it failed
+so this is a similar idea
+could we automate this?
+okay, so you know
+what a domain validated certificate is
+let's see how the automation works
+so you have a web server
+and Let's Encrypt is
+an entity that can issue certificates
+in PKI problems
+you would call them a certificate
+issuer, a CA
+certificate authority
+sorry
+okay
+okay
+so on the web server
+this is a web server that let's say you and I own
+and we want to make sure that this particular web server
+can actually serve content under HTTPS
+so what you do is
+if this was Linux, I think on Debian
+it's called an Acme client, as I said
+you run it, you know, your APT or Yum or whatever
+and you install
+their certificate management
+this project is actually open source
+you can actually go to GitHub and actually check the protocol
+the spec, you know, the implementation
+which is also on this
+and this is the way it works
+it uses automatic certificate management protocol
+Acme, it's also described
+as with many other things in the internet
+in RFC, the same 555
+you can take a look at that
+but basically what it works is
+it tries to automate this particular process
+and let's see how that works
+so you run the agent and then
+on your web server and what you do is
+what happens is the client requests
+a challenge
+to prove domain ownership
+so it goes to the CA
+in this case, Let's Encrypt
+and it tells it, okay, I'm ready to actually prove
+ownership of this particular domain
+which is, we use Acme
+so this is the agent that is doing it
+this is quite simple, right?
+it should be simple once you see how it works
+so Let's Encrypt says
+if you indeed are the
+person who owns that domain
+what I want you to do is
+I want you to put this random hash
+that I generated
+into vusec.net
+at this particular
+location
+and you sign it with this
+key
+some bunch of random numbers
+so let's
+pause a bit and then try to see what it's trying to do
+so
+first of all, what let's do the same
+okay, you claim that you own
+domain XYZ
+and I need to be able to
+know for sure that it isn't true
+and in order to be sure, what is a
+simple thing I could test
+I want to test if you can
+modify some content
+on that particular web server
+of course, you know
+for the protocol to work, you need an automated
+base so the CA
+basically tells you, here is the location
+that I want you to modify
+if this is indeed a domain that you own
+you should be able to do this
+and in fact it's quite simple
+all it says is that you go to this location
+which is very easy
+and you put some random knobs
+that's great
+and it also says you sign it with this thing
+so you'll see why that is important
+and if this was indeed your server
+then you basically provision a file in the server
+given the contents, you'll sign it
+and then
+what the
+client, the certificate manager
+will do is it will generate an asymmetric
+key pair, it's often called a reauthorized key pair
+it will sign
+a random number of old knobs
+and ship the public key above that
+oh, let me see, there's something
+over here
+ah, I think I
+overlooked something here
+I think
+when it says sign
+a particular number, it's actually asking
+this certificate manager
+to sign it with the public key of the CA
+so that's the one part of the CA
+so the certificate manager
+generates a key pair, it's called the authorized key pair
+and then what it does is it signs
+this nonce
+this one is signing it
+oh, this one is actually signing it with the
+the web server's
+private key and it attaches
+its public key so the server can actually
+verify, number one
+that this public key
+it uses this public key to verify
+that this was indeed
+signed by the private key counterpart
+of this public key, so that's one thing you know
+this particular nonce
+came into the first place
+because of the initial
+interactions, so which means
+that even if someone had spoofed the initial
+request, unless you were
+indeed the intended recipient, you wouldn't have
+received the response back
+whenever you spoof, you're acting
+you're behaving as if
+you're sending a request on behalf of someone else
+so typically this is something
+you also observe, right, so when you spoof a request
+the response to that particular request
+if one was generated, it would go to the intended victim
+not to you
+so this one verifies that if I
+see this particular number, I know for sure
+the initial request was actually
+originally provided
+and the CA also
+knows that
+it can actually access
+this particular location
+so the CA
+can actually pick this particular
+path, which it actually has
+specified in the initial interaction
+and then check whether
+this particular file or the path
+that the CA instructed contains
+the original number that it sent
+yes, hours and
+months originated
+which I don't think is
+talking about, the big number
+5, 6
+could be any random number here
+so
+it would prove that this public key
+it was signed by
+a private key counter value
+so it was that original
+number that it was for, signed
+and this is different
+it's something else
+this one proves that
+this public key indeed
+corresponds to this particular
+server because this public key
+can be used to check the private key
+part of this was used to sign this one
+and now it performs the
+second check which is, it goes to the location
+and says okay, I know
+for instance that this is your public key
+but I want to know if you are able
+to update
+a location attack domain
+with an answer, with a value that I gave you
+which is this one
+it knows the location, it checks whether
+the value actually matches
+if it matches it means the first product part of the
+communication was indeed
+done by this particular web server
+it couldn't have been spooked
+I don't guess why the whole top part
+is needed, can't you just do the bottom part
+just check if it changed or not
+let's see, why do we need the top part
+because we still need the
+server to get here
+we haven't come to that, so this is now
+checking the domain key verification
+sorry, domain ownership verification
+you'll have to still generate a key
+and it goes home there
+was there a question?
+let's see
+so at this point it says okay, I can
+access this location, I can see the content
+of the location matched what I earlier sent you
+so there's no spoofing
+and I've gotten your public key, that's good
+so it's going to send an okay
+so now
+the clients create what is called
+the certificate signing request
+the clients say that this is a request
+for me to get a certificate
+it contains the domain key
+and the public key for the server
+and it is signed by the
+private key corresponding to this public key
+so there's another key there
+so D is the capital domain
+and this public key
+is this one
+this was called as the
+original authorized pair
+and it's signed
+with the private key
+since the public key
+has already been exchanged in the previous
+part, now it could unwrap this message
+so that is why the public key
+is in the first key
+so it's signed by the private key
+corresponding to the public key
+CSR is signed by the private key
+verify the signature
+and make sure there's a certificate
+and at this point what happens is the certificate
+is signed by CS private key
+and then there will be a request
+so I hope that part is clear
+so the original one
+is called the authorized key pair
+this particular public key
+private key pair is only
+being used for the second part
+so now
+the CA has this public key
+so it can actually be verified in this particular part
+whether this one
+is indeed signed by the same person
+and the actual key
+or the third corresponding to this particular server
+is this private key
+for which the public key
+can count to five
+but this is entirely automated
+so it takes a couple of counters
+and at the end of this
+the server says that everything is certified
+this is also signed
+by the CA private key
+the server can once again confirm
+is indeed this particular CA
+that's signed by the private key
+and at this point it goes and then installs
+so the private key can count to five
+this one is the yellow one
+and it installs that as its server
+and it has it's share with them inside
+that's it
+I know this is a lot
+but this is just showing you
+that's it
+any questions?
+we'll take a little more time

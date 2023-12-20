@@ -1,0 +1,2263 @@
+Just say, do you think Quiz 2 is up, the same format as Quiz 1?
+It's just on VMs, assignment 2 is up.
+It's about the Kaminsky attack.
+There's a couple of read-mes.
+It is a bit more involved, because you run everything
+on your own machine, but it involves a couple of VMs.
+So pay attention to the read-mes, it should be clear.
+But the idea is that there are three components in VL.
+I'll just quickly give you an overview of the components.
+So in the Kaminsky attack, you have an attacker.
+So in the assignment, this will be you.
+There is a local resolver, which you are trying to poison.
+And of course, the local resolvers
+will interact with the root, or the TLDs, and so on,
+depending on the domain of the query, remember?
+You send a number of queries, and then you
+launch a birthday attack.
+Doing this in your assignment is a bit tricky,
+because first of all, you have to figure out
+who are the TLDs and who are the name servers that will respond.
+And depending on the domain, that will mean any number you want.
+And depending on the domain, that mean
+the same authoritative every time you work, they can change.
+So in order to simplify this, what you have
+is you remove all of this, and we'll simply
+put another name server here.
+This is actually a recursive name server.
+This is actually the one that's doing all the job.
+But this is a dummy for us for now.
+This is acting more like a forwarder.
+So any query you send is a forward name server.
+This one will do the recursive resolution.
+And it will give you back the answer.
+So the advantage is that you do know
+whom the local server will send the query to,
+which is this resolver, or name server.
+And the response will come from the name server.
+So that's why you have three different components.
+If you're wondering, oh, this looks different,
+it needs to get back.
+That's the difference.
+This should make it very easy.
+There is a very silly and rickety resolver running here.
+So don't over engineer or optimize your code.
+Just take a look at what it does.
+It can be straightforward.
+If you do too many things, it will be a plus or minus.
+Any questions?
+Take a look at your readme.
+It should be obvious.
+I was reading the description before the class,
+so maybe I missed it.
+But are there any language requirements for this?
+I think it's C.
+Is this also C?
+Yeah, also C.
+Any questions?
+OK, cool.
+It should be straightforward.
+OK, one more thing.
+Some of you might have noticed that your quiz
+won't score a change a bit.
+That's because I forgot who, but someone did a great job.
+Oh, yes, you both.
+What are your names?
+Alex.
+Julia.
+I'm sorry?
+Alex.
+Alex?
+Julia.
+Sorry?
+Julia.
+Julia.
+OK, you should thank them.
+They pointed out a typo in the options.
+Basically, there was one question for which
+there were two options because of the typo that
+were in the right.
+So if you answered any of them, then you get points.
+Earlier you had it wrong, and now I gave you points.
+Now I've provided both those options,
+and I've gotten an extra comment.
+OK, that's all for the assignments, and let's move on.
+So the very last lecture, we left somewhere along here,
+I guess, we were talking about PKI.
+We talked about CAs.
+By the way, whenever you look at CT logs and why CT logs,
+unfortunately, the first thing that will come up
+is the DigiNoteR incident.
+I felt bad that I'm trying to shame the Dutch government
+and the Dutch CA, but it looks like everyone does, so it's OK.
+Anyway, there's also lots of articles
+about the DigiNoteR incident, so do look up.
+But what I said was the whole idea behind CT logs.
+The reason why it's called logs is because all the certificates
+issued by the CA goes into a public database,
+so it's like a log.
+And CT stands for certificate transparency,
+and what that means is anyone can look into the log.
+Now, my claim was that if you do this,
+the advantage is that you can have extra eyes looking
+at those logs and can prevent whatever
+happens with DigiNoteR, which is a CA can't go rogue
+and issue certificates willy-nilly, we can catch it.
+Now, it's not clear how exactly it's going to happen.
+It's not clear what incentives are in place,
+but one thing that should be clear
+is if you are a domain owner, a high-value domain owner,
+at least you have the incentive to keep looking at the log.
+Or you could go even one step further,
+and then you could say, look, suppose no one is having
+an auditor or a monitor, what I could do
+is I could just drop up a startup that does this
+and provides a value-added service.
+Don't try it right now.
+This is done.
+But this is basically the incentives,
+and this is why it works.
+But there is a little more to it,
+as in there's a little more behind the scenes that
+goes in order to ensure that you can get more mileage
+out of certificate transparency,
+and we'll see that shortly.
+But first and foremost, these are the properties
+that we want, and yes?
+Does this log contain certificates that were issued
+by a single CA, or does it combine all these CAs into one?
+Hold on to that thought.
+Yeah, that's a very good question.
+I'll get to that.
+So the log has to have certain properties.
+It has to be public.
+If it is not, then what's the point?
+Because previously also the CA could say,
+I have a private log.
+If I can't see what you have done, then what's the point?
+Should be independent, as in if a CA,
+you want it to be maintained by an unbiased authority,
+always quote-unquote unbiased.
+You want it to be distributed.
+No single point of take is.
+Goes without saying.
+But this is somewhat key.
+You want it to assure non-repudiation,
+and I basically mentioned it last night,
+which means that you want the guarantee
+that once someone has issued a cert, they can't revolt.
+What I mean is, they can't go back and say,
+oh, I can do that, right?
+So if you want to guarantee non-repudiation,
+what you need is an append-only log.
+I mean, there are a number of ways in which you could do it,
+but append-only is simpler.
+Okay, and the nice thing is that you also want
+to append-only in a manner that it is tamper-proof,
+as in if anybody tampered,
+you must be able to identify it.
+Now, there's a subtle distinction in general.
+When you say tamper-proof,
+it means that you can't tamper with the data,
+but the manner in which tamper-proof is used
+in this context, it's more like tamper-evident.
+If someone did tamper, it'll become obvious.
+Okay, but you'll see why
+that distinction is a bit blurred soon.
+Now, Cloudflare operates a ZT log.
+They also have a beautiful, you know,
+I think it's called infographic, right?
+On several statistics that they observed
+based on the ZT log repository, right?
+It's called Mirtletown, and the reason it's called
+Mirtletown will become obvious once again soon.
+And they provide a number of interesting statistics.
+I think if you go to search for Cloudflare in Mirtletown,
+you know, it provides a page.
+For instance, it tells you, hey,
+which are the certificates that use legacy algorithms, right?
+How do you know that?
+All you have to do is crawl through the ZT logs, right?
+That's really nice.
+So you can publicly shame the CAs that are doing it.
+And this one, what it's showing is,
+on the left side, what you see are different CAs, right?
+Amazon, Amazon will see it.
+Serbdom, DigiSerb is a big one.
+You don't see Starcom, because remember, Starcom will.
+Let's Encrypt is there, GoDaddy is there,
+GoDaddy is very big, SectiGo is there.
+And these bars are showing the number of certs
+that they have been appending
+to different ZT log providers.
+Now, it's a very simple infographic,
+but observe a few things, okay?
+Number one, for all of the different CAs,
+and this is showing a bunch of handful of major CAs, right?
+Remember, there's a lot more CAs than shown in the slide.
+But for the sum of the top CAs,
+what you observe is that the bars
+are not of a single color, right?
+So which means that a CA is actually adding certs
+to different ZT logs, that's one.
+The second thing you can note is also that the number
+of certs that they add to different ZT logs
+seems to be not consistent, as in different volumes.
+No clue.
+Maybe they prefer one over the other,
+which is what I would say.
+The colors actually respond to different ZT logs, right?
+So Google looks like it's operating how many?
+One, two, three, four, five, six, five.
+So the one good thing is that I think the colors
+more or less, that doesn't do a full run of the CT log,
+but I think that, let's call this what, purple?
+Okay.
+Different shades of purple are Google.
+This is the orange.
+That's DigiSet.
+The darker one, the brown one is Let's Impress, SeptiGold.
+This is Cloudflare.
+Yes?
+So Cloudflare and Nimblest, that's their CT log,
+and Mercoton is their infographic thing.
+Yeah, Mercoton is the, yeah,
+it's the portal that actually provides this thing.
+Cloudflare, it looks like there's only one.
+Oh, maybe there's some of these colors
+and I'll explain it, I guess.
+Cloudflare operates at least two, if I remember correctly.
+Google operates so many.
+Why would you operate so many CT logs?
+Yes?
+Because there are at least six people at Google
+who want to put more into the CT log
+on their performance reviews, so they're great.
+That's some, still an answer.
+Actually, probably not that unlike,
+within the realm of possibility.
+Yeah, why not?
+Let's entertain the answer.
+Who knows?
+It's a good one, okay.
+Something more technical.
+I like it though, something more technical.
+Not socio-technical, just technical.
+Yes?
+They control the data?
+Huh?
+They control the data, they have direct access to it?
+Let's keep on getting.
+So, Google operates a number of CT logs.
+What does that mean, they control the data?
+I don't know.
+They have more data, more power to them, I guess.
+But they all have the same data, right?
+It prevents how to just do like.
+Yes, yes, yeah.
+You could actually deploy
+in geographically diverse locations
+that gives you resilience or reliability, yes.
+I had a question.
+Do they always append to a single log
+or to multiple logs as well?
+Okay, who appends sets to the CT log?
+CAs.
+Everyone.
+CAs could do that.
+Everyone.
+Domain owners.
+I'm sorry?
+Owners, sets, sources, owners.
+What did you say?
+Domain owners.
+Yeah, and then?
+Everyone, I said everyone.
+Anyone can do it.
+The logs are public, right?
+The logs are public, append only.
+So you can't delete anything.
+Nobody can delete anything.
+But anybody can add it.
+Wait, but does that mean that, for example,
+I want to insert like a thousand bogus entries
+I could do that as well?
+Yeah.
+But there's a process that will prevent you from doing.
+Okay.
+There's a small check, you'll see that.
+But anyone can add it.
+Why would you want anyone to add it?
+The whole reason why CT logs exist
+is because you want to audit all the sets.
+You want to have eyes on every single set
+that you encounter, right?
+If you go to google.com or gmail.com,
+let's make it more interesting, google gives, gmail.com,
+and you see a set that you have not seen in a while,
+as in your friends have not seen,
+you seem to be served content under a separate set.
+Wouldn't you be interested?
+What the heck is that?
+So what would you do?
+You want either you would like to report that
+or your browser has to see,
+ah, I haven't seen this set before, I'm gonna report it too.
+So in theory, anyone can add it to a CT logs.
+That should also answer the question,
+oh, why are there different logs?
+Do they add to different?
+So in general, the idea is that you want to add
+to as many CT logs as possible, right?
+How exactly do they do it?
+Is it automated?
+I don't know.
+There must be some level of automation involved
+by the CTs.
+There should be some amount of diversity,
+we'll see that, right?
+So we still haven't seen one specific thing,
+which is how exactly do the CT logs come into picture
+when a browser is actually viewing a set.
+Once I connect the piece,
+this picture will make more sense, okay?
+What kind of incentive do all the companies on the right
+have for hosting these logs?
+That's a good question.
+Let's take a, I can guess a few, right?
+Let's take a look at Cloudflare, okay?
+If you want to assure your clients,
+so Cloudflare, what is Cloudflare's business?
+Cloudflare is one of the largest CDNs in the world.
+They also, in addition to being a CDN,
+we'll see what a CDN does,
+basically they serve content from close by locations, right?
+That's a short definition.
+They also do web hosting, they do, they provide,
+you could host your content there over HTTPS,
+which means they'll get you the set, right?
+And one of the biggest services, value added services
+that CDNs provide these days is secure content delivery
+and an assurance that your content has not been compromised.
+One of the things that I have to do
+in order to ensure that is to verify that
+the set that I'm using has not been compromised
+or no one else has issued something funny
+to the domain that I control.
+So that's their incentive, right?
+So they wanna actually be able to monitor it.
+And given that anyone can operate a CD log,
+I mean, it requires some amount of cloud
+and technical expertise to operate these logs,
+we'll see why.
+But if Cloudflare has the money, has the brains, so why not?
+It also gives them tons of data.
+So suppose you know that a certain domain,
+a bunch of domains are actually going for a particular CA
+and the CA is not doing a good job.
+You can send your marketing team to those people saying,
+you know what, if you're with Cloudflare,
+this wouldn't happen.
+I'm just thinking, if someone at Cloudflare is like,
+if we can save money by just having Google do all of this,
+why not?
+In the internet, it could, there's nothing doing it,
+but the internet usually data is money, right?
+Either you realize it today or tomorrow.
+So you, you know, yes.
+In what aspect does Cloudflare get more data
+if all these logs are public in the first place?
+Seeing who's issuing the logs, maybe?
+They can analyze these logs, right?
+Yes, but with Wordletown, I'm understanding it,
+but operating your own CD log versus getting all the info
+from Google CD log, it seems like they're more positive.
+So CAs, when they issue certs,
+that business is also not a very huge profit-making one,
+right, but it's a prestigious one, right?
+Meaning not anybody can become a CA.
+Same way, CD logs, if someone tells you,
+we'll come to this.
+So long story short, if a browser says,
+look, it's great, your cert is in CD logs,
+and I'm not gonna trust, right?
+I'll only trust A, B, and C,
+and if you are one of the A, B, and C,
+that gives you a lot more power.
+It's about brand image.
+It's about finding out who is doing what
+and being the first one to wave the red flag,
+saying, hey, this CA, I flag them.
+Yeah, so when you asked why would Google host a lot,
+I answered data, and you said maybe that's not like-
+You said controlling data, which I didn't know what I mean.
+Yeah, they own it, okay, yeah,
+they're directly the ones that are hosting it,
+so maybe they have better access to that data or something.
+Is that different for Cloud threading for Google, or?
+No, the reason why every,
+why do you want to host multiple ones, right?
+So it's good enough if you have one.
+You could have one that is replicated across the globe,
+but these are not like that.
+They've been chosen in several locations
+to improve resilience,
+they've been deployed in several locations for other reasons
+but most importantly, you'll see,
+if it's an append-only log, what happens over time?
+It grows in size, and you want to stop it, right?
+You want to limit the size, so it's called sharding,
+a term that is very common in databases,
+or even in web development, you call it domain sharding.
+There's a reason why you don't host all the objects
+on a particular web page in the same domain, right?
+You provide multiple domains, anyone knows why?
+Yes?
+Different servers as well?
+What's the benefit?
+Computational ones?
+No.
+How many connections, huh?
+Load balancing?
+No, no, that's why you use a computation, but no.
+How many connections does a browser open
+and it fetches content?
+The measure is possible.
+No, it's not true.
+So, HTTP one or two?
+Two, let's say, one.
+So what happens if all the content is actually hosted
+behind one server, or one logical IP address?
+Even in HTTP, it's good that you brought up HTTP two,
+but in general, at a high level,
+the more number of IPs that you have allows you
+to ensure that one connection, or the communication
+of between, or the fetching of one particular object
+doesn't interfere with fetching of others, okay?
+Now, this is fast vanishing because of HTTP two
+that you mentioned, and HTTP three,
+because you could do connection multiplexing,
+called stream multiplexing.
+Within a connection, you could fetch multiple resources
+without interfering, but for a long time,
+it used to be the case that we couldn't do that,
+so what you do is you shard the objects
+over different domains, okay?
+Okay, anyway, the reason why they actually also operate
+multiple logs is because they're actually sharding,
+so 2018, 2019, 20, 21, each year could be a different log.
+Okay, now let's get into the details
+of how you would construct such a log.
+Okay.
+Okay, once again, you should know this picture.
+Now the focus is only on constructing
+this append-only tamper-proof log.
+Come on.
+How do you construct an append-only log structure?
+Simply saying you can't delete doesn't work, right?
+Yes?
+You make a blockchain.
+Yeah, yeah.
+I mean, I don't know, but people, you know,
+blockchain has gotten a very bad rep.
+Lots of things get a very bad rep
+when you try to shoehorn everything into the technology,
+but actually that's a very good answer.
+Why is that a good answer?
+Yes?
+Because if you delete something in the past,
+then the two pieces of both sides.
+Yeah, so creating an append-only data structure
+is not trivial because what you want is,
+it's not just simply a question
+of removing the ability to delete.
+What you want is you want a way to prove
+that if I ever inserted a record in the database
+or in the log, I should always be able to prove
+that my record was in there.
+If you don't have the guarantee,
+then whatever data structure you construct is meaningless.
+And the blockchain actually provides one nice way to do it.
+So here is the idea, right?
+So there's a CA that issues a number of different certs.
+Show me three.
+Let's take the first one.
+What you could do is as and when
+the CA actually issues a cert,
+you could take the serial number or the public key,
+hash the public key,
+and then combine it with whatever was previous.
+So this is where the idea of blockchains
+comes into picture.
+So the next one, what it does is you'll take a hash
+of its key or its serial, that's irrelevant.
+But what you need is you need to prove
+some sort of provenance, a history.
+And the way you do it is by always looking back.
+Second one says, oh, by the way, I came before one.
+But how do you ensure?
+Well, what you do is you combine my hash
+with the previous one cryptographically
+and then produce a new hash.
+So if someone asks, what is the current state of the log?
+The current state of the log is here.
+What happens when you set gets added?
+Well, if you look at the current state of the log,
+which is here, you take a hash of that
+or you take a hash of this, you combine them together,
+you know, use a cryptographic function and hash,
+and you produce a new one.
+So each hash, which is very similar
+to how a blockchain works, right?
+So each hash that you generate or each block,
+each and every action that you generate has two pointers,
+one to itself and one to the past, okay?
+And this keeps on going, right?
+What's the cost of adding anything to this structure?
+If you wanna add anything, what's the cost?
+In terms of complexity, algorithmic complexity.
+All of them.
+All of them, why?
+Because you have to traverse them, that's right.
+No, at any point, that's a good thing,
+maybe it was not clear, at any point,
+you only have to know your own hash,
+but some input based on your own certificate
+and the one that is before you
+or the latest in the tree, in the log.
+So then this log?
+Yes, it's constant, right?
+Adding any set to this particular data structure
+is a constant operation, constant time operation.
+So that's really good.
+Now suppose somebody tries to delete something,
+how does it help?
+Well, the problem is, if you remove this,
+then all of these hashes will change, right?
+So it's not the case, this is why I said tamper evident
+and tamper proof, they're slightly different.
+This is more like tamper evident,
+but in reality, odds of doing this is very difficult,
+which is why it becomes tamper proof.
+Now what happens if you delete this,
+all of these hashes change, right?
+But each of the set, when it was inserted,
+they had the proof that this was their hash, right?
+So if you want to fake,
+if you want to completely erase the existence of the set,
+you'll have to change an entire chain.
+That is difficult.
+Exactly the same principles that underlie blockchain.
+Yes?
+Hash store inserts.
+It's reliable from the set,
+and whenever you combine,
+you take inputs from your set,
+and you take input from whatever's behind you, right?
+So basically, imagine as if this data structure
+has a pointer to the root, to the top, okay?
+Every time you add something,
+you take a hash of your own serial,
+or your own public key,
+you combine with the current root,
+you produce a new one, okay?
+So each time when someone added,
+the input that they had preserves or encodes history.
+So if you end up changing this,
+you'll have to go and then somehow manipulate
+all the keys or the hashes that everyone had.
+Yes?
+But on the case that three is removed, for instance,
+we can know that something was removed
+because four will not unhash or decrypt correctly to three,
+but we cannot know the information that was from three,
+right?
+No, you're right.
+You know that it was tempered,
+but you don't know who exactly tempered it?
+We don't know who tempered it,
+but tampering is almost nearly impossible
+because these are not held by the same entity, right?
+Everyone's looking at it.
+Everyone has looked at all these operations.
+So you remove one, the person holding four will say,
+look, this is not possible because,
+we will see this, this is called inclusion proof.
+Assume that these certificate issuers are different entities.
+Each one can now prove it is impossible
+for this tree to exist without this,
+because you know what?
+I can regenerate the string based on the knowledge
+that I have.
+I can tell you that this cannot happen.
+We'll see.
+This is called as an inclusion proof.
+You'll see that creepy.
+Yeah, but still you don't know
+what information was deleted, right?
+You could, you could.
+It's a little hard, but you could.
+Yeah, wouldn't all the other logs
+just doing the same things?
+So they just were like partly the same thing, yeah.
+But as long as you prove that the log has been tampered,
+the CT logs goes out the window, right?
+You prove that the CA or the CT log provider
+has done something nefarious, then that suffices.
+Okay.
+Okay, let's see how this thing works, right?
+So what you need to do is,
+in order to verify that something was,
+something indeed existed, what you do is this, right?
+In order to prove, for instance,
+that this particular set was in the chain or in the log,
+all I need is a following.
+I need this particular hash, the one that came before it.
+The current log structure has four more sets
+that have been added after me,
+but I need to know what were the hashes of each of those.
+If you tell me what these sets were,
+I can actually compute the function
+because I know I was here
+and I know what are the four other things came in.
+So I can go to this log and I say,
+okay, look, I was here and I can see these things are added.
+I can manually compute this
+and whatever endpoint that I arrive at
+will be exactly what this log is showing me.
+And if the two are exactly the same,
+then it means that you haven't done anything to tamper.
+This operation is not cheap
+because even if you do sharing and all that,
+if you go to Meckletown, for instance,
+there's a small parameter at the top of the page
+that tells you what is the rate
+of which certificates are being added.
+Just before coming to the class, I checked it.
+It was around 200,000 certificates an hour.
+So even without that knowledge,
+it's easy to say it's trivial to see
+that the verification,
+well, this is called as inclusion proof.
+This inclusion proof scales linearly
+in the size of this log.
+Addition is inexpensive because it's constant time,
+but verification is very expensive.
+By the way, this is called the inclusion proof.
+So the nice thing is that it's easy to add
+but hard to check.
+So it's easy for the CAs to add it,
+but it's hard for monitors.
+It's still one possible way to design the structure,
+but it's not a very efficient one.
+The question is, could you make it easy for both?
+Any ideas?
+Since you mentioned blockchain, I wanna ask you
+because the answer is there.
+Is there anyone else?
+Yes.
+Split into blocks.
+Split into blocks.
+Sort of right, but how do you split?
+How do you avoid linear scans for inclusion?
+Yes.
+Do you group the records into certain lengths
+or certain sets and then?
+Ah, close.
+No.
+It's not about splitting them.
+It's about how you combine them.
+Here, you combine each one with the previous one
+and that ends in a chain of length N.
+Yes?
+Is this something you can do in a Markov tree?
+In a Markov tree?
+Yeah.
+Yeah.
+It's exactly what you wanna do.
+What's a Markov tree?
+Do you know?
+Ah, it's, it will, it would arrange them
+instead of just in like a blank list type
+that would be a binary type that's still verifying them.
+You just have to work your way up to the first set.
+It's a binary tree or a balanced binary tree?
+What's the difference between?
+Well, it would have to be a balanced binary tree
+because then the verification, then the verification.
+What's the difference between the two?
+Yes, a balanced binary tree will always change
+such that the lowest nodes are all on one level
+as opposed to being like.
+The difference between any two levels can at max be one.
+Yeah.
+Right?
+Do you have a difference at all?
+Right?
+And only in a balanced binary tree,
+the lookup and the addition costs are, you know,
+not otherwise.
+There was a, I mean, I don't know how many of you here
+took the background quiz.
+There was a quiz about a data structure
+where there was an insert and a lookup.
+There was no balancing in that.
+If you don't balance a tree, I can give you an input
+that'll make your tree into a linear chain.
+You give me any tree construction.
+If you don't balance it, I'll give you an input
+that'll make it into a line, make it into a chain.
+Okay, so let's see how we can do that.
+So here is the idea, right?
+So I get two sets, maybe if there's one set,
+it's trivial, there's nothing to do.
+If I have two sets, what I do is I combine them like this
+and I make a group.
+So right now, this is the CD-log, right?
+So it has a group that's indicated by this red circle,
+two sets under it, great.
+What do I do with the third one?
+Well, you sort of get the idea, right?
+So the third one is combine the back route
+and I still keep the tree balanced.
+The fourth one looks like that, right?
+Now observe that I moved from three to four,
+there was one other internal node that was added.
+And then so on and so on.
+And this is basically a balanced binary search,
+that's a balanced binary tree.
+In this case, it's actually storing these hashes
+or hashes, hashes, and it's another tree.
+By the way, this is why the portal is called muggle town.
+Now let's see the advantage of this particular structure.
+Same set, now if I remove,
+the advantage of the chain was that whenever you remove,
+you have now the obligation to fake or manipulate
+all the entries that come out of it, right?
+Same thing holds here, right?
+If I move three, all of these are affected,
+so I'll have to fake all of them.
+That's hard, impractical.
+So that benefit is still there.
+So it is time to prove.
+How about inclusion proof, right?
+In order to show, if you give me a root,
+I will prove whether that root is a feasible one or not,
+right, so that's an inclusion proof.
+I can say that if you tell me this is a root,
+my key is contained in it.
+And how do you do that?
+Well, you take three, right?
+So you recompute the path from your set to the root.
+And the nice thing about it is that
+in order to generate this one,
+so you already have three in your hand.
+You don't have four.
+If you have four, you can go one level up, right?
+And once you go one level up,
+you need one more input, which is to the left.
+And then you go one level up.
+And once you're there, you need this one,
+and you go one level up, okay?
+In previous case, in order to construct the inclusion proof,
+you had to walk through every single hash of the set,
+or basically you had to have the information
+about all the sets that were issued after you,
+which is why I said the inclusion proof scales
+linearly in the size of the log, which is really bad.
+But here, the advantage is that
+the inclusion proof scales as well.
+I have a figure of log n.
+Yes, right, so it's just the number of steps
+that you need to go up to the tree.
+If it is a balanced binary tree, it's log, right?
+Log of n, and that's really nice.
+How many additional hashes you require?
+Same, right?
+One per level, so it's log of n.
+And this is the best you could do.
+Any questions?
+If you have ideas to improve this further,
+you could easily write a paper.
+You want to have some of everything.
+Is that really maintainable?
+Because internet traffic also scales up over time.
+Traffic has gotten up, you have a good point.
+The traffic doesn't dictate how many sets are generated.
+You should go, one of you could check
+the Mercantile Cloudflare, check the rate.
+It does get updated.
+Right now, it's 200,000 sets per hour, and it's going.
+So with 200,000 sets per hour,
+that's a massive amount of data.
+Yes.
+So is it just, yeah, they have enough money
+to have enough storage for these things?
+It's just.
+Storage, I mean, the cost of storage
+is still a lot, lot cheaper.
+Don't think you need to worry about it.
+What do you think is the size of,
+suppose you were to, how many of you
+know anything about blockchains?
+Don't want to endorse blockchains.
+But blockchains have a similar idea, right?
+Every single transaction that has been committed
+to the chain, so to speak, you cannot remove it.
+I would say you cannot, within quotes, right?
+Now, how large do you think is,
+for instance, the Ethereum chain?
+Doesn't it grow by like 1.5 terabytes a year or something?
+It's something like, the.
+Yeah, so suppose today I have to start a node.
+Forget mining, okay?
+Forget mining, mining for coins.
+Suppose I start a node that only has
+to catch up, meaning I have to know what happened
+in the past in order to move forward, right?
+That node will take, depending on your internet connection,
+anywhere between two to four weeks to catch up.
+That's assuming that, number one,
+your ISP doesn't come charging behind you.
+Number two, you have the data to,
+a hard drive to actually handle it,
+because it'll run into petabytes at this point.
+Yes?
+So when I ask you,
+should I get how is the hash, which one?
+I don't know exactly the functions that I use,
+but you could use any of cryptographically secure hashes.
+Does certification always go back to your root,
+or is it like, after certain steps,
+we're going straight on, sort of?
+It's obvious to the root, because the idea is that
+somebody tells you, look, this is a current CD-logs, okay?
+The only easiest point, though,
+that you have the CD-logs is the root,
+because the root is always usable, right?
+So you take a look at the root,
+and then say, oh, is my set still there?
+Or you're actually saying,
+is the CD-log has been tampered or not tampered?
+And that's an easy check anyone can perform.
+You start new local threads after...
+Yeah, exactly, so how do you shard?
+Well, you stop it and start a new local tree.
+So right now, I think they do yearly sharding.
+But you could cut it at any point.
+All right.
+When you shard it, how does the complexity change?
+It remains the same, but N is really strong.
+Yes, yes, it remains the same.
+It's a constant time optimization.
+So when I ask you a question like this in the exam,
+please say it doesn't change.
+The sharding will not change the complexity of the lookup.
+If it does, once again, it will change, you know,
+whatever, you know, the lower bounds and so on.
+It's impossible.
+You'll probably get a curing award if you do that.
+So now, the advantage of this one is that it's easy to add,
+easy to check, easy for CA, easy for monitors.
+At least everyone's paying the same cost.
+Yes?
+When I input, I always need the previous hash, right?
+To compute a new hash.
+But if you have so many inputs at the same time,
+does that actually scale?
+Because I always need to wait for my,
+the previous input to be finished computing.
+The way it actually inserts here is that
+when you insert, you always take a look at the root.
+I mean, the person who's implementing this,
+by the way, there's implementation for CT logs,
+at least for Cloudflare is open source.
+You can actually look at it and get help.
+You only have to push the leaf all the way down to the bar
+and a number of inputs that you require
+is once again log into the base.
+Right?
+Think about it, right?
+All the certs are actually at the leaf, right?
+These are all intermediate hashes.
+So how long does it take for your key to go to the leaf?
+That depends on the number of nodes currently in the log,
+which is a balanced binary tree.
+So if I tell you that that one has n,
+which means that the size can be log n to the base here.
+So the hash on computing is actually hash
+the bottom of the node and not the previous node.
+And it is still previous.
+If you think about it, every node is actually looking
+at combining it with the previous hash.
+But when you add a new cert, what you can do is
+you can walk down, figure out where you would have to go.
+So here for the eighth cert will be here, right?
+So you can actually figure out that seven is all you need.
+Once you have seven, you can compute it.
+Okay.
+But so if I insert eight, I need seven.
+And if nine is inserted, they need eight.
+Yeah, eight plus these interviews.
+Yes, but is it not like a problem?
+Because we have so many things at the same time inserting,
+you always have to wait for the previous to be completed.
+It's not like a scaling problem?
+No.
+No.
+Well, so if you're asking, do, I mean,
+are you asking about concurrent insertions?
+Yes.
+It's all sequential, as far as I understand it.
+In some order, right?
+You'll have to maintain some order.
+Your ordering doesn't really matter,
+but you have to maintain some order.
+Not so much.
+You also kind of have to log the data structure.
+I'm sorry?
+You also have to make it look correct.
+Logs correctly?
+Log.
+Yes.
+Yeah, yeah.
+Yeah, that goes without saying.
+But if you ever make a mistake
+and then you pamper with something, someone will say,
+hey, you think like the program.
+Yes.
+Is there a significant cost associated with
+then you have to add additional layers to the binary tree?
+Because you'd have to compute new.
+Now you're getting into the specifics
+of the cost of balancing and all that.
+There is a bit of cost.
+Again, it's amortized over time.
+Okay, that's fine.
+I think it was a famous incident.
+I forgot whether it was Google or Cloudflare
+where some bit errors caused the entire CT logs to go.
+These things can happen.
+The people will spot it.
+The whole idea is that they'll figure it out.
+At least minutes, if not seconds.
+Any questions?
+Okay, let's quickly go to the last one.
+I do have a question.
+Yes.
+So when we notice that something's up in practice,
+what happens when the hashes don't check out?
+You scream at the top of your voice,
+asking the CT log provider to shut up.
+Because basically if any CT,
+if you could prove that the logs compromise,
+then it's really bad.
+So what prevents an attacker from putting bogus certificates
+into this log and then screaming at the CT that, oh, it's-
+Bogus certificates is still an input, right?
+I mean, you can only say,
+oh, you added bogus certificates, so what?
+Right?
+That doesn't, yeah.
+Yeah, go ahead.
+You might have already mentioned this,
+but for a single CT, you have handed to a single log
+or you have handed to multiple logs?
+So we'll come to that.
+So let me finish this.
+If you have still questions, we can answer back, okay?
+So let's finish this and then take a break
+and then I'll take your questions, okay?
+So now, all of this was based on the claim
+that somehow this improves certificate checks, right?
+So now let's take a look at how certified issuance works
+in this whole CT log zone.
+By now, whatever websites you're actually using,
+their certs are in a CT log.
+If in case it's not,
+I still don't know what somebody's behavior,
+Chrome won't load this website.
+We'll see why, okay?
+Okay, so you should remember this picture.
+I'm gonna simplify the picture by removing some entities
+and let's see how this thing works.
+So website requests a certificate,
+so you're a domain owner, you want a cert, okay?
+You go to a CA and say, give me a cert, you pay money.
+Now what the CA does is they go and then insert
+what is called as a preset, like a certificate
+before a certificate is called a preset.
+Not very nice in Italy.
+Why the hell do they have to do it?
+Well, when you issue this preset,
+there's a danger or something there, you'll see why.
+When you submit your preset to the CT log,
+the CT log basically says, oh, I see your cert,
+you know, I check a few things, you know, they could.
+And then they can certify that, yeah, you indeed,
+you know, have inserted a preset and here's your timestamp.
+And so the issue is something's fine.
+The preset is almost identical to a set,
+but you shouldn't actually see presets ever in deployment.
+Okay?
+Because it's not exactly a set, it's a step before the set.
+It's kind of convoluted, you'll see why.
+Hold on to it, okay?
+And so in order to ensure that your browser
+never accepts a preset, there is an extension
+that tells the browser, do not accept it, right?
+And if it ever loads a set, all browsers will scream
+saying, ah, I can't trust it, okay?
+Okay, but why go to this additional step?
+Well, oh, when you get this preset certified,
+there's an implicit promise that you'll actually add
+the actual cert to the log within 24 hours.
+Okay, that's called maximum merge delay.
+It's called merge delay because you're trying to merge
+your cert to the CT logs, maximum merge delay,
+within 24 hours, you're supposed to do it, okay?
+Now, the reason why you do this dance is because
+the stamp that you get from the CT logs
+is what matters a lot for the browser, okay?
+This particular stamp is called
+signed certificate timestamp, SCT, okay?
+The fact that your cert has an SCT
+from an approved CT log provider,
+and the fact that it has not just one, two or three,
+who mandates it, we'll see,
+that determines the security of your cert.
+This is like saying, look, I don't trust
+whatever Bala says.
+I'm gonna go and then check in Google.
+If that says it's okay, then maybe I'll go ask her about it.
+If both of them check out and then they say the same thing
+as what Bala says, then maybe I'll accept that this is true.
+Something similar to that.
+This is why you need CT logs to be independent,
+and this is why you also need the proof that,
+you also need some guarantee that you could trust
+the CT log provider.
+Okay?
+Then the CA submits a cert, everything is fine and dirty.
+This SCT is attached to your cert,
+then the website gets the cert with the SCT.
+When your website serves a certificate
+with one or more SCTs, the browsers are happy, okay?
+So there is this, I think this is probably up here,
+you can check this URL.
+Google has an extensive document.
+Why Google?
+Because Google, the Chrome browser is from them,
+one of the largest market share, right?
+And they actually started, they invested a lot
+in this technology, in this infrastructure.
+They helped a lot of people, it's really good.
+And it's actually quite good.
+And they have this detailed report on what it takes
+to operate your own CT log, right?
+There are requirements.
+They'll keep checking your CT log database.
+If one out of 100,000 requests even timeout, you're out.
+You can't operate.
+Maybe these requirements have changed
+when you can actually check this.
+That's because you don't want these servers,
+you don't want anyone, anytime they can have it
+to operate the CT log server.
+Even if you do have all those things,
+they might still not recognize you, that's a different thing.
+But Chrome actually made it very strict in the sense
+that what they said was Chrome browser actually
+will require all publicly trusted TLS certificates
+issued after April 20th, 30th, 2018,
+to support CT in order to be recognized as valid.
+It doesn't matter who issued your set.
+If it is not in the CT log,
+which means if it doesn't have the SCTs,
+it won't be recognized by Chrome.
+And now that completes the picture
+of why CT logs actually are important, right?
+Not just that, there is an extension called Expect CT.
+It forces CT compliance, right?
+A browser can't say, ah, I know,
+maybe I can be a little flexible.
+No, if that extension is there,
+again, browser's mandated behavior
+is that they should check for SCTs.
+Depending on the certificate lifetime,
+you know, if it's less than 15 months, you need two CTs.
+If it is more than 39 months, you need five SCTs.
+Otherwise Chrome will spit out the certificate.
+It won't establish the connection.
+What's SCT?
+A sign of the certificate timestamps.
+That's what you get when you insert your search to the CT log.
+Now, these five can't all be Google.
+I mean, at least two has to be Google, right?
+Why two Google?
+Because they want to make sure that you insert it,
+you know, to two different geographical data.
+They had a Nimbus and Argon or something.
+I think Argon was recently rolled out as a new one.
+And they'll keep doing this.
+So they want two of their own servers,
+maybe one from Cloudflare,
+maybe one from BGSAT, and so on.
+Five is a lot.
+And this is basically trying to say,
+if you have somehow issued a fake certificate,
+compromised the CA, issued a rogue certificate,
+entered that certificate into five different CT logs,
+somehow gotten away with it,
+then you know what, kudos to you.
+You can go ahead.
+That's basically what it's trying to say.
+But that's really hard.
+Does it kind of create a central point
+of the internet for Google Chrome?
+Oh my God, why are you raining on my parade?
+In some sense, right?
+You could say that, oh, CT logs is managed by a few.
+This thing, doesn't it mean that, you know,
+we are shifting the control back to a few providers?
+Valid argument, very valid argument.
+There's nothing you can do about it.
+The only thing you can say is, look,
+they're not still restricting anyone
+from running their own CT log infrastructure.
+So that's a simple thing.
+Yes?
+I'm assuming somebody's compromised the CA.
+How much of a hurdle would it present
+to upload it to five different CT logs?
+Just for example, if you have their private key
+and you don't have a shell on their box,
+you can do everything you want and impersonate them.
+So can you not just request it from the bottom?
+They'll figure it out.
+Is it that big of trouble for like...
+So previously when DigiNotar incident happened,
+I mean, it still does not prevent you
+from issuing rogue certificates, right?
+When DigiNotar was compromised,
+a lot of government websites, certificates,
+there were rogue certificates issued for those,
+which means that you can prop up a server and say,
+I am, I don't know,
+whatever the famous Dutch government website,
+I'm so and so.
+And then you can ask the users to consume content
+from your website and users won't be able to verify
+whether, for instance, the DDA app, right?
+Behind the scenes that the server that it attracts to you
+to pretend that you are the server, right?
+So there's nothing preventing you
+from issuing rogue certificates,
+but the fact that you have to,
+for that certificate to be acceptable by a browser,
+you have to go through five different CTs
+and get these five CTs.
+That's hard.
+That's hard.
+Yes.
+How hard is it to just spin up five different CTs
+and then make Google Chrome point to those
+instead of officially recommending them?
+Absolutely, I think.
+How do you make Google Chrome point to that?
+Probably by some extension or malicious extension.
+So you could, yeah.
+So one way, it's a good point, right?
+So you're thinking in a very good direction.
+So you could force the browser to change the CTs
+that it'll accept, but let's think about it.
+For that attack to work,
+you want all the users to use your browser.
+Once again, we can only raise the bar, the difficulty.
+These are not proving that you can't do it.
+It's just difficult.
+So in the first attack,
+what do you do with the five CTs?
+Actually, the certificate has a lifetime,
+smaller than three or 15 months, right?
+You can just use Google.
+Yeah.
+So what exactly is the detail that's on our part
+that we can do more?
+What's the detail?
+Yeah, what's exactly the detail of the algorithm?
+Suppose you have a set that expires.
+By the way, we can take a break for five, 10 minutes,
+and then, but if you have questions, you can sit down.
+So let's assume that you have,
+you see the browser whose lifetime is 12 months.
+Yeah.
+That's usually very small, by today's standards.
+So 12 months.
+So it means you need two CTs.
+Ask for the stock, I don't know if this changed.
+And those two CTs that you need to get
+are not any random, right?
+At least one of them is, I think, is Google.
+The other one is probably Cloud for Amazon.
+It still doesn't prevent,
+but you still have to as an attacker,
+you take your growth set,
+let's say if it works for amazon.com, right?
+And you go and publish in these two CTs.
+What are the odds that Amazon is not actually
+looking for those domains?
+Keep in mind, how long does it actually take
+to check whether my domain has been compromised?
+It's not much, right?
+It's very easy.
+You issue a growth set, if it goes in,
+you can bet that I am not, if I am the company provider.
+Because I can easily check these logs.
+Let me put it this way.
+Previously, if I was amazon.com,
+I wanted to ensure that the only certificate
+that can ever be used on amazon.com
+is the one that's signed by Bigiset, okay?
+Suppose I have this requirement.
+Why, because I paid for Bigiset's certificate?
+I've invested a lot of money getting an ED set.
+I better have the assurance that
+that's the only set that can be used, okay?
+But previously, how would you ever check for that?
+How would you ever know someone is using a set?
+Someone is using a set for your domain
+that you don't know about.
+The only way you can know is
+if you actually went to the site.
+Yeah, right?
+So if I was a clever attacker, what I would do is, okay,
+it's just a question of visibility, right?
+So what I'm gonna do is I'm gonna fake,
+you know, pop up a site just for you folks.
+I'll run the web server locally.
+And the unfortunate event that, you know,
+I know someone from Amazon is in this room
+and then goes to the website, they wouldn't know, right?
+That's easier problem.
+That's an easier thing to handle.
+But now, it doesn't matter who you're targeting, right?
+If the user is using, is a savvy user using Chrome,
+you need to convince two large CD providers, right?
+Who's, you know, who are taking pride in the fact that,
+look, you know, anybody can audit, anybody can observe,
+we can monitor the road series.
+You have to convince two of those tough ones,
+somehow pass through their screening and then say,
+oh, you know what, here is a set for amazon.com.
+And what happens if I find a rogue server?
+Oh, today?
+You could report.
+Well, not me, but what if the local holder finds me?
+So usually what happens is that it creates a war, right?
+So you, you know, if you're a CA and I find
+that there is a rogue set for a domain
+that you are supposed to be responsible for,
+you'll probably lose your business.
+Because without certs, we have nothing.
+Yes.
+How does this happen for like non-TLS certs?
+Because I remember like ACES or MSI getting compromised
+a couple of years ago.
+Does there exist something like that for?
+That's a very good question, I don't know.
+Today's certs are used in a lot of different places.
+Like for instance, Apple issued this code signing
+for binaries, there's also a cert there.
+There's a lot of places that's kind of featured.
+The same infrastructure could be used,
+but I don't know if they're used.
+Yes, yes.
+I have a question.
+But the certs that are issued in whatever context
+might still be used in class.
+Yeah.
+So you have this problem, right?
+This problem is that it will be added to the maximum
+emergency that you have within X hours.
+Do you use your agents to check?
+It's not the user agent that is checking
+because if you don't do this addition,
+you don't have anything.
+Now let's say you add something to the log,
+it says well I promise I won't add it within.
+You can't issue this to the browser.
+If you issue this to the browser,
+the browser will say I can't accept it.
+So you have this.
+So there is a chicken and egg problem here.
+In order to get an SCT, you need to have a cert.
+Well you can't have a cert, you know, yeah.
+But if you've got the SCT and D in it,
+and the cert gets added within the MLB browser.
+Yeah.
+What if it doesn't get added within the MLB browser?
+Oh you're saying, what is it, there's a delay in the log?
+Yeah, a delay in the log to the MLB.
+I don't know.
+It creates problems.
+All right, so the reason the chicken and egg problem
+is the other thing that you already said,
+I guess the pre-cert doesn't have the SCT in it, right?
+But the real cert does have the SCT in it.
+Yeah, so there's a thing that you can't insert anything
+into the CT logs if it doesn't have an SCT.
+You can't get an SCT if it is not in the CT logs.
+So the way they got around it, because they don't want,
+so there was a question, right,
+oh what if I keep adding fake certs?
+Well, somebody has to check, but how will they check?
+There's a pre-cert.
+When you issue a pre-cert to something that looks bogus,
+people are like, you know what, I'm gonna give you.
+So the pre-cert is the way you will avoid
+this chicken and egg problem.
+So you issue a pre-cert, you get a SCT,
+then you take the SCT and attach it to the cert,
+then push it into the log, otherwise it won't be there.
+Why is the poison so important?
+Because you don't want this pre-cert to go,
+used by the browser, because a pre-cert
+technically may not be the log.
+There's a same thing I think your browser
+wouldn't accept it anyway if it doesn't have the SCT.
+The way to ensure that the browser doesn't accept it
+is through that poison cert extension.
+But also because they say, well,
+we're not gonna accept it.
+But how do you know whether something is a pre-cert
+or a cert?
+Well, a pre-cert wouldn't have an SCT on it, right?
+No, it will.
+It has a timestamp, but you wanna make sure
+that that is not the one that is getting circulated.
+It's almost identical, it's just a technicality.
+Yes, your certs will have the SCT.
+You can actually look at the details of the cert
+and it will tell you what it is.
+So I'm gonna change topics and I'm gonna talk about BGP.
+
+I'm gonna give you sort of a very quick tour
+of the three things.
+A very high-level overview of how BGP works.
+Once again, a very high-level overview
+of how a CDN works.
+And again, it goes without saying,
+a very high-level review of how any CAS works.
+Whatever I say for the next 20, 25 minutes
+shouldn't be surprising to you.
+It's just a primer.
+But if it is, then I would strongly recommend
+that you take a look on basic networking
+and then refresh these things.
+BGP, again, very basic.
+CDNs, by now you should know what a CDN is.
+If you don't, it is your five minutes
+or 10 minutes to figure it out.
+Okay, BGP, again, you might already know this.
+It's called the Border Gateway Protocol, very important.
+Without this protocol, networks won't know
+how to route your packets in the internet.
+So it's fundamental, it's very crucial,
+it's very agile, complex, broken, you know the truth.
+So when asked, you know, what is an internet,
+you might have come across this very bolding definition
+which is called the network of networks.
+That's because, you know, in reality,
+when you look at how the internet is structured,
+you have a number of networks.
+Networks are basically a set of routable prefixes, right?
+So you have CAPA-IN, you have SACO.
+They own a set of addresses
+which can be grouped into prefixes.
+Those prefixes put together, you know, represent a network.
+And within your network, you can do whatever you want.
+This is your kingdom, right?
+Nobody will question you.
+You could run whatever crazy protocol that you can think of.
+That's why they're also called autonomous systems.
+They're independent authority.
+They can do whatever nonsense they want within the network.
+The only rule is that the moment you come,
+you know, you go out of the network,
+you speak, you know, the common language.
+The common language here is BGP, okay?
+An autonomous system is managed and controlled
+by a single entity or organization.
+An autonomous system, again, you know,
+you could view it as a bunch of prefixes.
+You could view it as a bunch of devices
+that cater, you know, provide connectivity to different users
+although I have represented autonomous system
+by a fuzzy cloud.
+It doesn't necessarily have to be a single cloud.
+It could be geographically discontinuous, right?
+An autonomous system doesn't mean that,
+oh, it's a network that caters to users in Netherlands.
+No, it could be a network that actually provides service
+to users in US, Netherlands, and Australia.
+That could happen, okay?
+There is no need for a geographical category, okay?
+Good example of a sort of like a broken down AS is Google.
+Autonomous systems usually are identified by a number,
+an ASN, autonomous system number.
+Because you know, you can't identify an AS
+by just the prefix because prefix, there's a lot of them.
+To uniquely identify an autonomous system,
+you have a number.
+Google's AS number is AS 15169.
+Usually the number is just a 16-bit value,
+but you know, the terminology,
+the parlance is usually always to add the prefix AS to it.
+So you always say AS something, AS something.
+AS 20340 would be Akamai, a CD.
+AS 15169 is actually broken down into several pieces,
+so you will see if you try to look
+where Google's autonomous system is,
+it'll cover pretty much the entire world,
+except I'm talking about it.
+So what does BGP provide?
+BGP provides one of the key mechanisms, right?
+So all these networks are their own kingdom, so to speak,
+but they need some way to communicate to the other
+who are the set of users they're responsible for,
+or more importantly, what are the set of prefixes
+like they can carry traffic towards?
+So BGP allows a subnet to advertise its existence.
+It's a policy-based protocol, you'll see what that means.
+This is the number one reason why BGP is extremely complex.
+This policy has got nothing to do with technical things.
+Policy could simply mean I love this AS,
+I will take traffic from them.
+That's not something you can mathematically reason about.
+It's a path-vector protocol, you'll see what that means.
+It's very complex.
+BGP provides three functions,
+so it allows you to obtain, allows the network
+to obtain subnet reachability information.
+Reachability information is key, you'll see what that means,
+from neighboring neighbors, by the way.
+You can only do as much as what your neighbors tell you.
+Why?
+Because if you try to be greedy and try to acquire more,
+then you run into a very simple problem, which is...
+Too much traffic.
+Scale.
+Because in the internet,
+you don't know what other networks exist.
+You want a protocol to be as simple as possible.
+The simplest thing you can do is run in a distributed manner,
+just look at what your neighbors say.
+It's sort of a gossip protocol, we'll see how it works.
+But you basically build off of what your neighbors tell you,
+and then you keep accumulating information
+over time it updates.
+We'll see what is that information you acquire
+and how it updates.
+And whatever you learn, and what you're learning
+is basically routes to different prefixes,
+that's all you're learning.
+And you want whatever you learn to be known
+to all the routers in your domain.
+It also provides some mechanisms.
+By the way, whatever policies or whatever things you do
+inside your network that's governed by an intra-AS protocol,
+which is not BGP's, we won't get into details.
+We are only interested in the communication
+that happens between two ASs,
+which is your inter-AS communication,
+or inter-AS protocol.
+The last thing is, I mean, there might be more than one route
+to a given prefix, which one do you pick?
+And BGP provides a mechanism for that.
+And that mechanism, it's based on routing policy,
+
+which is why I've put good within quotes,
+because once again, it's not really clear
+how you could define that.
+Let's take a look at the first two.
+Learning reachability information, what does that mean?
+Well, it means how do I reach through different networks?
+So if I am the ASA here, I wanna know how to reach B
+and how to reach C, why?
+Because you can be a user in A, you're my customer,
+you're paying me money.
+And if you're paying me money,
+it means that you want people to reach you
+and you want to reach people all over the world.
+And if I have to be able to carry on that service,
+I should know who the other people are,
+who the other networks are.
+Networks are represented by prefixes or subnets.
+So you have networks like this.
+And the way BGP works is this,
+you don't want all the routers in your AS
+to communicate with all the routers in the neighboring AS,
+that would be very inefficient.
+Because if you have N routers in each side
+to connect all of them, that requires N squared links.
+So that's expensive.
+So what you do is you typically pick
+what are called as border routers,
+one router or two routers, and it varies.
+You pick one or two routers that actually can speak
+to your neighboring AS.
+These are called border routers, they'll speak BGP.
+They're the only routers that are required to speak BGP
+because you're going outside of the AS boundary.
+They will use TCP, obviously they have to
+because you need a reliable protocol
+to exchange these messages because they're crucial.
+And even though I have represented a single link
+connecting those two routers,
+it does not represent a physical link.
+It does not need to be a physical link,
+although typically it is.
+There's a lot of security that is implicit here.
+What I mean by that is BGP by itself has got nothing,
+no security on top of it.
+So it's a very simple protocol.
+It simply tells a router,
+who are your neighbors?
+Well, anyone who's connected to your ports
+through a fiber optic cable.
+And you basically trust whatever information you receive
+over those wires, over those cables.
+That's pretty much it.
+So which means that you better make sure
+when you connect these cables,
+you know who you're connecting to.
+But once again, actually requiring interfacing
+with the router is really hard.
+Now, here is a question.
+Suppose this is, let's say a KPN
+and let's say this is a Z-code.
+Two different ISPs.
+Obviously you can today,
+send an email or exchange data
+from if you're a KPN customer
+with someone who is using Z-code, right?
+Well, that could happen somewhere
+these ASs have to exchange information.
+Let's assume that there is a link connecting two routers
+from these two ISPs.
+Where would that happen?
+If the KPN router, let's say is somewhere
+and I don't know much about Netherlands geography yet.
+So let's assume that the KPN router
+is somewhere in Amsterdam.
+And give me a location that is too far from here
+in Netherlands.
+I'm sorry, what?
+Master.
+Okay, master.
+Let's say the second router is there.
+Laying a cable between these two locations is expensive.
+And that is just for two ISPs.
+Think about how many ISPs we have in the world.
+Do you want to be able to connect to all of them?
+So you really can't, I mean, you can,
+but it would be prohibitively expensive
+for you to lay cables to whoever you want to interface with.
+Depending on the country you live in, of course,
+even if you are a telecom giant,
+you have all the money in the world,
+you can't just dig a conduit by the side of the road.
+That's simply not possible.
+And you know, one particular place
+where these laws are extremely notoriously complex is US.
+In fact, cable companies are a monopoly.
+They claim that, oh, we are not a monopoly here.
+Look, I mean, AT&T made a famous,
+AT&T CEO made a famous statement.
+He said, oh, there's no monopoly in US.
+Look at all the locations where we serve customers.
+Wherever we serve, Comcast is not there.
+That's the definition of a monopoly.
+But again, so how exactly do you connect two routers?
+Put them both in an internet exchange?
+Yeah.
+So you have these buildings
+that are called internet exchange,
+they're typically called points of presence.
+Basically, or a pop, right?
+That's what the abbreviation is.
+And all it means is it's a location,
+it's a physical location where, you know,
+a bunch of routers are there, right?
+Each of those, instead of servers,
+you have a rack of routers.
+Each of those routers could belong to a different network.
+And you know, there's a switch connecting all of them
+and you can decide who to peer with.
+The term is called peering, right?
+And the person or the organization
+that constructs this building,
+facilitates this communication,
+typically is called as an internet exchange point.
+And that's a very nice facility, right?
+Because the only cost that you have to do
+is to bring your router to that location.
+As long as you have late infrastructure for that to happen,
+peering with other networks becomes easy, okay?
+One of the largest exchanges in the world
+actually is in Amsterdam.
+It's called the AMZIX, Amsterdam Internet Exchange.
+It's one of the heavily, you know,
+all these exchanges are heavily guarded,
+very secure building, why?
+Because if you break it, everything else breaks.
+Perhaps given the political climate,
+I shouldn't be saying these things.
+But anyway, if you want to really break the internet, right?
+You don't go sniffing cables, that never works.
+Although, you could actually Google for articles,
+you know, the keywords,
+New Jersey backhoe internet break, you know, outage.
+You'll see, I mean, there used to be a time,
+I mean, long back before some of you were born, I guess.
+You know, someone, you know, took a backhoe in New Jersey
+trying to dig, you know, a small,
+I don't know what they were doing in their backyard.
+There was a cable going through their backyard.
+They snipped it and it caused the, you know,
+a lot of people in the world to have an outage.
+Submarine cables sometimes could get cut
+because ships, you know, if you don't know exactly
+where you're throwing an anchor,
+and these days they're very careful about these,
+if you don't know where you're throwing an anchor,
+the anchor could actually pull the cable,
+cause it to split or break.
+And that's quite expensive to fix.
+But the internet is very resilient to outages
+as in to link break-ins.
+So typically breaking a conduit doesn't help that much.
+But if you take down an internet exchange,
+out of there you could do a lot of damage
+because you're not taking down one network,
+you're actually breaking the connections
+between any of them.
+That's really tough.
+I have never been to Amzix, the building,
+but I've been to one in the US, in Seattle,
+there's a very large exchange, internet exchange in Seattle.
+And there, you know, for a couple of blocks
+around the building there are cameras.
+So, you know, if you look shady, you know,
+you're walking around the building, you know,
+taking notes, there will be someone
+who will inquire what you're doing.
+Yes.
+Can we have a school trip?
+No.
+There used to be a colleague of mine here
+who had a very good contact at Amzix
+and he actually offered me a tour.
+Unfortunately he left the room, so it's very hard to get.
+I mean, for us maybe it's easier.
+But you would see that if you ever get a chance
+you should take it because you'll see
+how secure the building is.
+Don't wanna get into problems and let's change topics.
+So BGP, right?
+It allows these border routers to exchange data
+and these border routers are connected to one another.
+They're called peers.
+The term peer or the term appearing is very overloaded.
+So in case you find it confusing, I'm sorry,
+that's the, it's not because of me.
+But I'll try to clarify it whenever possible, right?
+So these are peers in the sense that they're actually,
+you know, on either side of a given link.
+Okay.
+Okay, so BGP allows the network to advertise
+over the spearing link, what does it allow you to advertise?
+I mean, for instance, if A owns a network 130.37.00.16,
+by the way, that network prefix is owned by the university.
+You can run who is on the prefix
+and you'll get more information.
+By advertising a prefix, you're basically saying
+you're allowed to, you are taking the obligation
+of carrying data towards that prefix, right?
+This is very important, right?
+A is saying I own the prefix and when I advertise,
+I'm saying if you have traffic to that prefix,
+you send it to me.
+That's basically what an announcement means, okay?
+So one high level bit to note there is that
+the data traffic is exactly in the direction opposite
+to the direction in which announcements go.
+This session between two border routers is called
+eBGP, again, not very creative, external BGP session,
+as opposed to BGP sessions between internal routers
+called iBGP, you could run BGP within a network,
+we won't get into that.
+Okay, now we'll dig into what it means to pick a good route,
+what does it mean to select a route, okay?
+So now we know what reachability information is about
+because reachability information is basically
+every network advertising a prefix and a path, okay?
+In order to know how a path is picked,
+we have to know something about routing policies.
+In short, routing policies are basically trying to tell you
+how do you choose a path from multiple alternatives
+and how do you control your advertisements
+for different ASs, we'll see these briefly.
+So here is a more complex network.
+Now, the assumption here is that every router is an AS,
+okay, that's just a simplification because otherwise
+it becomes a little difficult to illustrate, okay?
+Now, let's think about A, A wants to announce
+to the whole world that look, I own this prefix,
+which means that you should route traffic
+to this prefix to me, okay?
+And the way it does it is obviously advertises a prefix
+because you have to tell what you own.
+And in addition to that, it actually says,
+okay, in order to send traffic to 130.37.00.16,
+you send it to A, which is me, that's it.
+BGP is a simple gossip based protocol,
+so the idea is that A can only do this to its neighbors,
+so obviously the neighbors should carry on that advertisement
+and then do the propagation.
+So let's look at what B will do, right?
+So B will happily broadcast that information
+to all its neighbors, okay?
+It's smart enough to not to do that to A, that'll be silly.
+So it now sends it to C, E and D.
+Note one crucial thing, right?
+In the advertisement, it changed something, right?
+What did it change?
+It prefixed itself, it added its own AS as a prefix.
+By the way, the A, B, the alphabets and the letters
+that you see here are representative of AS numbers.
+You could think of them as AS numbers.
+Now, why is it doing this?
+Because B is saying, look, if you wanna send traffic
+to 130.37.00.16, I know the route to it
+and the route will go through me,
+but eventually it'll end at A, okay?
+So when you look at a BGP announcement,
+you can walk through the list of ASs in the path,
+the last one is presumably the one that originated, okay?
+There are some assumptions that we'll have to make about that.
+Typically, that holds true,
+there are situations where it will not hold, okay?
+Isn't that inefficient?
+Yes?
+Huh?
+Yes.
+So why do we still do it?
+Legacy?
+Could be one reason, there's always that reason.
+Yeah, could be, what else?
+It ensures this of that.
+Okay, so that's actually a good,
+I would like you to always guess,
+but let's follow through the guess, right?
+So the guess was that, oh,
+this is actually a good guess, right?
+So the guess was that, oh,
+because you have to know the path, right?
+Now, I haven't explained this,
+but let's assume that you accept the path,
+an announcement, if you accept it,
+it means that you're accepting the path to that prefix, okay?
+Accepting basically means you take it
+and put it in your database, that's it.
+There's a database in all these routers, it's normal, okay?
+Now, does it really matter
+that you have to know the entire path?
+Because when you receive a packet to a given destination,
+the only thing you can do is send it to your neighbor.
+The only thing you can do is send it to your neighbor.
+You can't control it all the way to the source.
+So why does the path matter?
+You don't want to have notes in it.
+Yes, right?
+Now, if these advertisements,
+it's a gossip-based protocol,
+so eventually what'll happen is that the advertisements
+might end up one way or the other
+towards the source that originated,
+and when it sees itself in the path,
+B will say, I'm not gonna forward this anymore.
+So imagine, this announcement could go
+to D, to F, to E, back to B,
+and B will say, I see myself in the AS path,
+which is great, I'm gonna drop this,
+because I know this, right?
+So you want to prevent the loop,
+and if you want to prevent a loop or a cycle,
+cycle is a more precise mathematical term,
+you want to do this.
+By the way, this is nothing but your path vector.
+This is why BGP is called a path vector protocol.
+There's one more detail to it, but I'll come to that.
+Doesn't this also help you choose the shortest route,
+or does that not matter?
+Ah, good one.
+It does, it actually helps you come back.
+That's also a good one.
+You could argue, the reason why I hesitate a bit
+is because you could argue that you could
+indicate the cost in another way,
+because if you, but that doesn't work.
+If you want to remove a cycle, you need to have a path.
+Does that help?
+Does the router know what its neighbors are?
+Yes, you will know who your neighbors are.
+You won't know anything beyond that.
+Before announcements already?
+Yes, meaning, because you know who's connected
+to your interfaces.
+Yes?
+This is also a useful policy, for example,
+if I see that C is in charge.
+Yes, you're jumping ahead, but let's hold on to that path.
+Now this thing keeps on going, right?
+So for instance, D picks up this announcement
+that it receives from B, it packs itself to it,
+and it pushes it forward.
+So far so good, okay?
+Now let's focus on two things to understand policies,
+and I'll get to what you said, okay?
+Let's ignore most of these things
+and look at the announcements that C receives, right?
+C receives two paths, okay?
+It received an announcement from A, right?
+So obviously it says, okay, I know I'm about to go
+to 130, 37, 00, 16, it's through A, right?
+Because it says, but I can also go through B, right?
+So this will be a path of one-half,
+this will be a path of two-halves, okay?
+So C's choices are actually sent to A,
+sent to B, which are then sent to A, eventually.
+Decisions are always local.
+The best you could do is figure out
+which neighbor to send it to, that's it.
+The announcements basically tell you
+that whoever you're sending it to has the obligation
+to carry the traffic towards the destination.
+Whether they do it or not is a different thing, okay?
+But that's the obligation, okay?
+Now, the way you choose which one of these is best
+depends on a cost function, okay?
+And when I say cost function, the reason why it's in quotes
+is because it's really hard to understand
+what that cost function is, right?
+Here is an example of a cost function, right?
+I pay more money to this AS,
+I pay more money to this one than this one.
+So even though this is a one-half path,
+I'm not gonna take this, I'm gonna take this one.
+Typically, if all things are equal,
+when I say all things are equal,
+there are a number of parameters that you have
+based on which you could choose.
+If all things are equal, you would actually pick the path
+that looks shorter, okay?
+Again, that looks like you're optimizing for performance,
+but that's just an illusion, right?
+BGP has no notion of performance, okay?
+Shortest paths need not give you any assurance,
+cannot give you any assurance about the performance.
+You could have a longer path that is actually
+more performant in terms of latency, bandwidth,
+than a shorter path.
+Shortest in terms of estimation or like,
+shortest in terms of the number of hops to the destination.
+Okay.
+Yes?
+So nothing prevents B from advertising to C
+that it can reach 130 just through B and not through BA?
+That is not a lot, because it's actually bad
+for a number of reasons.
+If you remove the originator,
+there are situations where you do it,
+but think about what it means.
+If you remove the origin from the announcement,
+it means that you have the responsibility
+to carry the traffic, okay?
+You could do that.
+If you're an attacker, you do wanna do that,
+but you wanna be very careful,
+because if you are not careful,
+the prefix that you announce might, you know,
+suck the entire internet's traffic towards you,
+and you'll go around just like that, okay?
+Imagine your router is connected over a 10 gig link,
+which is nothing.
+Usually the code routers in the internet
+are usually 400 gigabits per second,
+sorry, 400 gigabits per second and upwards, okay?
+That's a minimum that you get.
+If you take a code router, routers are very simple,
+almost to a point of being dumb, right?
+They only do two things, right?
+One is they speak BGP to a fairly reasonable extent,
+and the second thing they do is forward packets.
+They're optimized to do these things extremely fast, okay?
+They won't have any smart functionality,
+not like your Wi-Fi routers, right?
+They won't even like to hear the word smart, right?
+Because you want these routers to operate,
+so at 400 gigabits per second, I don't remember exactly,
+you have a few nanoseconds to resume a packet,
+look up where it goes, and send it on its way.
+You don't have a lot of room for thinking, okay?
+So when you hear the word sniffing, you know,
+deep packet inspection, on-path attacker,
+they're not sitting on routers.
+Even the most efficient code that you can write,
+if it takes more than a few nanoseconds,
+like two or three nanoseconds, you cannot run on a router.
+You can still run.
+The point I'm trying to make is,
+you will slow down the line rate,
+and that's not in the best interest of a network provider,
+because there's a lot of costs that they've sunk
+into the infrastructure.
+They won't leave any bit.
+They won't even do anything more than that is required.
+Did you have a question?
+Yeah, okay.
+So the way they choose the best path
+is based on some cost function,
+but unfortunately, the cost function
+has got nothing to do with performance,
+which is why, you know, to a large extent,
+if you want to complain, you know,
+the performance to a, you know, ISP, or to a Netflix,
+or whatever kind of provider you're consuming content from,
+if it sucks, it's because of BGP.
+The second thing, note, you know,
+another peculiarity in this illustration, right?
+D chose to re-announce or propagate
+this particular announcement to F and G, but not to E.
+Right?
+That's a little strange.
+You can do this, because that router
+is in the control of your AS.
+You're allowed to declare, define,
+what you re-announce and what you don't.
+But when you don't re-announce something,
+what are you trying to do?
+You're trying to limit the options for a neighbor,
+for an upstream or a downstream neighbor.
+Okay?
+And that is, once again, governed by policy,
+and that also has implications.
+So this is what I meant by policy-based, rather.
+Again, we'll come to this policy,
+but so far back, I hope it's clear.
+No performance, right?
+If I have any questions about performance,
+absolutely, you know not.
+BGP doesn't know anything about performance.
+Yeah, but if C was also exclusive to E,
+would it be a point that E doesn't know
+where it shines in or?
+I'm sorry, what?
+Meaning E might receive announcement,
+the hope is that E will receive an announcement
+to this particular prefix from someone.
+If it doesn't, it means that C's users
+cannot reach this prefix at all.
+What I'm trying to say is,
+D is choosing not to advertise it,
+because it doesn't want to carry traffic
+towards B or towards A.
+When you announce, you add yourself to the path.
+You don't remove the origin, at least not typically.
+You don't add someone else and then propagate it,
+that is also not allowed.
+You add yourself and then you propagate.
+But when you add yourself and you propagate,
+that means that you are staking on the obligation
+of carrying the traffic towards the destination.
+Fine?
+Yes?
+In this specific case, would B also propagate from C?
+This is just an example.
+You say not allowed, what if I'm a rogue AS
+and I just started blasting out stuff that is not allowed,
+who enforces that and what are the penalties?
+Then you'll soon get kicked out of the IXP.
+Okay.
+Think about it, right?
+Again, good question, when I say,
+and I did mean it when I say
+you're not allowed to do certain things.
+I mean, does it mean that you can't,
+you can always do things that you want.
+You can do anything.
+But most often what'll happen is that your neighbor
+who's receiving an announcement has a rule that says
+that tough luck, you try this announcement,
+I'm gonna kick you out.
+So they'll basically stop the connection.
+If they drop your announcement
+or if they actually sever the TCP connection, you're out.
+The moment the TCP connection breaks,
+BGP will forget all the announcements
+that they've learned over the connection.
+That's a security.
+Now you could think,
+ah, can I actually break this TCP connection?
+That's hard.
+The TCP attack that you did is against a server
+that no one was using.
+Trying the same TCP attack against a Netflix server,
+that's hard, that's incredibly hard.
+The volume of connections, randomness involved,
+that makes it harder.
+A cold router, it won't even accept a connection from you.
+Not only that, I mean, you have to be very close
+to the router, you have to be sitting right next
+to the router, but if you manage that,
+then you can do other things.
+That TCP port, I imagine,
+wouldn't be reasonable on the public internet.
+It's just internal to the internet.
+Yes, you're right, you're right.
+It's actually on a local lab, yeah.
+But I say that with quotes because sometimes
+you can't actually bring your router to an IXP,
+but you still want to peer with someone,
+so there is a possibility to do something,
+but it requires a little more technical details.
+If you want to know more, I can explain that.
+For all purposes, it's a physical link,
+but there are cases where that is not possible.
+The reason, by the way, this usually is one hop, usually.
+The reason is because when a router
+actually receives a packet, it figures out,
+okay, it has to go with that interface, right?
+What the router will do is it will figure out,
+I know who the neighbor is
+because I know the next hop IP address.
+I'll figure out the MAC.
+Once again, ARP and other things, right?
+And then it'll figure out the MAC and it'll replace
+the headers and it'll send it along its way.
+For this process to work, the next hop
+has to be a logically immediate for the next hop.
+If it does not, then things won't work.
+But again, typically, there are always ways to, you know.
+Okay, let's go to policy-based routing.
+There's not a lot of interesting things
+that I can say here that is technical, right?
+Policy basically means business relationships.
+And then the internet or the networking
+business relationships basically means money.
+If you want to know what route your packets take,
+just follow the money, right?
+Don't mean it in jest, I mean it in reality, right?
+So let's take this illustration, right?
+So I have two ASs, X and Y.
+You could imagine this as your regional ISPs
+that are providing you internet connectivity, okay?
+And the arrows basically indicate who pays money to whom.
+If they're not indicating the path or the direction of data,
+they're not indicating the direction of announcements.
+Keep that in mind, okay?
+Now in general, when you talk about business relationships,
+there are two relationships, right?
+Once again, it's based on money.
+If someone pays money to someone,
+then one is the customer, the other one's provider, right?
+So it's obvious who's customer, who's provider, right?
+So X and Y are customers, they're providers at A and B.
+What are they providing?
+Well, they're providing what is called as transit, okay?
+In other words, they're basically saying,
+if you send traffic to me,
+I can carry your traffic to the rest of the world,
+and the rest of the world's traffic, I'll bring it to you.
+There is another relationship that is called
+as settlement-free peering.
+Once again, it typically means no money involved.
+Why would that happen?
+Well, if A is actually sending as much traffic
+as B is sending to it,
+paying money basically cancels out each other, right?
+So they could say, oh, we're roughly the same,
+so what we could do is we could have an informal arrangement.
+You send traffic to me, I send traffic to you.
+No money, no money involved, okay?
+I said peering is an overloaded term.
+This is, again, when I say settlement-free peering,
+I mean this kind of arrangement where there is no economic,
+there's no money getting exchanged.
+Unfortunately, these two are once again called peers again.
+So let's see now how policy-based routing works, right?
+Let's add a third A is here, just to make it interesting,
+but again, I have put C here, there are no arrows,
+which means that C is a peer of A and B, settlement-free peer.
+Now let's see, when A advertises a prefix B,
+it promises to carry the traffic towards the destination.
+When you carry traffic towards the destination,
+it will incur a cost, so you better make sure
+someone pays you money for that, right?
+Simple economics, okay?
+X advertises its prefix to be, why would X advertise?
+X is your ISP, we've all paid a lot of money to the ISP,
+so the ISP better announce a prefix, right?
+And A will take that announcement,
+and then it will rebroadcast it, right, including itself.
+You remember how it works?
+To C and B, why would it do that?
+Well, X is paying A, so A is obligated to do this, okay?
+The traffic destined to B belonging to X from anywhere
+must reach X, that's the service that A is providing to X,
+that's why A is called transit, right?
+So A must be advertised.
+When B receives it, it will re-advertise to Y, right?
+So B is saying, oh, if you have traffic going to B
+which is owned by X, you can send it to me,
+and it says that to Y, which means Y will send traffic
+to B, B has to carry the traffic, who's paying B?
+Y is paying B, right?
+It goes through this one, there is no money involved,
+and then but A gets it, and A will carry the traffic
+towards X because A is getting paid, so that's fine.
+X will deliver it back to the users
+because X is getting paid by its users, so far so good.
+What you notice here is that B advertises B,
+so this makes sense.
+C does not advertise B to B, why?
+If C advertises, again, what does an advertisement mean?
+It means that you're willing to carry traffic
+towards the destination.
+Observe if it does, what happens.
+If C advertises, B will happily,
+assuming B chooses that path.
+If B sends traffic to C, C takes that traffic,
+sends it to A, B is not paying to C,
+A is not paying to C, it's doing work for nothing.
+So it won't do it, so far so good.
+No revenue for C.
+So when you do a trace out to your destination,
+you look at the IP addresses,
+you merge those IP addresses at the AS levels,
+what it means, all of this means,
+is that if you look at those AS level hops,
+you'll only see one peer-to-peer crossing.
+Does that make sense?
+This is why sometimes you, yes?
+What is a peer-to-peer crossing?
+This is a peer-to-peer crossing, A to B, A to C, C to B.
+Because you can only have one such thing,
+but there is no money involved.
+Yes?
+I don't know, let's say I have a neighbor
+who's with a different ISP than me,
+and I send a message to him,
+does it go all the way to an internet exchange
+and then come back?
+Yes, not internet exchange.
+So typically, if you think about it,
+you have your regional ISPs that is a hierarchy, right?
+So ASs are grouped into hierarchies.
+Again, it's a very informal definition.
+So your regional ISPs, and there are tier two,
+and there are tier ones.
+Okay?
+So you can think of it as larger and larger networks.
+Another way to think about it is that
+these ISPs pay money to this one,
+these ones pay money to this one.
+Any one here doesn't pay money to any other one.
+That's why they're tier ones.
+They got more.
+Now, all of this means that if you go up,
+you have to come down.
+You can go up, at some point you can try,
+you can cross, and then you can come down,
+but it will never happen like this.
+This is called a valley,
+and it's called valley-free routing.
+You cannot have valleys.
+Within each, the ASs within each level are all peers, right?
+Or not necessarily.
+Not necessarily.
+But if they're all peers,
+then you'll only see one such peering link.
+Yeah?
+I'm sorry, what?
+It will be V-A-X.
+V-A-X, right.
+Because each AS, when it propagates it, it lagged itself.
+Can I take two more minutes and then?
+Sorry.
+You could have other arrangements, right?
+X could have multi-homed.
+It's a term that you sometimes see.
+It means that you have multiple providers.
+So now you're paying both A and C.
+Now C will happily advertise.
+Because now you're paying money.
+Now, this we already saw.
+When B receives two such paths, what will it choose?
+It depends.
+When an announcement is actually sent out,
+there are multiple attributes, so to speak.
+We saw A is path, right?
+That's one of the key attributes,
+a mandatory attribute without it doesn't make any sense.
+Another mandatory attribute is next hop.
+You have to tell your neighbor who the next hop is.
+As if, suppose you accept that announcement,
+here is the next hop address.
+There are other parameters as well.
+Like multi-exip discriminator, local preference,
+and all that.
+I'm not gonna go over all of these things.
+But these are all, once again, policy-based.
+When I say policy-based routing,
+this is how you encode policy.
+I'll show you one example, right?
+Next hop interface, yeah.
+So when B learns actually two routes,
+what it can do is, B can say, look,
+the border routers that I have,
+I can configure them to say,
+when you receive an announcement,
+attach a local preference to that.
+A local preference is an attribute, okay?
+The local preference could be numbers like this,
+20, 50, whatever.
+And the process by which BGP would select the best path
+would actually include taking into consideration
+these local preference,
+so whichever is the highest local preference,
+you'll prefer that first, okay?
+Now, which one will you give highest preference?
+Obviously, the A is to with which you have
+good relationships, you pay less money.
+And local preference, this goes without saying,
+local preference trumps every other attribute.
+This is why it's policy-based, right?
+So there are like 10, about 10 or 11 steps.
+It's very convoluted,
+but it's supposedly deterministic, so you can always, yes?
+So local preference is not included in BGP?
+Announcement, no.
+It's local, it's local to an A.
+It's an A is basically trying to say,
+who I prefer more, okay?
+There are other attributes that you could add
+to the announcements, but local preference is not one.
+You generally don't wanna reveal
+your local preferences outside, okay?
+If you do, then that gives your customers
+a chance to complain why Netflix graphic sucks.
+I hope I have learned more about that.
+That's all I have for today.

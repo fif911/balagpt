@@ -1,0 +1,1695 @@
+[00:00.000 --> 00:06.000]  Okay. Oh, interesting. Then you can help me out.
+[00:06.000 --> 00:12.000]  So maybe I can, I will raise an answer. Maybe I can ask some questions.
+[00:12.000 --> 00:17.000]  Ah. Yeah, it's the same deal that I thought
+[00:17.000 --> 00:21.000]  because I thought I'll update it before I upload.
+[00:21.000 --> 00:26.000]  So I hope you remember what we covered on VGB.
+[00:26.000 --> 00:35.000]  So the reason why we cover CDN will become obvious
+[00:35.000 --> 00:39.000]  when we actually take a look at attacks against VGB.
+[00:39.000 --> 00:47.000]  Let's see. So most of the content today that we consume doesn't matter what type it is,
+[00:47.000 --> 00:53.000]  whether it's websites, video streams, Spotify, wherever you have.
+[00:53.000 --> 00:56.000]  They are delivered by content that we use.
+[00:56.000 --> 00:59.000]  So 80 to 85 percent of the content that you consume,
+[00:59.000 --> 01:03.000]  whether you like it or not, is delivered by CDNs.
+[01:03.000 --> 01:09.000]  And this is just showing a simple example of what the path might look like.
+[01:09.000 --> 01:15.000]  So suppose you're the user, you have internet connectivity from your internet service provider.
+[01:15.000 --> 01:18.000]  There are one or more ASAs that provide transit.
+[01:18.000 --> 01:23.000]  We already covered ports of transit when we discussed the VGB preliminaries.
+[01:23.000 --> 01:27.000]  Eventually the path will lead to a target network
+[01:27.000 --> 01:31.000]  from where you consume data or you send data to.
+[01:31.000 --> 01:37.000]  But typically this, the path over which you actually consume the network
+[01:37.000 --> 01:40.000]  might be really, really long, arbitrary long.
+[01:40.000 --> 01:42.000]  And it has implications for performance.
+[01:42.000 --> 01:46.000]  So in general if you want to improve the performance of content
+[01:46.000 --> 01:53.000]  delivering in the internet, you want to deliver content from somewhere close by to where you are.
+[01:53.000 --> 01:57.000]  Imagine you want to go run for a cup of coffee.
+[01:57.000 --> 02:01.000]  So typically what you do is there are a number of options.
+[02:01.000 --> 02:05.000]  But you save time by going to the nearest location, assuming coffee is everywhere.
+[02:05.000 --> 02:07.000]  So that's a good idea.
+[02:07.000 --> 02:10.000]  So let's see how this works.
+[02:10.000 --> 02:14.000]  So let's say my sense of geography is not that great,
+[02:14.000 --> 02:16.000]  but I think it's somewhere in the Netherlands.
+[02:16.000 --> 02:20.000]  So let's assume that we as users are in the Netherlands.
+[02:20.000 --> 02:23.000]  We try to consume some data.
+[02:23.000 --> 02:27.000]  So let's just chart what that path looks like, what the network path looks like.
+[02:27.000 --> 02:31.000]  So it's somewhere in the UK.
+[02:31.000 --> 02:36.000]  Italy should not go over the sea to the UK, but let's assume it does.
+[02:36.000 --> 02:40.000]  And then it goes to somewhere in Portugal.
+[02:40.000 --> 02:44.000]  And then it takes a transatlantic link to the US.
+[02:44.000 --> 02:48.000]  And that goes all the way to the west coast.
+[02:48.000 --> 02:52.000]  By the way, this is not just a pigment of my imagination.
+[02:52.000 --> 02:57.000]  In fact, some of the content that you consume today, whether it's Facebook,
+[02:57.000 --> 03:02.000]  I think it does actually go through a path as long as this one.
+[03:02.000 --> 03:07.000]  What's the issue with this particular path?
+[03:07.000 --> 03:10.000]  Yes.
+[03:10.000 --> 03:16.000]  Especially, is there one particular link that could be really problematic?
+[03:16.000 --> 03:19.000]  I'm assuming a transatlantic link could be a bottleneck.
+[03:19.000 --> 03:21.000]  Yeah.
+[03:21.000 --> 03:24.000]  It's a bottleneck, but it could be really useful.
+[03:24.000 --> 03:26.000]  As in the architect might be really high.
+[03:26.000 --> 03:31.000]  And the architect is what I want you to keep in mind.
+[03:31.000 --> 03:38.000]  Because for the most part, if you think about typical web transactions,
+[03:38.000 --> 03:46.000]  in fact, DNS transactions, almost 80 to 85% of the content that we request
+[03:46.000 --> 03:50.000]  over the internet, they're really, really small.
+[03:50.000 --> 03:52.000]  For content that is really small in size,
+[03:52.000 --> 03:56.000]  RTT is the key determinant of performance.
+[03:56.000 --> 04:00.000]  But if the content that you're trying to deliver is really large,
+[04:00.000 --> 04:04.000]  the bandwidth becomes a dominant factor.
+[04:04.000 --> 04:11.000]  So here there are some obvious issues.
+[04:11.000 --> 04:18.000]  The transatlantic link is an issue because every time you're sending data over that,
+[04:18.000 --> 04:21.000]  the acknowledgment has to come back over the same path.
+[04:21.000 --> 04:23.000]  And that's really slow.
+[04:23.000 --> 04:26.000]  If you remember the basics about TCP,
+[04:26.000 --> 04:29.000]  TCP is a self-clock or act-clock protocol.
+[04:29.000 --> 04:34.000]  So if your acts are actually arriving over this long link,
+[04:34.000 --> 04:41.000]  rest assured that your TCP's behaviors will be extremely slow.
+[04:41.000 --> 04:42.000]  So biggest challenge is latency.
+[04:42.000 --> 04:46.000]  Implications of TCP throughput depends on latency.
+[04:46.000 --> 04:49.000]  That's one easy way to think about it.
+[04:49.000 --> 04:52.000]  What are the other issues?
+[04:53.000 --> 05:00.000]  Given that most of you have very great experience building systems,
+[05:00.000 --> 05:03.000]  you don't want to host all your content in one location,
+[05:03.000 --> 05:06.000]  because it's called a single-point failure.
+[05:06.000 --> 05:09.000]  And a single point of failure comes into picture,
+[05:09.000 --> 05:12.000]  not just in security.
+[05:12.000 --> 05:15.000]  When someone is intentionally launching an attack,
+[05:15.000 --> 05:18.000]  it could just be, for instance,
+[05:18.000 --> 05:23.000]  I don't know, if something happened, let's say,
+[05:23.000 --> 05:26.000]  or if there's a public event happening that is being hosted on,
+[05:26.000 --> 05:29.000]  being streamed live on YouTube and everyone wants to access.
+[05:29.000 --> 05:33.000]  So it's not an attack, but events like this that go vital,
+[05:33.000 --> 05:36.000]  suddenly you can invite what is called as a flash crowd.
+[05:36.000 --> 05:40.000]  Suddenly hundreds of millions of users might go access a content on the server,
+[05:40.000 --> 05:46.000]  and that could actually dig down the server because there's only one or a few.
+[05:46.000 --> 05:50.000]  If it's a single point of failure, they don't actually have to be just one server.
+[05:50.000 --> 05:54.000]  It could be still a logically centralized location.
+[05:54.000 --> 05:59.000]  You could have any number of servers, but the problem still applies.
+[05:59.000 --> 06:02.000]  So flash cards may overwhelm the server.
+[06:02.000 --> 06:04.000]  It could also be intentional.
+[06:04.000 --> 06:06.000]  Attacks become higher.
+[06:06.000 --> 06:09.000]  Bandwidth and storage costs might be very prohibitive.
+[06:09.000 --> 06:13.000]  If you're only selling data, storage is a number of other issues,
+[06:13.000 --> 06:16.000]  it's extremely expensive.
+[06:16.000 --> 06:24.000]  What's your estimate of the total amount of data that, let's say,
+[06:24.000 --> 06:31.000]  is required to represent all the movies that is in Netflix's collection?
+[06:31.000 --> 06:34.000]  How should we consider redundancy?
+[06:34.000 --> 06:36.000]  Let's ignore redundancy.
+[06:37.000 --> 06:43.000]  Movies are, let's say, roughly 90 minutes long, right?
+[06:43.000 --> 06:44.000]  Yes.
+[06:44.000 --> 06:46.000]  Five petabytes?
+[06:46.000 --> 06:47.000]  Five petabytes.
+[06:47.000 --> 06:48.000]  That's really interesting.
+[06:48.000 --> 06:49.000]  Why five?
+[06:49.000 --> 06:52.000]  People say ten, hundred, but it's very interesting.
+[06:52.000 --> 06:53.000]  You said five.
+[06:53.000 --> 06:55.000]  That's kind of the right answer.
+[06:55.000 --> 06:57.000]  Five petabytes.
+[06:57.000 --> 07:00.000]  That's a very nice guess.
+[07:00.000 --> 07:01.000]  Anyone else?
+[07:01.000 --> 07:03.000]  Anyone else wants to venture a guess?
+[07:07.000 --> 07:12.000]  Go home and do this back-of-the-end calculation.
+[07:12.000 --> 07:18.000]  There's a 90-minute, let's say average movie duration is 90 minutes.
+[07:18.000 --> 07:27.000]  Video streams are typically split into roughly either ten-second segments.
+[07:27.000 --> 07:30.000]  Let's say Netflix uses something like four or ten, but let's say ten seconds.
+[07:30.000 --> 07:36.000]  So the 90-minute video is split into small chunks or segments of duration,
+[07:36.000 --> 07:38.000]  let's say ten seconds.
+[07:38.000 --> 07:39.000]  Let's keep it simple.
+[07:39.000 --> 07:40.000]  Ten seconds.
+[07:40.000 --> 07:45.000]  Each of those ten-second segments, they're encoded anywhere between
+[07:45.000 --> 07:48.000]  12 to 16 different resolutions.
+[07:48.000 --> 07:49.000]  Why?
+[07:49.000 --> 07:53.000]  Because, I don't know, if you're from a part of the world where you don't have
+[07:53.000 --> 07:57.000]  a device that is capable of rendering content at very high quality,
+[07:57.000 --> 08:04.000]  doesn't make any sense if the server tries to do all sorts of optimizations
+[08:04.000 --> 08:07.000]  to give you a 4K video and you can't do it.
+[08:07.000 --> 08:12.000]  And sometimes delivering videos of a very high quality than the device can render
+[08:12.000 --> 08:16.000]  could be really problematic because downscaling is not that easy.
+[08:16.000 --> 08:18.000]  It's not always easy.
+[08:18.000 --> 08:23.000]  Same way upscaling, sometimes it's easier, but it also provides terrible performance.
+[08:23.000 --> 08:30.000]  If I give you a 240p video or a 480p video and you're watching a 4K or 8K screen,
+[08:30.000 --> 08:33.000]  it's not going to be really nice.
+[08:33.000 --> 08:38.000]  Because you don't know who is consuming at what point and what their rendering
+[08:38.000 --> 08:43.000]  capabilities are, you typically encode every single segment across a number of
+[08:43.000 --> 08:44.000]  resolutions.
+[08:44.000 --> 08:51.000]  So every four-second segment is encoded anywhere from 12 to 16.
+[08:51.000 --> 08:55.000]  And not just the resolutions, but you also encode it at different bit rates.
+[08:55.000 --> 09:00.000]  So you can actually deliver a 4K video at slightly different bit rates.
+[09:00.000 --> 09:05.000]  So let's say 4K, it takes somewhere around let's say four to six MEPs,
+[09:05.000 --> 09:07.000]  let's say the stream at four-second video.
+[09:07.000 --> 09:12.000]  What if the client that is actually fetching that video does not have that amount
+[09:12.000 --> 09:14.000]  of bandwidth to fetch it?
+[09:14.000 --> 09:16.000]  But they still can render the 4K video.
+[09:16.000 --> 09:20.000]  So what you want to do is you still want to generate a 4K video
+[09:20.000 --> 09:25.000]  and sell it to them, but probably down-sample it or encode it at a lower rate.
+[09:25.000 --> 09:28.000]  What it means is that you're using fewer bits to encode the same video.
+[09:28.000 --> 09:30.000]  It means the quality is a bit low.
+[09:30.000 --> 09:31.000]  Sometimes you want to do that.
+[09:31.000 --> 09:33.000]  There are lots of decisions like this.
+[09:33.000 --> 09:39.000]  So you take those 16 resolutions that you use, let's say 10 resolutions per 4K video,
+[09:39.000 --> 09:44.000]  and then you multiply it by another four or eight to accommodate all these bit rates.
+[09:44.000 --> 09:49.000]  So that gives you roughly anywhere from 32 to 40 different formats
+[09:49.000 --> 09:52.000]  in which you encode every four-second video.
+[09:52.000 --> 09:59.000]  Now you multiply that by the entire video and by the number of videos that they have,
+[09:59.000 --> 10:02.000]  and it gives you an estimate of how much of the data they have.
+[10:02.000 --> 10:05.000]  So five petabytes doesn't even come close.
+[10:05.000 --> 10:13.000]  So usually it's, I think two years ago they invented, not invented,
+[10:13.000 --> 10:18.000]  they coined two new terms just because the volume of data was so large
+[10:18.000 --> 10:23.000]  that saying hundreds of petabytes or thousands of petabytes was not easy.
+[10:23.000 --> 10:27.000]  I think they use, right now, meocabytes or etabytes or things like that.
+[10:27.000 --> 10:34.000]  So Netflix, I think the last estimate they gave was close to around 300 or 400 petabytes.
+[10:34.000 --> 10:39.000]  But that's rapidly evolving, rapidly changing.
+[10:39.000 --> 10:44.000]  Now the question is, you don't want to put all of that content in one server
+[10:44.000 --> 10:49.000]  because that server goes down, God forbid you can't do much.
+[10:49.000 --> 10:54.000]  Google almost 15 years ago, they wrote a small blog post
+[10:54.000 --> 10:59.000]  saying that no matter how fast and how idealized version of Internet you have,
+[10:59.000 --> 11:04.000]  it's easier to actually ship one service of Google,
+[11:04.000 --> 11:08.000]  the data generated by one service of Google, from the West Coast to East Coast
+[11:08.000 --> 11:12.000]  and FedEx packages rather than actually send it over Internet
+[11:12.000 --> 11:17.000]  because it's not very efficient.
+[11:17.000 --> 11:21.000]  So these are the problems. So how do you handle it?
+[11:21.000 --> 11:25.000]  You can't send data all the way from one location, but for you to be a fan,
+[11:25.000 --> 11:29.000]  you can't put all the way in just one location, that's fine.
+[11:29.000 --> 11:32.000]  So the question is, what do you do?
+[11:32.000 --> 11:34.000]  This is the easiest thing, right?
+[11:34.000 --> 11:37.000]  What do you do? You replicate the content.
+[11:37.000 --> 11:42.000]  By the way, when I say replicate here, I'm actually abusing the term.
+[11:42.000 --> 11:46.000]  Replicate in general means you create a copy of multiple locations,
+[11:46.000 --> 11:49.000]  but you don't want to do that.
+[11:49.000 --> 11:54.000]  Because if you simply copy all the data that you have in multiple locations,
+[11:54.000 --> 11:57.000]  that's an easy way for you to go under.
+[11:57.000 --> 12:00.000]  Because no matter how much of cache inflow that you have,
+[12:00.000 --> 12:02.000]  if you're a socket, if this is your business plan,
+[12:02.000 --> 12:06.000]  this is one of the terrible plans that you can present.
+[12:06.000 --> 12:09.000]  Because think about it. Suppose you get some money
+[12:09.000 --> 12:12.000]  and you want to put up a deploy a new server,
+[12:12.000 --> 12:16.000]  if your plan is to basically replicate blindly all the data,
+[12:16.000 --> 12:21.000]  you'll spend most of your time just doing that, not selling a new disk.
+[12:21.000 --> 12:25.000]  So the question is, how do we replicate content?
+[12:25.000 --> 12:27.000]  So what you want to do is something called as caching.
+[12:27.000 --> 12:31.000]  So you want to cache, just like how the cache is in your operating system works.
+[12:32.000 --> 12:36.000]  You want to somehow keep items that are frequently requested
+[12:36.000 --> 12:38.000]  close to where they've requested.
+[12:38.000 --> 12:40.000]  Does that make sense?
+[12:40.000 --> 12:43.000]  So now let's see how that works.
+[12:46.000 --> 12:52.000]  But suppose you intelligently cache the objects in different servers,
+[12:52.000 --> 12:55.000]  some are still in the US, some are in Europe,
+[12:55.000 --> 12:57.000]  maybe some in Africa and so on.
+[12:57.000 --> 13:01.000]  Then the idea is that you can actually try and figure out at one time
+[13:01.000 --> 13:04.000]  when the user is actually trying to request the content,
+[13:04.000 --> 13:07.000]  which server is nearer to the user.
+[13:07.000 --> 13:09.000]  You'll see how you can do that.
+[13:09.000 --> 13:11.000]  But once you magically find the server that is nearest to the user,
+[13:11.000 --> 13:15.000]  then you basically redirect the user to that server.
+[13:15.000 --> 13:18.000]  So again, CDN is all about two techniques.
+[13:18.000 --> 13:20.000]  One is caching, the other one is redirection.
+[13:20.000 --> 13:26.000]  Agile techniques and any systems to solve any system problem.
+[13:26.000 --> 13:29.000]  So now let's see how the redirection works.
+[13:29.000 --> 13:32.000]  Basic questions are where should we serve the content from,
+[13:32.000 --> 13:34.000]  local or nearby the patients,
+[13:34.000 --> 13:36.000]  and the locally part is within the course
+[13:36.000 --> 13:41.000]  because there are multiple meanings for that particular thing.
+[13:42.000 --> 13:44.000]  So in general approaches to content,
+[13:44.000 --> 13:46.000]  you could do centralized hosting,
+[13:46.000 --> 13:49.000]  this is what we used to do in the 90s no more.
+[13:49.000 --> 13:51.000]  You could do peer-to-peer networks,
+[13:51.000 --> 13:53.000]  there was a period of time peer-to-peer networks,
+[13:53.000 --> 13:55.000]  very famous, very popular,
+[13:55.000 --> 13:59.000]  and even today they have their niche applications.
+[13:59.000 --> 14:02.000]  Basically the advantage is that in theory,
+[14:02.000 --> 14:04.000]  again the operative word is in theory,
+[14:04.000 --> 14:08.000]  in theory they have infinite scalability.
+[14:08.000 --> 14:10.000]  Because the idea is this,
+[14:10.000 --> 14:12.000]  the more and more of us actually download the content,
+[14:12.000 --> 14:14.000]  the more it becomes available,
+[14:14.000 --> 14:17.000]  and the more options we have to download it from,
+[14:17.000 --> 14:21.000]  and hopefully some of those options are very close to us.
+[14:21.000 --> 14:24.000]  But in practice it's terrible, why?
+[14:29.000 --> 14:30.000]  Yes?
+[14:30.000 --> 14:33.000]  Because most peers will have slow networks,
+[14:33.000 --> 14:34.000]  will we just not...
+[14:34.000 --> 14:36.000]  Yeah, specifically speaking,
+[14:36.000 --> 14:38.000]  which part of the peer is slow?
+[14:38.000 --> 14:40.000]  Oh, this is upstream is slow downstream problems.
+[14:40.000 --> 14:41.000]  Yes, exactly.
+[14:41.000 --> 14:42.000]  So in practice,
+[14:42.000 --> 14:45.000]  download capacity is limited by the upload capacity of your peers,
+[14:45.000 --> 14:49.000]  the upload capacity is usually much smaller than your downloads.
+[14:51.000 --> 14:53.000]  That situation hasn't changed much.
+[14:53.000 --> 14:55.000]  The third option is content delivery networks,
+[14:55.000 --> 14:57.000]  the subject of today's talk.
+[14:57.000 --> 15:00.000]  Basically the idea is you offload content delivery
+[15:00.000 --> 15:02.000]  to a large number of content servers,
+[15:02.000 --> 15:05.000]  we also call them as edge.
+[15:05.000 --> 15:09.000]  If you are Netflix and you are the one producing the content,
+[15:09.000 --> 15:13.000]  you're also referred to as an origin or content provider.
+[15:13.000 --> 15:20.000]  CDMs like Akamai, Cloudflare, Google, Amazon,
+[15:20.000 --> 15:25.000]  those CDNs and servers are referred to as edge servers or content servers.
+[15:25.000 --> 15:32.000]  They're called edge because in networking the way you view the content
+[15:32.000 --> 15:35.000]  is as if the content is coming from somewhere far away,
+[15:35.000 --> 15:38.000]  and the users are, if you think of it as a tree,
+[15:38.000 --> 15:42.000]  and users like you and I are hanging from the leaves of the tree.
+[15:42.000 --> 15:46.000]  And the closer you go to the edge of the internet, so to speak,
+[15:46.000 --> 15:48.000]  and that's where you want your CDN servers to be
+[15:48.000 --> 15:54.000]  because that's the closest point for the users.
+[15:54.000 --> 15:58.000]  This is a hard problem, right?
+[15:58.000 --> 16:02.000]  So CDNs, basically their business is to deliver content faster.
+[16:02.000 --> 16:06.000]  In general, to deliver content faster, you only have two tricks.
+[16:06.000 --> 16:11.000]  One is your increased bandwidth, the other one is your reduced latency.
+[16:11.000 --> 16:14.000]  Almost anybody can actually, you know, if you have money,
+[16:14.000 --> 16:16.000]  it's easier to increase bandwidth.
+[16:16.000 --> 16:20.000]  If you have money, it's still difficult to reduce latency.
+[16:20.000 --> 16:24.000]  Because in order to reduce latency, you need to reduce the distance
+[16:24.000 --> 16:26.000]  over which data travels.
+[16:26.000 --> 16:29.000]  That's much harder to solve than increasing bandwidth
+[16:29.000 --> 16:33.000]  because increasing bandwidth basically means you buy another cable.
+[16:33.000 --> 16:37.000]  But increasing bandwidth doesn't reduce latency.
+[16:37.000 --> 16:41.000]  If servers are 300 kilometers apart, no matter how many optical fiber cables
+[16:41.000 --> 16:45.000]  you put placed between these two servers, the latency remains constant.
+[16:45.000 --> 16:48.000]  I hope you understand that.
+[16:48.000 --> 16:51.000]  Okay.
+[16:51.000 --> 16:55.000]  Let's see, in diverse locations and networks,
+[16:55.000 --> 16:59.000]  Akamai is one of the largest CDNs in the world.
+[16:59.000 --> 17:05.000]  The term is from some Hawaiian dialect, I don't know which one.
+[17:05.000 --> 17:07.000]  It means intelligent.
+[17:07.000 --> 17:10.000]  There's a lot of interesting stories about Akamai.
+[17:10.000 --> 17:14.000]  It was founded, my PhD advisor was actually
+[17:14.000 --> 17:17.000]  one of the founding members of Akamai.
+[17:17.000 --> 17:23.000]  It started actually as a failed research effort from MIT.
+[17:23.000 --> 17:25.000]  And I say failed research effort.
+[17:25.000 --> 17:27.000]  The paper was published.
+[17:27.000 --> 17:31.000]  It's one of the fantastic hashing techniques you can ever encounter
+[17:31.000 --> 17:33.000]  that's called consistent hashing.
+[17:33.000 --> 17:36.000]  So Akamai came out of that research.
+[17:36.000 --> 17:42.000]  And the person who was driving that research was a very poor graduate student.
+[17:43.000 --> 17:45.000]  And he wanted money.
+[17:45.000 --> 17:48.000]  He was a mathematician of extraordinary capabilities.
+[17:48.000 --> 17:53.000]  Just like today, those days, getting a job as a mathematician was extremely hard.
+[17:53.000 --> 17:58.000]  Even today, the world is really small for mathematicians.
+[17:58.000 --> 18:02.000]  So they actually pitched it to a couple of startup competitions.
+[18:02.000 --> 18:04.000]  They were terribly round.
+[18:04.000 --> 18:08.000]  Everyone thought this is the worst thing anyone could ever come up with.
+[18:08.000 --> 18:12.000]  They said as mathematicians, you have no clue how the internet operates.
+[18:12.000 --> 18:18.000]  They still somehow scraped money together, launched a platform with a company.
+[18:18.000 --> 18:23.000]  They were still struggling to get customers.
+[18:23.000 --> 18:30.000]  The day Akamai actually was brought to fame was actually close to after the 9-11 attacks.
+[18:30.000 --> 18:34.000]  Because CNN and a couple of news sites went down.
+[18:34.000 --> 18:42.000]  And they were trying to struggle to see how to sell suddenly the huge influx of requests they were getting.
+[18:42.000 --> 18:44.000]  And they turned to Akamai, and the rest is history.
+[18:44.000 --> 18:50.000]  Akamai is, in some sense, a 9-pound gorilla in the CNN market.
+[18:50.000 --> 18:54.000]  Today, it's comparable in science, but Akamai still has an action.
+[18:54.000 --> 18:58.000]  One of the most expensive, one of the largest CNN networks in the world.
+[18:58.000 --> 19:04.000]  Unfortunately, the person who launched Akamai, as in the proteins behind Akamai.
+[19:04.000 --> 19:10.000]  Unfortunately, a lot of their life, he died on the, he was in one of the planes in 9-11 attacks.
+[19:10.000 --> 19:14.000]  So he's waiting for the state.
+[19:14.000 --> 19:16.000]  Yes?
+[19:16.000 --> 19:20.000]  What is the reason that Akamai still has an action?
+[19:20.000 --> 19:30.000]  It's a very powerful algorithm behind the scenes, Dr. Akamai.
+[19:30.000 --> 19:36.000]  Akamai is a robot that doesn't have academic data or anything these days.
+[19:36.000 --> 19:44.000]  But for a long time, Akamai's bread and butter were basically not just engineering techniques,
+[19:44.000 --> 19:48.000]  but they had solid proof that you can't even date the network.
+[19:49.000 --> 19:52.000]  Can Akamai be brought down? Yes.
+[19:52.000 --> 19:55.000]  But by the time, you know, in fact, this holds true for a cloud flare.
+[19:55.000 --> 19:58.000]  They are so large, and their algorithms are so robust.
+[19:58.000 --> 20:01.000]  By the time you bring down Akamai's network or cloud flare's network,
+[20:01.000 --> 20:06.000]  the concern is no longer Akamai or cloud flare, because you'll bring down close to 30% of the data left.
+[20:06.000 --> 20:12.000]  The Akamai's capacity, this was almost five years ago,
+[20:12.000 --> 20:16.000]  as in big capacity, was close to 300 yards per second.
+[20:16.000 --> 20:22.000]  If you could launch an attack that high, that big, then you could succeed.
+[20:22.000 --> 20:26.000]  It almost keeps you down.
+[20:26.000 --> 20:29.000]  Doing content delivery is not that easy, right?
+[20:29.000 --> 20:33.000]  We'll see this, because if you have a large fleet of servers,
+[20:33.000 --> 20:37.000]  of course you need money, but you could accrue money and then deploy servers.
+[20:38.000 --> 20:43.000]  But maintaining such a large fleet of servers is extraordinary, extremely difficult.
+[20:43.000 --> 20:46.000]  We'll see why.
+[20:46.000 --> 20:49.000]  So long story short, the benefits for a content consumer, like you and I,
+[20:49.000 --> 20:53.000]  is basically reduced latency, fast download.
+[20:53.000 --> 20:57.000]  Windows updates, I don't know, maybe not all of these distributions.
+[20:57.000 --> 21:02.000]  Most operating system updates, bug fixes, security updates,
+[21:02.000 --> 21:05.000]  they're almost always delivered by two zillions.
+[21:05.000 --> 21:09.000]  It's cheaper, it's faster.
+[21:09.000 --> 21:12.000]  Lots of video streams actually are delivered by zillions.
+[21:12.000 --> 21:16.000]  For the content provider, it actually reduces infrastructure costs.
+[21:16.000 --> 21:19.000]  Nobody wants to be in the business of maintaining a fleet of servers,
+[21:19.000 --> 21:23.000]  trying to figure out how to sync content between those fleet of servers.
+[21:23.000 --> 21:27.000]  So what you do is you figure out someone who's capable of doing that efficiently,
+[21:27.000 --> 21:30.000]  and then you handle the task of it.
+[21:30.000 --> 21:36.000]  Do CDN providers ever go to big internet companies and say,
+[21:36.000 --> 21:41.000]  by being part of your network, that you reduce?
+[21:41.000 --> 21:44.000]  Yes, they do.
+[21:44.000 --> 21:47.000]  Artemy doesn't have to lose any more.
+[21:47.000 --> 21:53.000]  Because there is something called in social networks,
+[21:53.000 --> 21:56.000]  and in fact in sociology there is a theory called network effect.
+[21:56.000 --> 21:59.000]  So the moment you cross a threshold size,
+[21:59.000 --> 22:04.000]  you could think about it in terms of popularity, clout,
+[22:04.000 --> 22:08.000]  there is a critical point after which you no longer have to struggle so much,
+[22:08.000 --> 22:12.000]  because the fact that you've reached that position brings you more investment,
+[22:12.000 --> 22:15.000]  money, social circles, and so on.
+[22:15.000 --> 22:18.000]  And that theory holds well in internet as well.
+[22:18.000 --> 22:22.000]  The larger the network, beyond a particular point,
+[22:22.000 --> 22:26.000]  money actually comes to you. You don't have to struggle so much.
+[22:26.000 --> 22:29.000]  Quick and easy deployment of network services,
+[22:29.000 --> 22:32.000]  it takes anywhere between a few seconds to a minute
+[22:32.000 --> 22:34.000]  in order to actually deliver content towards CDN.
+[22:34.000 --> 22:37.000]  Meaning today you decide, I want to be a customer of Akam,
+[22:37.000 --> 22:40.000]  you have the money, you pay, and within a few seconds
+[22:40.000 --> 22:44.000]  your customer of Akam is that simple.
+[22:44.000 --> 22:51.000]  CDNs, typically people think of CDNs as a distributor cash,
+[22:51.000 --> 22:54.000]  which is true, and when you think of a distributor cash,
+[22:54.000 --> 22:57.000]  you always think that, ah, which means that they sell static web content,
+[22:57.000 --> 23:01.000]  which is true. They do sell a lot of static content,
+[23:01.000 --> 23:05.000]  which includes HTML pages, embedded images, binders, and so on,
+[23:05.000 --> 23:08.000]  but they also can serve dynamic content.
+[23:08.000 --> 23:12.000]  It involves a little more complexity, but they can do it.
+[23:12.000 --> 23:17.000]  A lot of financial transactions today are over CDN networks,
+[23:18.000 --> 23:21.000]  because they're secure, they're fast, they're robust.
+[23:25.000 --> 23:28.000]  Okay, now we have a rough idea of what CDNs do.
+[23:28.000 --> 23:31.000]  Let's see the mechanics of how exactly they do it.
+[23:31.000 --> 23:32.000]  Yes.
+[23:32.000 --> 23:34.000]  What are the dynamics on the web?
+[23:34.000 --> 23:37.000]  We have to embrace the experience of certain things from behind.
+[23:37.000 --> 23:39.000]  Yes.
+[23:39.000 --> 23:43.000]  You do need to actually, static is very easy to configure,
+[23:43.000 --> 23:46.000]  and then you require a little bit more of thought.
+[23:48.000 --> 23:52.000]  So we'll see that in general, three ways in which you could do redirection.
+[23:52.000 --> 23:54.000]  One is the NIH pages.
+[23:54.000 --> 23:58.000]  When I say redirection, the question is, somehow you've figured out
+[23:58.000 --> 24:01.000]  how to replicate a cash content with different implications.
+[24:01.000 --> 24:04.000]  Now the question is, when a request comes from the user,
+[24:04.000 --> 24:07.000]  how do you figure out where to send that user?
+[24:07.000 --> 24:09.000]  How does this entire process work?
+[24:09.000 --> 24:11.000]  This is basically what is called a redirection.
+[24:12.000 --> 24:14.000]  You could do it in two ways.
+[24:14.000 --> 24:18.000]  One is DNS-based, the other one is anycast-based, which relies on BGP.
+[24:18.000 --> 24:20.000]  You could also do the hybrid one.
+[24:20.000 --> 24:25.000]  At least there is CDNs like Akamai and CloudFlare that are used in hybrid version.
+[24:25.000 --> 24:29.000]  Akamai was, at one point of time, the largest DNS-based CDN provider,
+[24:29.000 --> 24:33.000]  and CloudFlare used to be the largest anycast-based provider.
+[24:33.000 --> 24:36.000]  They both realized that you can't just use one technique,
+[24:36.000 --> 24:40.000]  because each has its own benefits, its own benefits and issues.
+[24:42.000 --> 24:45.000]  So how does a DNS-based redirection work?
+[24:45.000 --> 24:48.000]  So let's assume that the content is all the way in the US,
+[24:48.000 --> 24:51.000]  and the real users are sitting somewhere in Europe,
+[24:51.000 --> 24:52.000]  and you want to reach content.
+[24:52.000 --> 24:54.000]  So this is something that we already saw.
+[24:54.000 --> 24:57.000]  This is terrible if it goes over the transatlantic link.
+[24:57.000 --> 24:59.000]  Now the question is, what could you do?
+[24:59.000 --> 25:01.000]  First and foremost, what you do is you take that content
+[25:01.000 --> 25:03.000]  and then push it to the CDN center, right?
+[25:03.000 --> 25:06.000]  Say a sound server is somewhere, you know, figures out,
+[25:06.000 --> 25:08.000]  okay, you know what, I'll hold this content.
+[25:08.000 --> 25:10.000]  Oh, the cash is not there.
+[25:10.000 --> 25:13.000]  Let's not get into the mechanics of how you figure out where to cash,
+[25:13.000 --> 25:14.000]  but let's assume that you do.
+[25:14.000 --> 25:16.000]  Okay, so it looks like there are two other servers.
+[25:16.000 --> 25:21.000]  These black boxes are basically written, covered as backup servers.
+[25:21.000 --> 25:24.000]  And let's assume that these are operated by the CDN.
+[25:24.000 --> 25:26.000]  These are ones that I have added.
+[25:26.000 --> 25:28.000]  They're operated by the CDN.
+[25:28.000 --> 25:33.000]  And you could maintain the image that the user hopefully would fetch.
+[25:33.000 --> 25:37.000]  You would cache it at these two locations, okay?
+[25:37.000 --> 25:39.000]  Of course, the URL will change, right?
+[25:39.000 --> 25:42.000]  Because, you know, the content provider is not the same as the CDN.
+[25:42.000 --> 25:44.000]  So in this case, you know, the original content provider
+[25:44.000 --> 25:49.000]  is some site called abc.com that hosts this image called world.jpg.
+[25:49.000 --> 25:53.000]  And instead, now what you do is when you cache it,
+[25:53.000 --> 25:58.000]  it gets served under a new domain called the CDN.com, right?
+[25:58.000 --> 26:01.000]  But the image is still the same.
+[26:01.000 --> 26:05.000]  But the user only knows the abc.com's image, right?
+[26:05.000 --> 26:07.000]  You know, you have to figure out how to redirect the user
+[26:07.000 --> 26:10.000]  to the CDN's URL, which is sort of easy.
+[26:10.000 --> 26:14.000]  The next question is, once the user actually fetches the CDN URL,
+[26:14.000 --> 26:20.000]  how do you actually figure out which server to serve the content from?
+[26:20.000 --> 26:21.000]  So how does this work?
+[26:21.000 --> 26:24.000]  So let's assume that, you know, you fetch a page, right?
+[26:24.000 --> 26:27.000]  H-E-D-D-G-E-T. You're trying to fetch a page.
+[26:27.000 --> 26:32.000]  And the HTML basically does URL is there, abc.com world.jpg, right?
+[26:32.000 --> 26:34.000]  And what does your browser do?
+[26:34.000 --> 26:36.000]  The first thing the browser does is, of course,
+[26:36.000 --> 26:39.000]  before it fetches a content, it has to do a DNS resolution.
+[26:39.000 --> 26:41.000]  So it goes to your local resolver, and it says,
+[26:41.000 --> 26:46.000]  can you resolve www.abc.com?
+[26:46.000 --> 26:48.000]  Local resolver will do a lot of things, like root,
+[26:48.000 --> 26:50.000]  TLD, depending on its cache content.
+[26:50.000 --> 26:54.000]  But eventually, let's assume that it goes to the authoritative name server.
+[26:54.000 --> 26:57.000]  Just for the sake of explaining, you know, for the exposition,
+[26:57.000 --> 26:59.000]  I have indicated the authoritative name server
+[26:59.000 --> 27:03.000]  to also be somewhere in the west coast of U.S.
+[27:03.000 --> 27:05.000]  But it's okay, it doesn't have to be.
+[27:05.000 --> 27:07.000]  But it goes to the authoritative name server
+[27:07.000 --> 27:11.000]  and then asks, okay, could you resolve www.abc.com?
+[27:11.000 --> 27:13.000]  And at this point, what the authoritative name server
+[27:13.000 --> 27:16.000]  of the content provider could do is,
+[27:16.000 --> 27:18.000]  instead of giving you an IP address,
+[27:18.000 --> 27:20.000]  they could give you a CNAME bracket.
+[27:20.000 --> 27:22.000]  CNAME is a canonical name, right?
+[27:22.000 --> 27:25.000]  And one way to think about it is just a pointer, right?
+[27:25.000 --> 27:28.000]  Once again, simple key direction.
+[27:28.000 --> 27:29.000]  So the authoritative name server says,
+[27:29.000 --> 27:31.000]  rather than ask me for this IP address,
+[27:31.000 --> 27:34.000]  why don't you ask this particular CNAME, right?
+[27:35.000 --> 27:37.000]  And sometimes it might also give you glue records
+[27:37.000 --> 27:39.000]  to tell you where to go.
+[27:39.000 --> 27:40.000]  Yeah?
+[27:40.000 --> 27:42.000]  Why would you just not put the CNAME like,
+[27:42.000 --> 27:44.000]  if you were on the HTML?
+[27:44.000 --> 27:46.000]  You could do that, you could do that.
+[27:46.000 --> 27:48.000]  That used to be the case.
+[27:48.000 --> 27:51.000]  So when you go to Facebook.com and then you actually, you know,
+[27:51.000 --> 27:53.000]  use Python, you know, there's a request library,
+[27:53.000 --> 27:55.000]  which is really nice.
+[27:55.000 --> 27:56.000]  Fetch the base page, parse all the links,
+[27:56.000 --> 27:58.000]  and spit out all the domain names.
+[27:58.000 --> 28:01.000]  What you would see is that you would see,
+[28:01.000 --> 28:03.000]  in addition to FB.com, blah, blah, blah,
+[28:03.000 --> 28:09.000]  you'd also see AKA CDN dot something.
+[28:09.000 --> 28:11.000]  This used to be the case.
+[28:11.000 --> 28:14.000]  But at some point, you know, all these companies talk,
+[28:14.000 --> 28:17.000]  look, it's my page.
+[28:17.000 --> 28:18.000]  Of course I'm using CDNs,
+[28:18.000 --> 28:21.000]  but why would I want to give you free advertising?
+[28:21.000 --> 28:22.000]  Fine.
+[28:22.000 --> 28:24.000]  So I'm going to convert all my domain names to my own,
+[28:24.000 --> 28:27.000]  and then I'll figure out at runtime,
+[28:27.000 --> 28:29.000]  you know, how to do the Z direction.
+[28:29.000 --> 28:31.000]  There's also, yes?
+[28:31.000 --> 28:35.000]  What if you have multiple CDNs?
+[28:35.000 --> 28:36.000]  Excellent.
+[28:36.000 --> 28:38.000]  Which also helps if you don't have CDN names
+[28:38.000 --> 28:40.000]  encoded in your base page.
+[28:40.000 --> 28:42.000]  So you could do exactly what I was going to say.
+[28:42.000 --> 28:44.000]  Thanks for the question.
+[28:44.000 --> 28:46.000]  So the authority to do names out at runtime can decide.
+[28:46.000 --> 28:47.000]  Today I like Akamai.
+[28:47.000 --> 28:49.000]  I'm going to give you a single name to Akamai.
+[28:49.000 --> 28:50.000]  To modify, I like Cloudflare.
+[28:50.000 --> 28:51.000]  I'll switch it easily.
+[28:51.000 --> 28:54.000]  And it's just a simple record switch.
+[28:54.000 --> 28:58.000]  You can also do that in a dynamic manner.
+[28:58.000 --> 29:01.000]  So usually how do you pay these CDNs?
+[29:01.000 --> 29:03.000]  Usually you pay based on how much of traffic
+[29:03.000 --> 29:05.000]  that they're serving.
+[29:05.000 --> 29:07.000]  It's called a 95-5 room.
+[29:07.000 --> 29:09.000]  So every five minutes you keep calculating
+[29:09.000 --> 29:14.000]  how much of bandwidth or how much of the data you're delivering.
+[29:14.000 --> 29:15.000]  Holds true.
+[29:15.000 --> 29:18.000]  Unlike UNI, when companies actually get contracts
+[29:18.000 --> 29:21.000]  from ISPs or networks, they don't pay a flat fee.
+[29:21.000 --> 29:24.000]  Nobody wants to pay a flat fee.
+[29:24.000 --> 29:26.000]  Because networks are not provisioned like that.
+[29:26.000 --> 29:28.000]  So what you do is you'll simply say,
+[29:28.000 --> 29:33.000]  I'll keep looking at your usage every five minute intervals.
+[29:33.000 --> 29:36.000]  So that gives me a number of snapshots into your usage.
+[29:36.000 --> 29:38.000]  And I'm going to compute ACDF, a cumulative distribution
+[29:38.000 --> 29:39.000]  function.
+[29:39.000 --> 29:41.000]  And I'm going to look at the 95th percentile
+[29:41.000 --> 29:42.000]  of the distribution.
+[29:42.000 --> 29:44.000]  And I'm going to charge you based on that.
+[29:44.000 --> 29:45.000]  So it's not peak usage.
+[29:45.000 --> 29:46.000]  That will be 100%.
+[29:46.000 --> 29:48.000]  But it's looking at the 95th percentile.
+[29:48.000 --> 29:50.000]  So you have a bit of wiggle room.
+[29:50.000 --> 29:52.000]  Sometimes you could go really high.
+[29:52.000 --> 29:55.000]  But as long as it is not so prolonged that it
+[29:55.000 --> 30:00.000]  doesn't hurt your 95th percentile, you're OK.
+[30:00.000 --> 30:03.000]  So if you are a content provider, what you could do
+[30:03.000 --> 30:05.000]  is what you are hinting at.
+[30:05.000 --> 30:06.000]  So you could actually have contracts
+[30:06.000 --> 30:08.000]  with multiple affiliates, figure out
+[30:08.000 --> 30:10.000]  based on how much you are paying them,
+[30:10.000 --> 30:14.000]  based on the time of date, I don't know, event.
+[30:14.000 --> 30:19.000]  You figure out who to redirect the requested.
+[30:19.000 --> 30:20.000]  And today, this is a norm.
+[30:20.000 --> 30:21.000]  Now let's see.
+[30:21.000 --> 30:23.000]  OK, so you've given the CDM bracket.
+[30:23.000 --> 30:24.000]  You redirected it.
+[30:24.000 --> 30:26.000]  You could also provide a couple of glue records
+[30:26.000 --> 30:29.000]  to help to resolve it along.
+[30:29.000 --> 30:31.000]  And let's assume that the authoritative name server
+[30:31.000 --> 30:35.000]  of now the CDM will be directed to the CDM.
+[30:35.000 --> 30:37.000]  It's somewhere there.
+[30:37.000 --> 30:38.000]  Now what does this one do?
+[30:38.000 --> 30:40.000]  This is an authoritative name server
+[30:40.000 --> 30:42.000]  of a particular CDM.
+[30:42.000 --> 30:44.000]  In this case, the same CDM that will eventually
+[30:44.000 --> 30:45.000]  give you the content.
+[30:45.000 --> 30:48.000]  So the assumption here is that this authoritative name server
+[30:48.000 --> 30:52.000]  actually knows where the content is,
+[30:52.000 --> 30:55.000]  or in which servers the content resides.
+[30:55.000 --> 30:58.000]  And what it could do is it could actually figure out, hey,
+[30:58.000 --> 31:00.000]  I know that there is a server here that is actually
+[31:00.000 --> 31:02.000]  very close to the application, which looks
+[31:02.000 --> 31:04.000]  like somewhere in the Netherlands.
+[31:04.000 --> 31:06.000]  And I'm going to give you the AA or acquired AA
+[31:06.000 --> 31:08.000]  record for that.
+[31:08.000 --> 31:13.000]  So basically IPV4 or IPV67.
+[31:13.000 --> 31:15.000]  Once you figure that out, then basically the rest
+[31:15.000 --> 31:16.000]  of the thing resumes.
+[31:16.000 --> 31:18.000]  So you could also now make a get request
+[31:18.000 --> 31:20.000]  to that particular server, because you
+[31:20.000 --> 31:22.000]  have the IP address, TCP resumes.
+[31:22.000 --> 31:24.000]  And now your TCP connection instead
+[31:24.000 --> 31:30.000]  of going over a long RTP link, it goes over a short RTP link,
+[31:30.000 --> 31:33.000]  which means the TCP now has more room to aggressively wrap up,
+[31:33.000 --> 31:34.000]  or quickly wrap up.
+[31:38.000 --> 31:44.000]  How does this server now figure out among the many options
+[31:44.000 --> 31:46.000]  it has, how does it actually figure out
+[31:46.000 --> 31:49.000]  which one to redirect you to?
+[31:49.000 --> 31:51.000]  It could do a number of things, because basically this
+[31:51.000 --> 31:53.000]  is an application level software.
+[31:53.000 --> 31:58.000]  So you could do anything that you have visibility over.
+[31:58.000 --> 32:01.000]  Typically, what they do is they give it a server type.
+[32:01.000 --> 32:06.000]  Like I said, people not just serve HTTP contents.
+[32:06.000 --> 32:11.000]  They actually serve a rich name.
+[32:11.000 --> 32:12.000]  The platform is quite rich, so they
+[32:12.000 --> 32:14.000]  can deliver quite a lot of different things.
+[32:14.000 --> 32:17.000]  Today, most of the content still goes over HTTP.
+[32:17.000 --> 32:20.000]  But depending on what kind of content you're looking for,
+[32:20.000 --> 32:23.000]  for instance, if it's images, if it's a video,
+[32:23.000 --> 32:25.000]  I might redirect you to a different server,
+[32:25.000 --> 32:31.000]  because I know entirely what kind of content is stored in there.
+[32:31.000 --> 32:33.000]  You could also look at the server help.
+[32:33.000 --> 32:37.000]  Akamai and TalkFlare, so when I was a graduate student,
+[32:37.000 --> 32:39.000]  I used to spend a lot of time at Akamai,
+[32:39.000 --> 32:41.000]  because as a networking researcher,
+[32:41.000 --> 32:45.000]  this is a company that had, this was like what,
+[32:46.000 --> 32:47.000]  nearly eight years ago.
+[32:47.000 --> 32:50.000]  At that time, Akamai had roughly 300,000 servers
+[32:50.000 --> 32:53.000]  in 4,000 different locations or networks,
+[32:53.000 --> 32:57.000]  in roughly around 180 to 190 different countries.
+[32:57.000 --> 32:59.000]  And so this was like a treasure trove of data,
+[32:59.000 --> 33:01.000]  so we don't say no to that.
+[33:01.000 --> 33:03.000]  So we can do quite a lot of interesting analysis
+[33:03.000 --> 33:05.000]  and figure out what's happening in the internet,
+[33:05.000 --> 33:08.000]  and this is what I used to do.
+[33:08.000 --> 33:11.000]  And one thing that I observed, and I also
+[33:11.000 --> 33:13.000]  had a lot of collaboration with CloudFlare,
+[33:13.000 --> 33:15.000]  and one of the impressive things with these networks
+[33:15.000 --> 33:18.000]  is when you have a fleet as large as,
+[33:18.000 --> 33:21.000]  let's say, half a million servers,
+[33:21.000 --> 33:24.000]  failure becomes a problem.
+[33:24.000 --> 33:27.000]  The probability, individual probability of a server
+[33:27.000 --> 33:29.000]  failing might be really, really small,
+[33:29.000 --> 33:30.000]  but when you multiply that probability
+[33:30.000 --> 33:32.000]  by a really large number,
+[33:32.000 --> 33:35.000]  the number of absolute failures that you encounter
+[33:35.000 --> 33:38.000]  becomes quite significant.
+[33:38.000 --> 33:41.000]  So almost every now and then you'll have a server go down,
+[33:41.000 --> 33:44.000]  a link fail, and this is almost always known.
+[33:44.000 --> 33:49.000]  So simply figuring out which one of your 500,000 servers
+[33:49.000 --> 33:55.000]  is even up requires a non-trivial data collection system.
+[33:55.000 --> 33:56.000]  Think about it.
+[33:56.000 --> 33:59.000]  If every server, if you have, let's say,
+[33:59.000 --> 34:01.000]  I don't know how many of you know there's a network
+[34:01.000 --> 34:03.000]  standing in a room called Z-map,
+[34:03.000 --> 34:06.000]  which is a n-map on steroids.
+[34:06.000 --> 34:08.000]  But even if you have a tool like that,
+[34:08.000 --> 34:12.000]  creating all your 500,000 servers today
+[34:12.000 --> 34:16.000]  and getting quickly an estimate of who's up and who's down,
+[34:16.000 --> 34:17.000]  that's hard.
+[34:17.000 --> 34:19.000]  And you want to do that repeatedly.
+[34:19.000 --> 34:23.000]  So they have very sophisticated systems that can do logging
+[34:23.000 --> 34:27.000]  and doing heartbeat checks.
+[34:27.000 --> 34:30.000]  Basically, you want the server to, every now and then,
+[34:30.000 --> 34:35.000]  give you a small amount of information saying, hey, I'm up.
+[34:35.000 --> 34:38.000]  And then you always say, then you naturally tend to think,
+[34:38.000 --> 34:41.000]  OK, just knowing you're up doesn't help me.
+[34:41.000 --> 34:43.000]  Because I also want to know, what does your uplink bandwidth
+[34:43.000 --> 34:44.000]  look like?
+[34:44.000 --> 34:46.000]  What does it downlink bandwidth look like?
+[34:46.000 --> 34:47.000]  How do you measure that?
+[34:47.000 --> 34:49.000]  How do you measure that contingency
+[34:49.000 --> 34:51.000]  and report to a centralized location?
+[34:51.000 --> 34:54.000]  If you do all of that reporting to one single centralized
+[34:54.000 --> 34:56.000]  location, you fall into the same problem
+[34:56.000 --> 34:59.000]  that we started with, which is single pointer failure.
+[34:59.000 --> 35:02.000]  So how do you do that in a distributed manner?
+[35:02.000 --> 35:07.000]  How do you handle this back-to-back scale,
+[35:07.000 --> 35:10.000]  such that the logs don't even make your system?
+[35:10.000 --> 35:12.000]  These are all hard problems.
+[35:12.000 --> 35:16.000]  Think about also server updates.
+[35:16.000 --> 35:18.000]  Whatever software this server is on,
+[35:18.000 --> 35:20.000]  say for instance, these servers are typically
+[35:20.000 --> 35:22.000]  doing data delivery over HTTP.
+[35:22.000 --> 35:24.000]  So there is some HTTP server running,
+[35:24.000 --> 35:27.000]  but you could run Apache or Nginx.
+[35:27.000 --> 35:30.000]  And let's assume that, I don't know, 6 o'clock today,
+[35:30.000 --> 35:32.000]  someone tells you, hey, there's a CD registered
+[35:32.000 --> 35:34.000]  against this particular version.
+[35:34.000 --> 35:37.000]  So you want to update the server versions.
+[35:37.000 --> 35:39.000]  Now you have 500,000 servers.
+[35:39.000 --> 35:41.000]  How do you roll the upgrades?
+[35:41.000 --> 35:43.000]  You don't want to be too quick, because what does the update
+[35:43.000 --> 35:45.000]  that you roll tells?
+[35:45.000 --> 35:48.000]  You'll take down the entire fleet.
+[35:48.000 --> 35:49.000]  So what do you do?
+[35:49.000 --> 35:53.000]  How do you figure out rolling upgrades?
+[35:53.000 --> 35:54.000]  That's really hard.
+[35:54.000 --> 35:57.000]  How do you figure out rolling upgrades when, let's say,
+[35:57.000 --> 35:59.000]  right around that time, let's say in the US,
+[35:59.000 --> 36:01.000]  there's a Super Bowl happening.
+[36:01.000 --> 36:03.000]  So you don't want to take down your servers right now.
+[36:03.000 --> 36:05.000]  And there's a lot of paying customers
+[36:05.000 --> 36:09.000]  who are watching a video or watching an event on your servers.
+[36:09.000 --> 36:14.000]  So these are all hard problems.
+[36:14.000 --> 36:16.000]  So nearly around four to five years
+[36:16.000 --> 36:19.000]  went into designing some of these systems.
+[36:19.000 --> 36:22.000]  And today, the systems that I'm going to talk about
+[36:22.000 --> 36:24.000]  are massive.
+[36:24.000 --> 36:30.000]  The logs alone are hundreds of terabytes.
+[36:30.000 --> 36:33.000]  But anyway, figuring out how to analyze those logs
+[36:33.000 --> 36:36.000]  is leading to these authoritative details
+[36:36.000 --> 36:38.000]  so that they can, at any point of time,
+[36:38.000 --> 36:41.000]  have a holistic view of what the network looks like,
+[36:41.000 --> 36:43.000]  that's also a hard problem.
+[36:43.000 --> 36:44.000]  This is one of the reasons why nobody
+[36:44.000 --> 36:46.000]  wants to build their own unions.
+[36:46.000 --> 36:48.000]  So they're happy automatically.
+[36:48.000 --> 36:49.000]  They're happy fastly.
+[36:49.000 --> 36:50.000]  So there's clouds that exist.
+[36:50.000 --> 36:55.000]  It just happens to be given the list.
+[36:55.000 --> 36:57.000]  So the authoritative name server can also
+[36:57.000 --> 37:00.000]  take a look at things like the health.
+[37:00.000 --> 37:02.000]  When was the server last picked out
+[37:02.000 --> 37:03.000]  for four hours in the media?
+[37:06.000 --> 37:08.000]  You can also look at a server's node.
+[37:08.000 --> 37:12.000]  I see the network visualization.
+[37:12.000 --> 37:15.000]  Network condition.
+[37:15.000 --> 37:17.000]  If a server actually reports that, hey,
+[37:17.000 --> 37:19.000]  by the way, whenever I try to serve data
+[37:19.000 --> 37:22.000]  from, let's say, a setting in Paris to users in Netherlands,
+[37:22.000 --> 37:25.000]  I encounter a lot of back-to-box.
+[37:25.000 --> 37:28.000]  Or I, in particular, mention those things
+[37:28.000 --> 37:29.000]  to get enough bandwidth.
+[37:29.000 --> 37:32.000]  Maybe something along the Paris market.
+[37:32.000 --> 37:34.000]  So then what do you do?
+[37:34.000 --> 37:37.000]  You don't provide the idea to the back-server anymore
+[37:37.000 --> 37:39.000]  to users in Netherlands.
+[37:39.000 --> 37:41.000]  So on and so forth.
+[37:41.000 --> 37:43.000]  Well, last but not the least, you can also
+[37:43.000 --> 37:45.000]  take a look at your location.
+[37:46.000 --> 37:47.000]  How do you do that?
+[37:52.000 --> 37:53.000]  Yes?
+[37:53.000 --> 37:55.000]  IP address.
+[37:55.000 --> 38:01.000]  So the reverse lookup doesn't work for end user addresses.
+[38:01.000 --> 38:04.000]  But having your IP address does help.
+[38:04.000 --> 38:07.000]  Actually, more importantly, they don't really
+[38:07.000 --> 38:08.000]  want to know your IP address.
+[38:08.000 --> 38:11.000]  They just want to know your local resolvers' IP address.
+[38:11.000 --> 38:13.000]  Because local resolver is usually a good proxy
+[38:13.000 --> 38:16.000]  for where you are.
+[38:16.000 --> 38:21.000]  Because if you're in KPM, if I know the KPM's resolver IP
+[38:21.000 --> 38:24.000]  address, I know you're a KPM user, right?
+[38:24.000 --> 38:27.000]  I mean, assuming that KPM resolvers are not so magnanimous
+[38:27.000 --> 38:30.000]  enough to answer everyone's queries along the way.
+[38:30.000 --> 38:32.000]  But this did happen back in the days.
+[38:32.000 --> 38:35.000]  This is why the Kaminsky attack was notorious, right?
+[38:35.000 --> 38:37.000]  Recursive resolvers, I mean, resolvers
+[38:37.000 --> 38:39.000]  when they do recursive resolution,
+[38:39.000 --> 38:40.000]  they're actually doing a lot of work.
+[38:40.000 --> 38:42.000]  So you only want to do it for your own users,
+[38:42.000 --> 38:44.000]  not for the entire world.
+[38:44.000 --> 38:46.000]  Even today, you'll find recursive resolvers
+[38:46.000 --> 38:49.000]  that do resolutions for everyone out there.
+[38:49.000 --> 38:51.000]  This last point, client location,
+[38:51.000 --> 38:53.000]  it's like a double-edged sword, right?
+[38:53.000 --> 38:57.000]  Because you do want to reveal your location to someone
+[38:57.000 --> 39:01.000]  like a CDN so that you get mapped to a nearby server.
+[39:01.000 --> 39:03.000]  But by doing that, you're also revealing
+[39:03.000 --> 39:06.000]  private information about your own.
+[39:06.000 --> 39:08.000]  So there is an alternative today,
+[39:08.000 --> 39:10.000]  which is that instead of using local resolver,
+[39:10.000 --> 39:13.000]  you could use, I don't know, send your solder to Google
+[39:13.000 --> 39:17.000]  and then use their quad 8 or V8, so forth, right?
+[39:17.000 --> 39:20.000]  You could also use quad 1, which is a public resolver
+[39:20.000 --> 39:22.000]  operated by CloudFlare, or quad 9,
+[39:22.000 --> 39:24.000]  which is actually quite nice.
+[39:24.000 --> 39:26.000]  I think it's run by a German company.
+[39:26.000 --> 39:28.000]  It's pretty good.
+[39:28.000 --> 39:32.000]  But the disadvantage of DOLS is that by using a resolver
+[39:32.000 --> 39:35.000]  that is not close to you, that is somewhere else,
+[39:35.000 --> 39:37.000]  you know, it gives you privacy,
+[39:37.000 --> 39:39.000]  but the performance is also going to attack.
+[39:39.000 --> 39:40.000]  Yes?
+[39:40.000 --> 39:44.000]  So what happens if I'm requesting something for quad 9
+[39:44.000 --> 39:47.000]  and I'm using CloudFlare's quad 1?
+[39:47.000 --> 39:52.000]  And what would be the IP address for CloudFlare
+[39:52.000 --> 39:56.000]  for an answer from the C available system?
+[39:56.000 --> 39:57.000]  What one?
+[39:57.000 --> 40:03.000]  So when CloudFlare launched the quad 1,
+[40:03.000 --> 40:05.000]  or when CloudFlare actually worked with Mozilla
+[40:05.000 --> 40:10.000]  to launch this DNS over HTTPS,
+[40:10.000 --> 40:13.000]  what they did was they said,
+[40:13.000 --> 40:15.000]  not only is our public resolver free
+[40:15.000 --> 40:19.000]  and it operates over HTTPS, so your ISP can't see,
+[40:19.000 --> 40:24.000]  we also won't reveal your IP address to any of the CDNs there,
+[40:24.000 --> 40:26.000]  which is great for them,
+[40:26.000 --> 40:30.000]  but it actually was detrimental for any other CDN,
+[40:30.000 --> 40:34.000]  because CDNs do need to know,
+[40:34.000 --> 40:37.000]  they need to have some input of where you are,
+[40:37.000 --> 40:39.000]  without that it's very hard to map incorrectly.
+[40:39.000 --> 40:42.000]  But today what our CloudFlare or most resolvers do,
+[40:42.000 --> 40:45.000]  public resolvers do, there is an extension
+[40:45.000 --> 40:48.000]  when there are any operating resolvers,
+[40:48.000 --> 40:50.000]  and the resolver actually tries to resolve
+[40:50.000 --> 40:52.000]  whatever query that you give them.
+[40:52.000 --> 40:55.000]  There's an extension in DNS called ENS,
+[40:55.000 --> 40:59.000]  which allows the resolver to put your subnet,
+[40:59.000 --> 41:01.000]  so rather than revealing your entire IP address,
+[41:01.000 --> 41:04.000]  they'll put a slash 24 or a slash 16.
+[41:04.000 --> 41:06.000]  So the CDNs can actually figure out
+[41:06.000 --> 41:09.000]  very high or cost granularity,
+[41:09.000 --> 41:11.000]  what your IP address is.
+[41:11.000 --> 41:13.000]  That's usually surprises.
+[41:17.000 --> 41:23.000]  Could they actually mess up with CloudFlare's mapping,
+[41:23.000 --> 41:25.000]  or CloudFlare could they lock them,
+[41:25.000 --> 41:27.000]  I think they could.
+[41:28.000 --> 41:31.000]  We'll quickly review one more technique,
+[41:31.000 --> 41:33.000]  and then we'll break.
+[41:33.000 --> 41:38.000]  So the other method is DNS-based redirectional voice,
+[41:38.000 --> 41:40.000]  like how we discuss.
+[41:42.000 --> 41:44.000]  The advantage of DNS-based redirection
+[41:44.000 --> 41:46.000]  is that every time,
+[41:46.000 --> 41:49.000]  by controlling the time to live
+[41:49.000 --> 41:52.000]  of the final answer of the IP address I give,
+[41:52.000 --> 41:56.000]  I can actually control how quickly the user will come back to me.
+[41:57.000 --> 41:59.000]  So here it reminds the authority of the server
+[41:59.000 --> 42:01.000]  when it tells you, okay, by the way,
+[42:01.000 --> 42:03.000]  the one the server highlighted in green is where
+[42:03.000 --> 42:06.000]  I want you to go and fetch this item.
+[42:06.000 --> 42:09.000]  Basically what it is giving you is an IPv4 or IPv6 address.
+[42:09.000 --> 42:11.000]  It's a DNS response.
+[42:11.000 --> 42:13.000]  And the DNS response, what it could do is it could say,
+[42:13.000 --> 42:15.000]  you're only allowed to catch this in five seconds,
+[42:15.000 --> 42:17.000]  which means that at the sixth second,
+[42:17.000 --> 42:19.000]  if you want to still receive content from that particular location,
+[42:19.000 --> 42:20.000]  you'll come back to me.
+[42:20.000 --> 42:22.000]  And now I can figure out once again
+[42:22.000 --> 42:25.000]  which server you have to go to.
+[42:25.000 --> 42:31.000]  So it does allow you to do very fine-grained load balancing.
+[42:31.000 --> 42:35.000]  So this is why sometimes when you actually try to resolve
+[42:35.000 --> 42:37.000]  any domain that is hosted by a CDN,
+[42:37.000 --> 42:39.000]  when you resolve, you'll get like four IP addresses.
+[42:39.000 --> 42:41.000]  And if you do the resolutions again and again,
+[42:41.000 --> 42:44.000]  you'll see the order of those IP addresses will change.
+[42:44.000 --> 42:46.000]  Typically you're trying to pick the first one.
+[42:46.000 --> 42:48.000]  The reason why there are multiple ones
+[42:48.000 --> 42:50.000]  and they keep rotating is because they're doing
+[42:50.000 --> 42:52.000]  some sort of a round-robin load balancing.
+[42:52.000 --> 42:54.000]  It's much more sophisticated than a round-robin,
+[42:54.000 --> 42:56.000]  but they can do all of these tricks.
+[42:56.000 --> 43:00.000]  So these are all the nice things that you get from DNS.
+[43:00.000 --> 43:04.000]  One terrible issue with DNS-based reduction
+[43:04.000 --> 43:06.000]  is just like everything else
+[43:06.000 --> 43:09.000]  and every single network protocol that we're discussing,
+[43:09.000 --> 43:13.000]  there are no guarantees that people will follow recommendations.
+[43:13.000 --> 43:14.000]  Remember OCSB?
+[43:14.000 --> 43:16.000]  You know, people turn it off because they thought,
+[43:16.000 --> 43:18.000]  I have to perform something.
+[43:18.000 --> 43:22.000]  Same way, Windows, I forgot which versions.
+[43:22.000 --> 43:24.000]  Okay, we can also pick up Linux.
+[43:24.000 --> 43:27.000]  There are kernels, specific kernels,
+[43:27.000 --> 43:28.000]  with what they did was they said,
+[43:28.000 --> 43:32.000]  look, this whole idea of going back again and again
+[43:32.000 --> 43:34.000]  to the CDN's authority to a game server
+[43:34.000 --> 43:37.000]  to resolve a domain, this is very silly.
+[43:37.000 --> 43:38.000]  I want my users to be happy.
+[43:38.000 --> 43:40.000]  So what I'm going to do is I'm going to ignore the TTL
+[43:40.000 --> 43:42.000]  that the authority to a game server gives me.
+[43:42.000 --> 43:47.000]  I'm going to catch it for five minutes.
+[43:47.000 --> 43:50.000]  Now, suppose you actually sent a record
+[43:50.000 --> 43:52.000]  with a TTL of five seconds,
+[43:52.000 --> 43:54.000]  hoping that you could reboot that server
+[43:54.000 --> 43:56.000]  and upgrade it in the next three minutes,
+[43:56.000 --> 43:58.000]  but the client is still caching that particular thing
+[43:58.000 --> 44:00.000]  for five minutes.
+[44:00.000 --> 44:02.000]  So you lose control.
+[44:02.000 --> 44:03.000]  Does this happen?
+[44:03.000 --> 44:04.000]  Yes, it does happen.
+[44:04.000 --> 44:05.000]  Does this happen today?
+[44:05.000 --> 44:07.000]  Yes, it does.
+[44:07.000 --> 44:10.000]  Nearly 50 to 60 percent of the resolve word
+[44:10.000 --> 44:12.000]  is that we all use.
+[44:12.000 --> 44:15.000]  Do not respect details.
+[44:15.000 --> 44:17.000]  Why don't we see an issue?
+[44:17.000 --> 44:19.000]  Well, the reason why we don't see an issue
+[44:19.000 --> 44:22.000]  is most of the time we serve as app.
+[44:22.000 --> 44:26.000]  But occasionally things do work.
+[44:26.000 --> 44:27.000]  So what can you do?
+[44:27.000 --> 44:29.000]  You could do something different.
+[44:29.000 --> 44:31.000]  So I'm going to give you a high level intuition
+[44:31.000 --> 44:32.000]  of how this one works.
+[44:32.000 --> 44:35.000]  It's called any cache-based redirection.
+[44:35.000 --> 44:36.000]  It's the same idea, right?
+[44:36.000 --> 44:39.000]  So the client, the browser issues it gets.
+[44:39.000 --> 44:42.000]  There is a URL, and it tries to figure out
+[44:42.000 --> 44:43.000]  where the URL is.
+[44:43.000 --> 44:44.000]  It's the same process.
+[44:44.000 --> 44:46.000]  It goes to the local resolve word,
+[44:46.000 --> 44:47.000]  local resolve word,
+[44:47.000 --> 44:50.000]  go to the authoritative name server of the content provider.
+[44:50.000 --> 44:53.000]  Now, instead of returning a C name,
+[44:53.000 --> 44:55.000]  the authoritative name server basically returns
+[44:55.000 --> 44:56.000]  your IP address.
+[44:56.000 --> 44:59.000]  And this one looks like it's 3.3.3.3.
+[44:59.000 --> 45:01.000]  It could be anything.
+[45:01.000 --> 45:04.000]  So the authoritative name server is now returning an IP address.
+[45:04.000 --> 45:07.000]  This IP address belongs to a, let's say, a CDN.
+[45:07.000 --> 45:10.000]  Now, how does this help us?
+[45:10.000 --> 45:12.000]  IP address typically means that you're pointing
+[45:12.000 --> 45:14.000]  to a location in the internet
+[45:14.000 --> 45:16.000]  where you retrieve the content file.
+[45:16.000 --> 45:17.000]  Right?
+[45:17.000 --> 45:18.000]  That's how it works.
+[45:18.000 --> 45:21.000]  But here, the reason why this works is because
+[45:21.000 --> 45:25.000]  in a number of servers, I'm showing three here, right?
+[45:25.000 --> 45:27.000]  One in the US, one in Europe,
+[45:27.000 --> 45:29.000]  they actually have the same IP address.
+[45:29.000 --> 45:32.000]  In this case, it's 3.3.3.3.
+[45:32.000 --> 45:35.000]  This is basically called as an any-cache IP address.
+[45:35.000 --> 45:36.000]  Right?
+[45:36.000 --> 45:39.000]  It's nothing special compared to the regular
+[45:39.000 --> 45:42.000]  uni-cache address that you encounter every day.
+[45:42.000 --> 45:45.000]  The only difference being, somehow,
+[45:45.000 --> 45:48.000]  the routers next to these servers
+[45:48.000 --> 45:51.000]  are allowed to advertise that particular prefix
+[45:51.000 --> 45:53.000]  from multiple locations.
+[45:53.000 --> 45:55.000]  So typically, how does VGT work?
+[45:55.000 --> 45:57.000]  There is a network, say, somewhere in the US,
+[45:57.000 --> 46:01.000]  and it says, look, I'm responsible for 1.2.3.0
+[46:01.000 --> 46:04.000]  slash 8 into 16, or 24.
+[46:04.000 --> 46:07.000]  I'm responsible for this particular network.
+[46:07.000 --> 46:09.000]  And any time you want to send data to it,
+[46:09.000 --> 46:11.000]  you know, you can send it to me, and you get the advertisers.
+[46:11.000 --> 46:12.000]  Okay?
+[46:12.000 --> 46:13.000]  It's the same idea.
+[46:13.000 --> 46:15.000]  But in any case, what you do is you
+[46:15.000 --> 46:18.000]  publish that announcement from multiple locations, right?
+[46:18.000 --> 46:21.000]  So the server here, it's saying, oh, by the way,
+[46:21.000 --> 46:25.000]  3.3.3.0 slash 24 is me.
+[46:25.000 --> 46:28.000]  As in, you want to send data to me, you don't send it here.
+[46:28.000 --> 46:29.000]  This server does this.
+[46:29.000 --> 46:31.000]  That server also does the same thing.
+[46:31.000 --> 46:33.000]  They're all announcing the same prefix
+[46:33.000 --> 46:34.000]  from multiple locations.
+[46:34.000 --> 46:39.000]  What does VGT do?
+[46:39.000 --> 46:42.000]  Eventually, your network will receive all these announcements.
+[46:42.000 --> 46:43.000]  It could.
+[46:43.000 --> 46:50.000]  What will it do?
+[46:50.000 --> 46:53.000]  It will pick either, assuming everything else is the same,
+[46:53.000 --> 46:54.000]  it will look at the announcements,
+[46:54.000 --> 46:56.000]  it will look at the AS pattern of the announcement,
+[46:56.000 --> 46:57.000]  pick the one that the shot is.
+[46:57.000 --> 47:00.000]  Assuming that is the most performant one.
+[47:00.000 --> 47:02.000]  It could also have local preference values.
+[47:02.000 --> 47:03.000]  Keep that in mind, right?
+[47:03.000 --> 47:05.000]  Local preference trumps over everything else.
+[47:05.000 --> 47:08.000]  It could also say, by the way, whenever I receive an announcement
+[47:08.000 --> 47:12.000]  from KPN, I trust that more from, I don't know, AT&T.
+[47:12.000 --> 47:15.000]  And so if KPN announces a path that has eight halves,
+[47:15.000 --> 47:19.000]  it'll still accept it because local preference is pretty high.
+[47:19.000 --> 47:28.000]  So what happens in any cast is that you're letting BGP dictate.
+[47:28.000 --> 47:33.000]  You're basically letting BGP dictate which server gets picked.
+[47:33.000 --> 47:37.000]  The only control you have is where you announce the prefixes from.
+[47:37.000 --> 47:41.000]  But BGP designs your network in this case.
+[47:41.000 --> 47:42.000]  We have somewhere in the Netherlands,
+[47:42.000 --> 47:45.000]  so if you're getting a connection from KPN,
+[47:45.000 --> 47:50.000]  KPN designs which anycast route you pick.
+[47:50.000 --> 47:55.000]  Hope that the route is, let's say, the one nearby,
+[47:55.000 --> 47:58.000]  let's say somewhere in France or somewhere in Germany.
+[47:58.000 --> 48:01.000]  But once again, there is no guarantee.
+[48:01.000 --> 48:05.000]  The group name servers in the DNS hierarchy actually use anycast.
+[48:05.000 --> 48:09.000]  And so there are 13 group name servers,
+[48:09.000 --> 48:11.000]  and they deploy them at about 200 locations.
+[48:11.000 --> 48:14.000]  They use anycast.
+[48:14.000 --> 48:15.000]  It's very simple.
+[48:15.000 --> 48:17.000]  It's simple IP address.
+[48:17.000 --> 48:19.000]  You announce at multiple locations.
+[48:19.000 --> 48:23.000]  But unfortunately, what happens is because of weird quantities
+[48:23.000 --> 48:26.000]  with BGP, keep in mind BGP has no emotional performance.
+[48:26.000 --> 48:28.000]  It's all policy days.
+[48:28.000 --> 48:31.000]  So unfortunately, for anywhere between two attacks,
+[48:31.000 --> 48:44.000]  BGP is all about announcing route to prefixes.
+[48:44.000 --> 48:47.000]  And so any attack would be targeting those prefixes.
+[48:47.000 --> 48:49.000]  And let's see what those attacks look like
+[48:49.000 --> 48:53.000]  and what we didn't know about them.
+[48:53.000 --> 48:56.000]  Probably remember there's an overview with three ASs.
+[48:56.000 --> 49:03.000]  BGP allows an AS to announce a prefix.
+[49:03.000 --> 49:06.000]  And it basically says, I'm the owner of the prefix
+[49:06.000 --> 49:07.000]  and keeps propagating.
+[49:07.000 --> 49:10.000]  Every AS that propagates an announcement
+[49:10.000 --> 49:13.000]  prevents itself from being AFI.
+[49:13.000 --> 49:17.000]  So this is something you saw.
+[49:17.000 --> 49:22.000]  Now, what is interesting is if you look at the network B,
+[49:22.000 --> 49:24.000]  which receives this announcement from A saying,
+[49:24.000 --> 49:31.000]  hey, by the way, in order to reach 130, 37, 00, 16,
+[49:31.000 --> 49:34.000]  you send your packets towards them.
+[49:34.000 --> 49:36.000]  And B, in this case, it looks like it's
+[49:36.000 --> 49:39.000]  happily accepting that route and eventually B propagating back
+[49:39.000 --> 49:42.000]  to C, preventing itself to the AS path.
+[49:42.000 --> 49:46.000]  You can see that in the illustration.
+[49:46.000 --> 49:50.000]  Now, what I want you to know, and this is true even today,
+[49:50.000 --> 49:54.000]  is that networks B and C have no way of validating
+[49:54.000 --> 49:58.000]  in a secure and reliable way whether A is even
+[49:58.000 --> 50:02.000]  allowed to announce this prefix.
+[50:02.000 --> 50:08.000]  So here, A says that to send traffic to 130, 37, 00, 16,
+[50:08.000 --> 50:10.000]  you could send the traffic to that network.
+[50:10.000 --> 50:13.000]  But there is no way in which we can confirm
+[50:13.000 --> 50:16.000]  that A indeed owns that prefix.
+[50:17.000 --> 50:19.000]  And the same goes for C. Of course,
+[50:19.000 --> 50:21.000]  if B can't do it by transient properties,
+[50:21.000 --> 50:22.000]  it can't do anything.
+[50:26.000 --> 50:33.000]  So route hijacks basically imply that, for instance, if you are
+[50:33.000 --> 50:37.000]  quite a resourceful person, you manage
+[50:37.000 --> 50:43.000]  to run your own network, this could be heard.
+[50:43.000 --> 50:46.000]  You could basically start announcing that 130, 37, 16
+[50:46.000 --> 50:47.000]  is your prefix.
+[50:47.000 --> 50:52.000]  And you could give back to C. Assuming all things being equal,
+[50:52.000 --> 50:54.000]  now C gets two announcements, right?
+[50:54.000 --> 50:58.000]  One from B that says the path to that prefix is B, A,
+[50:58.000 --> 51:00.000]  and one from fervent in this case.
+[51:00.000 --> 51:03.000]  It says the path to that prefix is just one half H.
+[51:03.000 --> 51:05.000]  Assuming all things being equal, C
+[51:05.000 --> 51:07.000]  will happily accept further its announcement.
+[51:07.000 --> 51:10.000]  And what happens here is that network has effectively
+[51:10.000 --> 51:12.000]  taken over, or you, as an attacker,
+[51:12.000 --> 51:16.000]  could effectively take over the ownership of the prefix.
+[51:16.000 --> 51:17.000]  Yes?
+[51:26.000 --> 51:27.000]  Very good point.
+[51:27.000 --> 51:28.000]  You'll come to that.
+[51:28.000 --> 51:29.000]  Yeah.
+[51:29.000 --> 51:31.000]  We'll see what those procedures look like.
+[51:36.000 --> 51:39.000]  So obviously, we all want to believe that this can never
+[51:39.000 --> 51:40.000]  happen on the internet.
+[51:40.000 --> 51:43.000]  But again, you know how this goes against us.
+[51:43.000 --> 51:45.000]  We have them all the time.
+[51:45.000 --> 51:48.000]  I mean, search for, I mean, Twitter is a very good source
+[51:48.000 --> 51:49.000]  of information for this.
+[51:49.000 --> 51:51.000]  There's a lot of networks that will even out and say,
+[51:51.000 --> 51:54.000]  hey, by the way, someone hijacked our prefix.
+[51:54.000 --> 51:59.000]  And trust me, every day, you'll hear someone hijacking something.
+[51:59.000 --> 52:03.000]  These are not, mostly, they're unintentional.
+[52:03.000 --> 52:05.000]  Why would they be unintentional?
+[52:05.000 --> 52:07.000]  People do make mistakes.
+[52:07.000 --> 52:11.000]  All it takes is one network administrator
+[52:11.000 --> 52:15.000]  in a network that has hundreds of routers
+[52:15.000 --> 52:18.000]  to just misconfigure one router.
+[52:18.000 --> 52:22.000]  And you'll end up hijacking someone's network.
+[52:22.000 --> 52:24.000]  There are two kinds of hijacks.
+[52:24.000 --> 52:26.000]  One is called the prefix hijack, which is what we saw.
+[52:26.000 --> 52:28.000]  There's a sub- prefix hijack.
+[52:28.000 --> 52:32.000]  So hijacks are very common.
+[52:32.000 --> 52:34.000]  A prefix hijack is basically, you're
+[52:34.000 --> 52:36.000]  taking all the entire prefix.
+[52:36.000 --> 52:39.000]  Sub- prefix basically means that you're not
+[52:39.000 --> 52:40.000]  taking the entire network.
+[52:40.000 --> 52:41.000]  You're just taking a sub- prefix.
+[52:41.000 --> 52:47.000]  So note that in this case, you have a network named after me.
+[52:47.000 --> 52:50.000]  It's announcing a sub- prefix, not the entire prefix.
+[52:50.000 --> 52:54.000]  The slash maybe two instead of a slash 16.
+[52:54.000 --> 52:57.000]  Now, in order to understand some of these prefix
+[52:57.000 --> 53:01.000]  and sub- prefix hijacks, we have to review quickly
+[53:01.000 --> 53:04.000]  how routers do prefix matches.
+[53:04.000 --> 53:07.000]  So routers are all the time receiving announcements
+[53:07.000 --> 53:11.000]  from their peers in other networks.
+[53:11.000 --> 53:15.000]  They're receiving announcements for different prefixes.
+[53:15.000 --> 53:19.000]  And so let's, if you take a look at one of these border
+[53:19.000 --> 53:23.000]  routers and you ask it to dump its table.
+[53:23.000 --> 53:26.000]  By the way, I was telling someone,
+[53:26.000 --> 53:29.000]  if you search online in Google or whatever search engine
+[53:29.000 --> 53:34.000]  you can use, you search for the term looking glass servers.
+[53:34.000 --> 53:37.000]  Looking glass.
+[53:37.000 --> 53:43.000]  What this is, is basically a small piece of software
+[53:43.000 --> 53:47.000]  that runs on real routers in the internet.
+[53:47.000 --> 53:48.000]  And I say real routers.
+[53:48.000 --> 53:53.000]  These could be co-routers, could be routers operated by ISD.
+[53:53.000 --> 53:55.000]  And a lot of these networks actually operate
+[53:55.000 --> 53:56.000]  through software and routers.
+[53:56.000 --> 53:57.000]  Now, why would they do it?
+[53:57.000 --> 53:58.000]  And what does it do?
+[53:58.000 --> 54:00.000]  It's basically for troubleshooting.
+[54:00.000 --> 54:02.000]  And what the software allows you to do is,
+[54:02.000 --> 54:06.000]  it's called looking glass because it allows you to get some visibility
+[54:06.000 --> 54:08.000]  into the network.
+[54:08.000 --> 54:10.000]  What kind of network?
+[54:10.000 --> 54:15.000]  You can do trace routes from a router to a network.
+[54:15.000 --> 54:19.000]  These are all very heavily coupled, heavily monitored,
+[54:19.000 --> 54:21.000]  so don't play games.
+[54:21.000 --> 54:24.000]  You'll get picked out, or worse, your ISD, you know,
+[54:24.000 --> 54:28.000]  came from after you tried.
+[54:28.000 --> 54:30.000]  It's fine.
+[54:30.000 --> 54:35.000]  And then the nice thing is that when you actually hop onto it
+[54:35.000 --> 54:37.000]  or the log in to a router, it has a, by the way,
+[54:37.000 --> 54:41.000]  it has, I don't know, 19 is HD on a little bit.
+[54:41.000 --> 54:44.000]  So you'll have to, sometimes you'll see marking times.
+[54:44.000 --> 54:46.000]  I don't know how many of you even know this.
+[54:46.000 --> 54:49.000]  But if you ignore that, the nice thing is that you can ask
+[54:49.000 --> 54:52.000]  the co-router to show its table dump.
+[54:52.000 --> 54:57.000]  A table dump basically will tell you all the prefixes that it knows
+[54:57.000 --> 55:00.000]  and the best facts to those prefixes.
+[55:00.000 --> 55:03.000]  Sometimes it might be quite large and they, like I said,
+[55:03.000 --> 55:06.000]  they heavily throttle the output or, you know,
+[55:06.000 --> 55:10.000]  get access to these looking glass servers.
+[55:10.000 --> 55:12.000]  But you can still get a lot of information about,
+[55:12.000 --> 55:16.000]  say for instance, you can figure out, I don't know if KPN offers
+[55:16.000 --> 55:19.000]  looking glass servers, but again, electric is a big network
+[55:19.000 --> 55:21.000]  that actually provides a lot of looking glass servers.
+[55:21.000 --> 55:24.000]  APMP does, Deutsche Telekom does.
+[55:24.000 --> 55:27.000]  So you can hop onto the routers of the particular network
+[55:27.000 --> 55:29.000]  and ask it, hey, by the way, can you show me a table dump?
+[55:29.000 --> 55:32.000]  And you can say, ah, is Deutsche Telekom peering with KPN?
+[55:32.000 --> 55:34.000]  If so, what does the route look like?
+[55:34.000 --> 55:37.000]  And you can answer these questions.
+[55:37.000 --> 55:39.000]  That's really nice.
+[55:39.000 --> 55:43.000]  Now what you will observe is that routers have tons of entries, right?
+[55:43.000 --> 55:48.000]  Hundreds of thousands of entries in what is called as,
+[55:48.000 --> 55:50.000]  here I call it as a routing table,
+[55:50.000 --> 55:53.000]  but I'm strictly sticking with what's called as a forward information base
+[55:53.000 --> 55:56.000]  or FIB.
+[55:56.000 --> 56:02.000]  Basically, all the table contains is for every single prefix
+[56:02.000 --> 56:06.000]  that the router has learned, quote, unquote, learned.
+[56:06.000 --> 56:09.000]  It'll basically tell the router, suppose you receive a packet for that prefix,
+[56:09.000 --> 56:12.000]  what is the interface over which it will send the packet?
+[56:12.000 --> 56:17.000]  As simple as that.
+[56:17.000 --> 56:25.000]  So now the question is, you know, when the router receives an IP address,
+[56:25.000 --> 56:29.000]  sorry, a packet with a given destination,
+[56:29.000 --> 56:32.000]  it has to have a mechanism by which it could figure out
+[56:32.000 --> 56:37.000]  which one of these entries can be used or basically
+[56:37.000 --> 56:40.000]  which one of these entries matches the destination of the packet
+[56:40.000 --> 56:45.000]  so that you can figure out which interface to route that packet.
+[56:45.000 --> 56:49.000]  So this one looks like 130, 37, 00, 24,
+[56:49.000 --> 56:55.000]  as if the packet of the router receives might be one of those...
+[57:00.000 --> 57:02.000]  in that prefix.
+[57:02.000 --> 57:04.000]  And the router can figure out, oh, by the way,
+[57:04.000 --> 57:08.000]  the IP address of that prefix matches this one.
+[57:08.000 --> 57:11.000]  Now this one looks like an exact match, which is very easy,
+[57:11.000 --> 57:15.000]  but unfortunately sometimes what you see is something like this.
+[57:15.000 --> 57:19.000]  So for instance, this one is 130, 37, 00, 20.
+[57:19.000 --> 57:22.000]  This is basic IP address checking, right?
+[57:22.000 --> 57:26.000]  So you're checking whether the given prefix is a super net
+[57:26.000 --> 57:29.000]  or contains the IP address in the packet.
+[57:29.000 --> 57:33.000]  So in this case, it looks like there are two addresses
+[57:33.000 --> 57:37.000]  that could contain the IP address.
+[57:37.000 --> 57:38.000]  That should be obvious.
+[57:38.000 --> 57:40.000]  The first one is 130, 37.
+[57:40.000 --> 57:42.000]  The first one is a slash 16.
+[57:42.000 --> 57:44.000]  And if you pay attention to the destination address,
+[57:44.000 --> 57:47.000]  it's clear that it's within that slash 16.
+[57:47.000 --> 57:51.000]  Unfortunately, there's also a slash 24 that contains the IP address.
+[57:51.000 --> 57:53.000]  This could happen.
+[57:53.000 --> 57:56.000]  What it means is that this router, at some point of time,
+[57:56.000 --> 57:58.000]  received two announcements.
+[57:58.000 --> 58:00.000]  One to a slash 16.
+[58:00.000 --> 58:03.000]  The other one was a more fine-grained announcement, right?
+[58:03.000 --> 58:04.000]  What is a forced-grained announcement?
+[58:04.000 --> 58:07.000]  It means they are announcing routes to a larger prefix.
+[58:07.000 --> 58:10.000]  Fine-grained announcements means they are announcing routes
+[58:10.000 --> 58:13.000]  to a smaller prefix, okay?
+[58:13.000 --> 58:15.000]  And the router said, okay, these two are different,
+[58:15.000 --> 58:18.000]  so I'm going to maintain both of them in my data.
+[58:18.000 --> 58:20.000]  So what do I do when a packet comes?
+[58:20.000 --> 58:23.000]  You actually figure out which one is the longest prefix match
+[58:23.000 --> 58:25.000]  for the given IP address.
+[58:25.000 --> 58:28.000]  It's called LPM, or Longest Perfect Match.
+[58:28.000 --> 58:31.000]  And the way it does it, it builds a data structure called a trie,
+[58:31.000 --> 58:36.000]  T-R-I-E, announced trie.
+[58:36.000 --> 58:38.000]  And basically, you can think of that data structure as basically
+[58:38.000 --> 58:40.000]  as like a binary trie.
+[58:40.000 --> 58:44.000]  It starts with, you know, if you think this trie is a prefix,
+[58:44.000 --> 58:47.000]  and you convert that to a string of bits,
+[58:47.000 --> 58:49.000]  you could represent that with a trie.
+[58:49.000 --> 58:51.000]  It starts with a loop.
+[58:51.000 --> 58:52.000]  You go left, it's a zero.
+[58:52.000 --> 58:54.000]  You go right, it's a one.
+[58:54.000 --> 58:57.000]  You can build the entire thing for the prefix.
+[58:57.000 --> 59:00.000]  And you could represent it in a very compact manner,
+[59:00.000 --> 59:03.000]  and there are hardware implementations that allow you to
+[59:03.000 --> 59:06.000]  represent this in hardware, and you can easily do it with a cup.
+[59:06.000 --> 59:08.000]  And this is what routers are designed for.
+[59:08.000 --> 59:13.000]  To build these trie is extremely fast, quickly,
+[59:13.000 --> 59:17.000]  and to do the cups on these trie.
+[59:17.000 --> 59:19.000]  So here, what you're going to do is you'll actually figure out
+[59:19.000 --> 59:20.000]  which is the longest prefix.
+[59:20.000 --> 59:24.000]  So slide 24 is undoubtedly the longest prefix that matches
+[59:24.000 --> 59:25.000]  that particular address.
+[59:25.000 --> 59:29.000]  And so it will battle that market through interface two
+[59:29.000 --> 59:32.000]  and not through interface four.
+[59:32.000 --> 59:34.000]  Any questions?
+[59:48.000 --> 59:50.000]  So let's see.
+[59:53.000 --> 59:55.000]  I'm going to go through a couple of very old attacks.
+[59:55.000 --> 59:56.000]  These are all real.
+[59:56.000 --> 59:58.000]  You can lift them up.
+[59:58.000 --> 01:00:00.000]  There are interesting stories about some of them
+[01:00:01.000 --> 01:00:03.000]  beyond the scope of one.
+[01:00:03.000 --> 01:00:09.000]  The earliest high-tech incident happened in 1997.
+[01:00:09.000 --> 01:00:12.000]  This was an AS-12 AS-17.
+[01:00:12.000 --> 01:00:16.000]  It was somewhere in the U.S. probably close to Florida.
+[01:00:16.000 --> 01:00:21.000]  So it learned routes from nothing in Florida, but it did happen.
+[01:00:21.000 --> 01:00:27.000]  So what it did was this router in this particular area
+[01:00:27.000 --> 01:00:29.000]  did something really funny.
+[01:00:29.000 --> 01:00:32.000]  It took an announcement with very large prefix,
+[01:00:32.000 --> 01:00:35.000]  like a slash 16, and it disaggregated.
+[01:00:35.000 --> 01:00:38.000]  This aggregation basically means you make a larger prefix
+[01:00:38.000 --> 01:00:40.000]  into a number of smaller ones.
+[01:00:40.000 --> 01:00:42.000]  Why do you want to do that?
+[01:00:42.000 --> 01:00:44.000]  If you recall the longest prefix match,
+[01:00:44.000 --> 01:00:47.000]  what longest prefix match tells you is that if routers
+[01:00:47.000 --> 01:00:49.000]  have a number of announcements,
+[01:00:49.000 --> 01:00:54.000]  they always prefer the most specific one.
+[01:00:54.000 --> 01:00:56.000]  If someone tells you a specific address,
+[01:00:56.000 --> 01:00:58.000]  the character is easier to give them a route
+[01:00:58.000 --> 01:01:01.000]  rather than when they give you a fuzzy location.
+[01:01:01.000 --> 01:01:04.000]  So that's kind of an illusion.
+[01:01:04.000 --> 01:01:07.000]  Presumably for some load balancing or, I don't know,
+[01:01:07.000 --> 01:01:10.000]  imagined control over traffic,
+[01:01:10.000 --> 01:01:15.000]  it disaggregated all these slash 16s into a slash 24.
+[01:01:15.000 --> 01:01:17.000]  It did not stop at that.
+[01:01:17.000 --> 01:01:21.000]  It actually broke even bigger prefixes into slash 24s.
+[01:01:21.000 --> 01:01:23.000]  If you make a slash 16 into a slash 24,
+[01:01:23.000 --> 01:01:26.000]  how much less are you going to be getting?
+[01:01:34.000 --> 01:01:36.000]  Do you know what?
+[01:01:36.000 --> 01:01:38.000]  How long did that take?
+[01:01:38.000 --> 01:01:41.000]  How many networks do you raise to break a slash 16
+[01:01:41.000 --> 01:01:44.000]  into a slash 24?
+[01:01:44.000 --> 01:01:47.000]  Is it?
+[01:01:47.000 --> 01:01:58.000]  So basically it broke all these prefixes into fine grained ones.
+[01:01:58.000 --> 01:02:01.000]  So it had, when this attack happened,
+[01:02:01.000 --> 01:02:03.000]  somewhere close to 200,000 entries,
+[01:02:03.000 --> 01:02:06.000]  routers called routers at the table of maintaining
+[01:02:06.000 --> 01:02:08.000]  close to a billion entries.
+[01:02:08.000 --> 01:02:10.000]  That's where it starts.
+[01:02:10.000 --> 01:02:12.000]  The memory that they used to maintain
+[01:02:12.000 --> 01:02:14.000]  is extremely expensive.
+[01:02:14.000 --> 01:02:17.000]  So you have every incentive to actually be consolidating
+[01:02:17.000 --> 01:02:19.000]  or aggregating them.
+[01:02:19.000 --> 01:02:21.000]  But for some reason, I don't know,
+[01:02:21.000 --> 01:02:22.000]  this problem is the opposite.
+[01:02:22.000 --> 01:02:24.000]  There are reasons why we wanted to do this aggregation.
+[01:02:24.000 --> 01:02:25.000]  Keep that in mind.
+[01:02:25.000 --> 01:02:28.000]  So it had 250,000 entries in its thousand table,
+[01:02:28.000 --> 01:02:30.000]  and then it did this.
+[01:02:30.000 --> 01:02:34.000]  It linked all these disaggregated routes between them.
+[01:02:34.000 --> 01:02:36.000]  Now let's review what happened.
+[01:02:36.000 --> 01:02:43.000]  So you learn the path to really large prefixes,
+[01:02:43.000 --> 01:02:45.000]  let's say a slash 16, slash 8.
+[01:02:45.000 --> 01:02:47.000]  These are not your prefixes, right?
+[01:02:47.000 --> 01:02:51.000]  These are prefixes that you learn from your neighbors.
+[01:02:51.000 --> 01:02:54.000]  This is how you need these routes.
+[01:02:54.000 --> 01:02:59.000]  Somewhere along the way, you look at the announcement,
+[01:02:59.000 --> 01:03:00.000]  everything just starts.
+[01:03:00.000 --> 01:03:03.000]  You install that route in your routing route.
+[01:03:03.000 --> 01:03:05.000]  And that's why you use this route.
+[01:03:05.000 --> 01:03:07.000]  But this route has broke that announcement
+[01:03:07.000 --> 01:03:09.000]  into a number of slash and forth.
+[01:03:09.000 --> 01:03:10.000]  Still OK.
+[01:03:10.000 --> 01:03:11.000]  Not bad.
+[01:03:11.000 --> 01:03:13.000]  But now think about what will happen
+[01:03:13.000 --> 01:03:17.000]  if you re-announce those slash 24s, how to do that.
+[01:03:17.000 --> 01:03:20.000]  The original announcements haven't changed, right?
+[01:03:20.000 --> 01:03:22.000]  The original announcements still could be a slash 8,
+[01:03:22.000 --> 01:03:24.000]  a slash 18.
+[01:03:24.000 --> 01:03:26.000]  But you are announcing slash reports,
+[01:03:26.000 --> 01:03:30.000]  so it doesn't really matter who announces what.
+[01:03:30.000 --> 01:03:33.000]  For every single announcement that you make,
+[01:03:33.000 --> 01:03:36.000]  you will receive the packet for that prefix.
+[01:03:36.000 --> 01:03:39.000]  Because, number one, these are really migrating.
+[01:03:39.000 --> 01:03:42.000]  And second, slash 24 is the smallest prefixes
+[01:03:42.000 --> 01:03:43.000]  you can announce.
+[01:03:43.000 --> 01:03:46.000]  If you announce anything smaller than that,
+[01:03:46.000 --> 01:03:48.000]  it's typically larger than the data.
+[01:03:48.000 --> 01:03:49.000]  Because why?
+[01:03:49.000 --> 01:03:51.000]  Because space is expensive on the logics,
+[01:03:51.000 --> 01:03:53.000]  so you don't want to maintain a lot of prefixes.
+[01:03:53.000 --> 01:03:55.000]  So you want to capture it somehow.
+[01:03:55.000 --> 01:03:58.000]  So it's an arbitrary gap, so slash 24 is the largest.
+[01:03:58.000 --> 01:04:00.000]  It's smaller than zero.
+[01:04:00.000 --> 01:04:02.000]  Larger than five.
+[01:04:02.000 --> 01:04:05.000]  So by disaggregating routes into straight forth,
+[01:04:05.000 --> 01:04:07.000]  you can't get any further, which means
+[01:04:07.000 --> 01:04:13.000]  that you have absolute control over all the 250,000 prefixes.
+[01:04:13.000 --> 01:04:18.000]  But they are not in the route to all the 200,000 prefixes.
+[01:04:18.000 --> 01:04:21.000]  This is something that they didn't anticipate by leaking.
+[01:04:21.000 --> 01:04:24.000]  This is called a route leak.
+[01:04:24.000 --> 01:04:26.000]  How does a route leak happen?
+[01:04:26.000 --> 01:04:29.000]  Remember in BGP, when we reviewed the basics,
+[01:04:29.000 --> 01:04:32.000]  I said there are these relationships between AS's.
+[01:04:32.000 --> 01:04:35.000]  There are policies that determine who you announce,
+[01:04:35.000 --> 01:04:37.000]  what kind of prediction you announce to whom.
+[01:04:37.000 --> 01:04:39.000]  It's a policy-based protocol.
+[01:04:39.000 --> 01:04:41.000]  So sometimes it could happen.
+[01:04:41.000 --> 01:04:42.000]  It doesn't happen.
+[01:04:42.000 --> 01:04:44.000]  And it happens over and over.
+[01:04:44.000 --> 01:04:46.000]  Business relationships change over and over.
+[01:04:46.000 --> 01:04:48.000]  Sometimes the people are going to say,
+[01:04:48.000 --> 01:04:50.000]  I have a new contract with the network.
+[01:04:50.000 --> 01:04:52.000]  Now I'm allowed to announce that.
+[01:04:52.000 --> 01:04:54.000]  And mistakes like these happen.
+[01:04:54.000 --> 01:04:56.000]  And what happens is, in this case,
+[01:04:56.000 --> 01:04:58.000]  they leak out the announcement, and suddenly they invited
+[01:04:58.000 --> 01:05:02.000]  almost all of the internet traffic towards them.
+[01:05:02.000 --> 01:05:04.000]  So the entire internet seemed to be hosted
+[01:05:04.000 --> 01:05:06.000]  until the day of 2007.
+[01:05:06.000 --> 01:05:08.000]  We go along with this matter.
+[01:05:10.000 --> 01:05:13.000]  Unfortunately, what happened was that this incident was so
+[01:05:13.000 --> 01:05:16.000]  famous, because it was not just a question of this router
+[01:05:16.000 --> 01:05:19.000]  rebooting, shutting down, because you have to link
+[01:05:19.000 --> 01:05:22.000]  until every router that received this latch
+[01:05:22.000 --> 01:05:25.000]  reinforced the internet to change,
+[01:05:25.000 --> 01:05:27.000]  to acknowledge that by the way this was a mistake,
+[01:05:27.000 --> 01:05:29.000]  you have to ignore it.
+[01:05:29.000 --> 01:05:32.000]  And that's really hard, because this is a distributed protocol.
+[01:05:33.000 --> 01:05:36.000]  And these announcements take some amount of time to propagate.
+[01:05:36.000 --> 01:05:39.000]  So even if you simply shut down AS7007,
+[01:05:39.000 --> 01:05:42.000]  you still have to wait for a reasonable amount of time
+[01:05:42.000 --> 01:05:45.000]  for every router to learn that by the way,
+[01:05:45.000 --> 01:05:48.000]  this router is no longer active.
+[01:05:52.000 --> 01:05:55.000]  And so they literally have to power down,
+[01:05:55.000 --> 01:05:59.000]  or power cycle, a lot of code routers.
+[01:05:59.000 --> 01:06:02.000]  And this is, by the way, doing this entire time frame,
+[01:06:02.000 --> 01:06:07.000]  all your networks, the paths are actually going
+[01:06:07.000 --> 01:06:10.000]  towards AS7007 and then all of this down.
+[01:06:10.000 --> 01:06:12.000]  So basically it's synchronous.
+[01:06:12.000 --> 01:06:13.000]  The term is called synchronous.
+[01:06:13.000 --> 01:06:16.000]  It means that you have a route to a destination
+[01:06:16.000 --> 01:06:17.000]  that doesn't need this.
+[01:06:17.000 --> 01:06:20.000]  Your packets go towards them, and then they're going to be dropped.
+[01:06:20.000 --> 01:06:22.000]  So this has been bad.
+[01:06:22.000 --> 01:06:24.000]  This is one of the earliest, isn't it?
+[01:06:24.000 --> 01:06:26.000]  There's a model in the slide.
+[01:06:26.000 --> 01:06:28.000]  When I put it up, you can look it up.
+[01:06:28.000 --> 01:06:30.000]  There's a long story about what exactly happened
+[01:06:30.000 --> 01:06:32.000]  and what happened when it looked at it.
+[01:06:36.000 --> 01:06:38.000]  But this is, yeah.
+[01:06:38.000 --> 01:06:42.000]  How is it that you're getting the,
+[01:06:42.000 --> 01:06:44.000]  oh, I heard that.
+[01:06:44.000 --> 01:06:46.000]  Yeah, I don't know.
+[01:06:46.000 --> 01:06:48.000]  Imagine, you might-
+[01:06:48.000 --> 01:06:49.000]  You broke out the back of the slide
+[01:06:49.000 --> 01:06:50.000]  and then you're going to break it down
+[01:06:50.000 --> 01:06:51.000]  and it has to go until the same month
+[01:06:51.000 --> 01:06:53.000]  that you got it right.
+[01:06:53.000 --> 01:06:57.000]  Imagine this, say for instance you are,
+[01:06:57.000 --> 01:07:01.000]  you have a router in, you know, somewhere in Amsterdam.
+[01:07:01.000 --> 01:07:03.000]  You're announcing to the whole world
+[01:07:03.000 --> 01:07:07.000]  that 1.37 in 2016 was my route,
+[01:07:07.000 --> 01:07:09.000]  and this is my way.
+[01:07:09.000 --> 01:07:12.000]  This is my path.
+[01:07:12.000 --> 01:07:14.000]  Somehow that particular announcement
+[01:07:14.000 --> 01:07:17.000]  makes it all the way to this AS-7007 somewhere in the U.S.
+[01:07:17.000 --> 01:07:19.000]  But rather what it says is,
+[01:07:19.000 --> 01:07:21.000]  okay, I'm going to take your Slack 16.
+[01:07:21.000 --> 01:07:23.000]  I think this would be a terrific Slack report
+[01:07:23.000 --> 01:07:25.000]  and we announce it.
+[01:07:25.000 --> 01:07:27.000]  When I re-announce it, of course, I will say,
+[01:07:27.000 --> 01:07:29.000]  look, I'm in the path, right?
+[01:07:29.000 --> 01:07:32.000]  So you could imagine, let's imagine a one-half path,
+[01:07:32.000 --> 01:07:36.000]  which means, let's say from U to all the way to that AS-7007,
+[01:07:36.000 --> 01:07:38.000]  it's one-half.
+[01:07:38.000 --> 01:07:40.000]  So your announcement goes to AS-7007.
+[01:07:40.000 --> 01:07:44.000]  AS-7007 prepends itself and re-announces.
+[01:07:44.000 --> 01:07:46.000]  But re-announcements are in slash-24,
+[01:07:46.000 --> 01:07:49.000]  which means for any one Brazilian in the whole world,
+[01:07:49.000 --> 01:07:51.000]  there will be two announcements.
+[01:07:51.000 --> 01:07:55.000]  Exactly.
+[01:07:55.000 --> 01:07:57.000]  So there are two announcements everyone will get,
+[01:07:57.000 --> 01:07:59.000]  one through U, right?
+[01:07:59.000 --> 01:08:02.000]  Let's call it somewhere in the Netherlands, right?
+[01:08:02.000 --> 01:08:04.000]  The other one will be that, you know,
+[01:08:04.000 --> 01:08:07.000]  let's say this is RAS 123.
+[01:08:07.000 --> 01:08:11.000]  They'll also get a number of, you know,
+[01:08:11.000 --> 01:08:14.000]  8 out of the star 24.
+[01:08:14.000 --> 01:08:16.000]  They'll get a number of slash-24s.
+[01:08:16.000 --> 01:08:19.000]  Each of those slash-24s will save 7,007,
+[01:08:19.000 --> 01:08:22.000]  followed by everything.
+[01:08:22.000 --> 01:08:24.000]  So you will eventually eventually get your packets,
+[01:08:24.000 --> 01:08:27.000]  get your traffic, but they all go through 7,007
+[01:08:27.000 --> 01:08:30.000]  because it's the longest prefix match.
+[01:08:30.000 --> 01:08:32.000]  And imagine doing that for every single prefix
+[01:08:32.000 --> 01:08:35.000]  that you have learned over time.
+[01:08:35.000 --> 01:08:37.000]  So in other words, it's not that the entire internet
+[01:08:37.000 --> 01:08:39.000]  was hosted and happened in a thing,
+[01:08:39.000 --> 01:08:41.000]  but it looked like in order to reach anywhere in the internet,
+[01:08:41.000 --> 01:08:43.000]  you have to go through 7,007.
+[01:08:43.000 --> 01:08:44.000]  Yes?
+[01:08:44.000 --> 01:08:47.000]  So why do lower prefixes get priority again?
+[01:08:47.000 --> 01:08:48.000]  Because it makes sense, right?
+[01:08:48.000 --> 01:08:50.000]  Because if you have two routes,
+[01:08:50.000 --> 01:08:58.000]  you want to always pick the most specific one.
+[01:08:58.000 --> 01:08:59.000]  Yes?
+[01:08:59.000 --> 01:09:04.000]  How long does it take relatives to forget those bogus entries?
+[01:09:04.000 --> 01:09:05.000]  Not much.
+[01:09:05.000 --> 01:09:07.000]  So when you reboot, they'll forget everything
+[01:09:07.000 --> 01:09:08.000]  and they'll relearn.
+[01:09:08.000 --> 01:09:11.000]  The problem is, when you reboot, when you come up,
+[01:09:11.000 --> 01:09:16.000]  the neighbors are going to still give you the same route.
+[01:09:16.000 --> 01:09:19.000]  So when you reboot, you hope your neighbors are also people.
+[01:09:19.000 --> 01:09:22.000]  They hope their neighbors reboot, and so on and so forth.
+[01:09:22.000 --> 01:09:26.000]  This is a problem because it's a distributed protocol,
+[01:09:26.000 --> 01:09:28.000]  and that's the issue.
+[01:09:28.000 --> 01:09:32.000]  Could you aggregate instead of disaggregate?
+[01:09:32.000 --> 01:09:34.000]  You could aggregate, but sometimes, I mean,
+[01:09:34.000 --> 01:09:36.000]  it depends on what you are trying to do.
+[01:09:36.000 --> 01:09:39.000]  When you disaggregate, the advantage that you have is that,
+[01:09:40.000 --> 01:09:44.000]  now that you know how LPMs work, longest prefix match works,
+[01:09:44.000 --> 01:09:46.000]  any time you announce a finite prefix,
+[01:09:46.000 --> 01:09:50.000]  you have control over directing how that traffic reaches you.
+[01:09:50.000 --> 01:09:52.000]  Sometimes you don't want to do that.
+[01:09:52.000 --> 01:09:54.000]  Sometimes you think that, you know what?
+[01:09:54.000 --> 01:09:55.000]  I don't really care.
+[01:09:55.000 --> 01:09:57.000]  So I'm going to disaggregate a number of prefixes in one.
+[01:09:57.000 --> 01:10:00.000]  You could if you have every one of the sub prefixes
+[01:10:00.000 --> 01:10:02.000]  that constitutes a bigger prefix.
+[01:10:02.000 --> 01:10:04.000]  Otherwise, you run into other problems, right?
+[01:10:04.000 --> 01:10:06.000]  Because then you aggregate into a larger prefix,
+[01:10:06.000 --> 01:10:08.000]  not all of which you want.
+[01:10:08.000 --> 01:10:11.000]  It also ends up consuming traffic that you don't want,
+[01:10:11.000 --> 01:10:14.000]  but you could do that.
+[01:10:14.000 --> 01:10:15.000]  This is 1997, right?
+[01:10:15.000 --> 01:10:18.000]  So I usually update these slides, but this time, I don't know.
+[01:10:18.000 --> 01:10:19.000]  This is 2008.
+[01:10:19.000 --> 01:10:22.000]  This is also a very famous incident,
+[01:10:22.000 --> 01:10:27.000]  and today, there was one recent one from India, 2022 also.
+[01:10:27.000 --> 01:10:29.000]  Governments do this again and again.
+[01:10:29.000 --> 01:10:31.000]  They never learn.
+[01:10:31.000 --> 01:10:33.000]  You know, they go to an internet provider,
+[01:10:33.000 --> 01:10:34.000]  and they say, you know what?
+[01:10:34.000 --> 01:10:37.000]  I don't want my citizens to consume YouTube traffic.
+[01:10:37.000 --> 01:10:38.000]  I don't know.
+[01:10:38.000 --> 01:10:40.000]  For whatever reason, on Netflix, I don't really care.
+[01:10:40.000 --> 01:10:42.000]  Because there was something offensive.
+[01:10:42.000 --> 01:10:45.000]  I don't want my citizens to consume that.
+[01:10:45.000 --> 01:10:48.000]  So you do, basically, you do censorship.
+[01:10:48.000 --> 01:10:51.000]  And this is one of the biggest hammers that you can take
+[01:10:51.000 --> 01:10:53.000]  in order to implement censorship, right?
+[01:10:53.000 --> 01:10:56.000]  So all hell will break loose.
+[01:10:56.000 --> 01:10:58.000]  So Pakistani governments actually ordered
+[01:10:58.000 --> 01:11:02.000]  one of the largest ISPs in their country to block YouTube.
+[01:11:02.000 --> 01:11:03.000]  What's the best way to block YouTube?
+[01:11:03.000 --> 01:11:06.000]  Basically, you remove the graphics.
+[01:11:06.000 --> 01:11:09.000]  You remove the route to that graphics.
+[01:11:09.000 --> 01:11:12.000]  So Pakistan Telecom actually added a slash 24 entry
+[01:11:12.000 --> 01:11:13.000]  in the routing table.
+[01:11:13.000 --> 01:11:14.000]  Why?
+[01:11:14.000 --> 01:11:15.000]  Because slash 24 is the smallest.
+[01:11:15.000 --> 01:11:19.000]  So if I know what is a prefix, what are the ID addresses
+[01:11:19.000 --> 01:11:23.000]  for the YouTube servers, I aggregate them into a prefix.
+[01:11:23.000 --> 01:11:25.000]  If they are larger than a slash 24,
+[01:11:25.000 --> 01:11:27.000]  I break them into a number of slash 24s,
+[01:11:27.000 --> 01:11:30.000]  and I announce that route to every router
+[01:11:30.000 --> 01:11:32.000]  or every network in my country.
+[01:11:32.000 --> 01:11:35.000]  Which means that I'm placing myself in the path
+[01:11:35.000 --> 01:11:37.000]  between my citizens and YouTube.
+[01:11:37.000 --> 01:11:38.000]  Now what can I do?
+[01:11:38.000 --> 01:11:40.000]  I can serve you a page that says you're not
+[01:11:40.000 --> 01:11:41.000]  allowed to watch YouTube.
+[01:11:41.000 --> 01:11:43.000]  But I could simply drop the traffic.
+[01:11:43.000 --> 01:11:44.000]  I could do that.
+[01:11:44.000 --> 01:11:45.000]  Or I could monitor.
+[01:11:45.000 --> 01:11:49.000]  I could create a log of who's watching YouTube in my country.
+[01:11:49.000 --> 01:11:50.000]  You could do that.
+[01:11:50.000 --> 01:11:57.000]  But again, what they did was they leaked this prefix
+[01:11:57.000 --> 01:11:59.000]  to everyone in the world.
+[01:11:59.000 --> 01:12:03.000]  Now suddenly what happened was Pakistan Telecom
+[01:12:03.000 --> 01:12:06.000]  or the ISP that leaked this slash 24,
+[01:12:06.000 --> 01:12:09.000]  it just once again became a D network
+[01:12:09.000 --> 01:12:14.000]  to go to reach YouTube.
+[01:12:14.000 --> 01:12:17.000]  They did exactly opposite of what they wanted to do.
+[01:12:17.000 --> 01:12:19.000]  But the worst thing is that, again,
+[01:12:19.000 --> 01:12:20.000]  Google was affected.
+[01:12:20.000 --> 01:12:23.000]  We lost a lot of money because of this.
+[01:12:23.000 --> 01:12:25.000]  But the main thing is that you can't handle suddenly
+[01:12:25.000 --> 01:12:27.000]  a traffic, because these are all very small ISPs.
+[01:12:28.000 --> 01:12:29.000]  Indian government did the same thing.
+[01:12:29.000 --> 01:12:31.000]  They twisted the arms of a network provider
+[01:12:31.000 --> 01:12:34.000]  and said, ah, Facebook is not complying with us.
+[01:12:34.000 --> 01:12:35.000]  You should block Facebook.
+[01:12:35.000 --> 01:12:37.000]  And the network provider was like, great.
+[01:12:37.000 --> 01:12:38.000]  Yes, I know how to do it.
+[01:12:38.000 --> 01:12:39.000]  It's very simple.
+[01:12:39.000 --> 01:12:42.000]  Create a number of slash 24 entries and do this.
+[01:12:42.000 --> 01:12:44.000]  But when you do it, you don't think.
+[01:12:44.000 --> 01:12:46.000]  Who are you announcing that route to?
+[01:12:46.000 --> 01:12:49.000]  And eventually it spread to a number of networks in India.
+[01:12:49.000 --> 01:12:51.000]  And once again, it happened.
+[01:12:51.000 --> 01:12:54.000]  This happened for a network in Bombay,
+[01:12:54.000 --> 01:12:58.000]  I think, which was similar to Google or Facebook service.
+[01:12:58.000 --> 01:13:00.000]  So anyway, virtually all YouTube traffic
+[01:13:00.000 --> 01:13:02.000]  was redirected to this particular alias.
+[01:13:02.000 --> 01:13:03.000]  And it went down.
+[01:13:03.000 --> 01:13:05.000]  They didn't have capacity.
+[01:13:05.000 --> 01:13:08.000]  This was still really old.
+[01:13:08.000 --> 01:13:12.000]  So 1997, the incident is well-documented.
+[01:13:12.000 --> 01:13:14.000]  There are a number of forums that actually
+[01:13:14.000 --> 01:13:19.000]  will give you a tour of what exactly happened in 1997.
+[01:13:19.000 --> 01:13:23.000]  They created a database called RADB.
+[01:13:23.000 --> 01:13:26.000]  Like I said, you can look up prefix hijacks and hijacks
+[01:13:26.000 --> 01:13:28.000]  or leaks, routing leaks, as they call.
+[01:13:28.000 --> 01:13:31.000]  They happen every day.
+[01:13:31.000 --> 01:13:32.000]  But they learn, of course.
+[01:13:32.000 --> 01:13:33.000]  We learn.
+[01:13:33.000 --> 01:13:34.000]  We make mistakes.
+[01:13:34.000 --> 01:13:35.000]  We learn.
+[01:13:35.000 --> 01:13:37.000]  So we created a database called Routing Assets Database.
+[01:13:37.000 --> 01:13:38.000]  It used to be called RADB.
+[01:13:38.000 --> 01:13:41.000]  Today it's called Internet Routing Industries.
+[01:13:41.000 --> 01:13:44.000]  This is very similar to what we're suggesting.
+[01:13:44.000 --> 01:13:46.000]  So people thought network administrators at least thought,
+[01:13:46.000 --> 01:13:51.000]  look, this is really not sensitive.
+[01:13:51.000 --> 01:13:55.000]  Not everyone should be able to announce every prefix.
+[01:13:55.000 --> 01:13:57.000]  And that's insane.
+[01:13:57.000 --> 01:13:58.000]  I own the prefix.
+[01:13:58.000 --> 01:14:01.000]  There must be a mechanism by which I can figure out
+[01:14:01.000 --> 01:14:05.000]  that I am indeed the only person allowed to have access.
+[01:14:05.000 --> 01:14:08.000]  BGP doesn't have a mechanism like this.
+[01:14:08.000 --> 01:14:11.000]  So what you do is you create out-of-band protocols,
+[01:14:11.000 --> 01:14:14.000]  out-of-band meaning outside of BGP.
+[01:14:14.000 --> 01:14:16.000]  You create a mechanism that allows
+[01:14:16.000 --> 01:14:19.000]  you to check who owns what.
+[01:14:19.000 --> 01:14:20.000]  And how does it help BGP?
+[01:14:20.000 --> 01:14:23.000]  Well, once again, by looking at another database
+[01:14:23.000 --> 01:14:25.000]  or some other mechanism, you can read out
+[01:14:25.000 --> 01:14:27.000]  or redo your configuration.
+[01:14:27.000 --> 01:14:30.000]  By the way, don't accept these prefixes
+[01:14:30.000 --> 01:14:31.000]  from this network.
+[01:14:31.000 --> 01:14:32.000]  It's still very manual.
+[01:14:32.000 --> 01:14:35.000]  But at least it gives you a way for you to check,
+[01:14:35.000 --> 01:14:37.000]  why am I receiving this announcement?
+[01:14:37.000 --> 01:14:39.000]  Is it even a valid one or a legitimate one?
+[01:14:39.000 --> 01:14:42.000]  OK.
+[01:14:42.000 --> 01:14:47.000]  Naturally, the question you should ask is, who owns IRR?
+[01:14:47.000 --> 01:14:51.000]  IRR registries used to be just simple files.
+[01:14:54.000 --> 01:14:57.000]  Key-value stores, another thing, were too complex for them.
+[01:14:57.000 --> 01:14:59.000]  So they said, OK, let's put it on simple files.
+[01:14:59.000 --> 01:15:01.000]  How do you make sure that every network provider can access
+[01:15:01.000 --> 01:15:02.000]  those files?
+[01:15:02.000 --> 01:15:05.000]  Let's put it on FDB.
+[01:15:05.000 --> 01:15:08.000]  How do you secure the content, the access to the FDB?
+[01:15:08.000 --> 01:15:09.000]  Let's not bother.
+[01:15:09.000 --> 01:15:11.000]  And that's pretty much what they did.
+[01:15:11.000 --> 01:15:14.000]  But of course, they have learned.
+[01:15:14.000 --> 01:15:18.000]  Once again, things have improved.
+[01:15:18.000 --> 01:15:22.000]  And then two guys from Wisconsin came along.
+[01:15:22.000 --> 01:15:25.000]  And they said, IRR is a tell-a-like here.
+[01:15:28.000 --> 01:15:31.000]  So these two folks, the gentlemen there,
+[01:15:31.000 --> 01:15:34.000]  you can look them up by their names, Antoine Capela
+[01:15:34.000 --> 01:15:35.000]  and Alex Perosoff.
+[01:15:35.000 --> 01:15:40.000]  They actually have operated a small network in Wisconsin.
+[01:15:40.000 --> 01:15:43.000]  And they thought, gee, it's so interesting.
+[01:15:43.000 --> 01:15:46.000]  Once you own a network, you get access
+[01:15:46.000 --> 01:15:49.000]  to write entries to IRR, the database.
+[01:15:49.000 --> 01:15:52.000]  And the way you write an entry into the IRR database
+[01:15:52.000 --> 01:15:54.000]  claiming that, look, I own this prefix,
+[01:15:54.000 --> 01:15:57.000]  it just requires an email.
+[01:15:57.000 --> 01:16:01.000]  And nobody checks who is sending these emails.
+[01:16:01.000 --> 01:16:03.000]  Isn't it fantastic?
+[01:16:03.000 --> 01:16:04.000]  So they did this attack.
+[01:16:04.000 --> 01:16:06.000]  This is a YouTube URL.
+[01:16:06.000 --> 01:16:07.000]  You can actually go through it.
+[01:16:07.000 --> 01:16:08.000]  This was so hilarious.
+[01:16:08.000 --> 01:16:10.000]  They did it at Defcon Live.
+[01:16:11.000 --> 01:16:15.000]  And not only did they demonstrate this attack,
+[01:16:15.000 --> 01:16:19.000]  they also said, by the way, the typical tools that you use,
+[01:16:19.000 --> 01:16:22.000]  like Tracer, to reveal the path over which your packets are
+[01:16:22.000 --> 01:16:24.000]  going, I can also hide from that.
+[01:16:24.000 --> 01:16:25.000]  Yes?
+[01:16:25.000 --> 01:16:28.000]  Do you know it's answered by actual blades,
+[01:16:28.000 --> 01:16:31.000]  an annual human process, but the app doesn't attract it?
+[01:16:31.000 --> 01:16:32.000]  Yeah.
+[01:16:32.000 --> 01:16:39.000]  Can you say, look, for instance, depending on who you are,
+[01:16:39.000 --> 01:16:45.000]  who you know, your name brings in some amount of trust.
+[01:16:45.000 --> 01:16:51.000]  And trust is a terrible thing when it comes to these protocols.
+[01:16:51.000 --> 01:16:52.000]  It's a very fun one.
+[01:16:52.000 --> 01:16:55.000]  It's a 20-minute talk, actually.
+[01:16:55.000 --> 01:16:56.000]  It's really nice.
+[01:16:56.000 --> 01:16:57.000]  You could clearly see.
+[01:16:57.000 --> 01:16:59.000]  They show you screenshots of their console.
+[01:16:59.000 --> 01:17:02.000]  And as he is talking, his friend actually
+[01:17:02.000 --> 01:17:03.000]  is trying to launch the attack.
+[01:17:03.000 --> 01:17:06.000]  It's very nice.
+[01:17:06.000 --> 01:17:07.000]  And this is what they did.
+[01:17:07.000 --> 01:17:12.000]  So what they did was, this was in 2013, so 10 years ago.
+[01:17:12.000 --> 01:17:15.000]  We still haven't changed much, but anyway.
+[01:17:15.000 --> 01:17:21.000]  So suppose there is a network C that has this prefix.
+[01:17:21.000 --> 01:17:24.000]  It looks like a slash when you do.
+[01:17:24.000 --> 01:17:27.000]  It's announcing its prefix all over the place,
+[01:17:27.000 --> 01:17:28.000]  and it looks like this, right?
+[01:17:28.000 --> 01:17:33.000]  So this is the areas that you control.
+[01:17:33.000 --> 01:17:37.000]  You could imagine you being either Anton, Kappel,
+[01:17:37.000 --> 01:17:38.000]  or Telesoft.
+[01:17:38.000 --> 01:17:41.000]  So they had a network in control.
+[01:17:41.000 --> 01:17:42.000]  So this is the key thing.
+[01:17:42.000 --> 01:17:45.000]  Once you have a network, you can pretty much do what you want.
+[01:17:45.000 --> 01:17:51.000]  Now, what did they do was the following.
+[01:17:51.000 --> 01:17:54.000]  In general, if you announce these slash when you do,
+[01:17:54.000 --> 01:17:56.000]  your route will look like this, right?
+[01:17:56.000 --> 01:17:57.000]  So that goes without saying.
+[01:17:57.000 --> 01:18:00.000]  I mean, this is basically showing, assuming everything is normal,
+[01:18:00.000 --> 01:18:01.000]  BGP will work.
+[01:18:01.000 --> 01:18:05.000]  And it looks like the paths, depending on which network accepts
+[01:18:05.000 --> 01:18:07.000]  your announcements, it looks something like this.
+[01:18:07.000 --> 01:18:09.000]  In this case, X accepts the path through Z,
+[01:18:09.000 --> 01:18:13.000]  so packets go like this and so on.
+[01:18:13.000 --> 01:18:15.000]  What they did was the following.
+[01:18:15.000 --> 01:18:20.000]  They did a sub prefix hijack, so they started announcing slash when you do these.
+[01:18:20.000 --> 01:18:22.000]  And they're very, very crafty about this.
+[01:18:22.000 --> 01:18:26.000]  They didn't announce a slash when you do willingly to every network,
+[01:18:26.000 --> 01:18:34.000]  because if you do that, maybe that prefix will go towards,
+[01:18:34.000 --> 01:18:36.000]  I don't know, an India CDN.
+[01:18:36.000 --> 01:18:38.000]  This is where the CDN is going to picture.
+[01:18:38.000 --> 01:18:40.000]  Or maybe the network scene where they'll figure out, hey,
+[01:18:40.000 --> 01:18:44.000]  someone's announcing a sub prefix for a prefix ION.
+[01:18:44.000 --> 01:18:49.000]  But they were very intelligently, what they did was they actually
+[01:18:49.000 --> 01:18:53.000]  announced it to some networks, not others.
+[01:18:53.000 --> 01:18:57.000]  So what will happen is that these networks, they'll look at this prefix
+[01:18:57.000 --> 01:18:59.000]  and then say, oh, this is the shortest path,
+[01:18:59.000 --> 01:19:04.000]  so I'm actually going to accept this route.
+[01:19:04.000 --> 01:19:10.000]  And what they did was, how do you actually prevent not all networks from accepting
+[01:19:10.000 --> 01:19:12.000]  this prefix?
+[01:19:12.000 --> 01:19:15.000]  So you can actually play with this AS path.
+[01:19:15.000 --> 01:19:20.000]  Whenever you re-announce a prefix, you're expected to prevent yourself to the AS path.
+[01:19:20.000 --> 01:19:21.000]  And this is a room.
+[01:19:21.000 --> 01:19:24.000]  You're supposed to follow that.
+[01:19:24.000 --> 01:19:26.000]  But you could actually prefix yourself multiple times.
+[01:19:26.000 --> 01:19:28.000]  Why would you do that?
+[01:19:28.000 --> 01:19:31.000]  In order to make a route less appealing to your neighbor.
+[01:19:31.000 --> 01:19:33.000]  This is also a valid event.
+[01:19:33.000 --> 01:19:35.000]  It's called AS path preventing.
+[01:19:35.000 --> 01:19:39.000]  So instead of saying the path to this prefix is ABC,
+[01:19:39.000 --> 01:19:43.000]  you could say it's AAABC.
+[01:19:43.000 --> 01:19:47.000]  So an AS path length looks like it's 4 or 5 instead of just being 3.
+[01:19:47.000 --> 01:19:49.000]  Does that make any sense?
+[01:19:49.000 --> 01:19:52.000]  A slow group of paths of A and A?
+[01:19:52.000 --> 01:19:54.000]  So think about it.
+[01:19:54.000 --> 01:19:56.000]  So I announced a prefix.
+[01:19:56.000 --> 01:20:00.000]  One to you and one to, let's say, to him.
+[01:20:00.000 --> 01:20:03.000]  When I announce to you, I say the path to that particular prefix,
+[01:20:03.000 --> 01:20:06.000]  let's say it's originated by someone called A.
+[01:20:06.000 --> 01:20:09.000]  So I say the path to the prefix is B, so B, A.
+[01:20:09.000 --> 01:20:11.000]  That's a two-half path.
+[01:20:11.000 --> 01:20:16.000]  But when I announce to him, I'm going to say it is BBB, A.
+[01:20:16.000 --> 01:20:18.000]  The idea is that if I do enough path preventing,
+[01:20:18.000 --> 01:20:20.000]  hopefully he will not accept that particular route
+[01:20:20.000 --> 01:20:24.000]  because he has shorter routes, assuming other things BBB work.
+[01:20:24.000 --> 01:20:26.000]  Is that path malformed?
+[01:20:26.000 --> 01:20:28.000]  Doesn't even make any sense for the path?
+[01:20:28.000 --> 01:20:29.000]  No, it's not malformed.
+[01:20:29.000 --> 01:20:30.000]  It is actually a valid thing.
+[01:20:30.000 --> 01:20:36.000]  AS path preventing is a very valid, legitimate engineering hack
+[01:20:36.000 --> 01:20:40.000]  because you do know that BGP ultimately looks at the path length.
+[01:20:40.000 --> 01:20:45.000]  And so sometimes in order to gain control over how long your path propagates,
+[01:20:46.000 --> 01:20:51.000]  the same AS is adjacent to your number of outputs.
+[01:20:51.000 --> 01:20:54.000]  Is that checked by BGP?
+[01:20:54.000 --> 01:20:55.000]  No, this is allowed.
+[01:20:55.000 --> 01:20:56.000]  That's what I'm saying.
+[01:20:56.000 --> 01:21:00.000]  So for instance, I know for sure that, let's say,
+[01:21:00.000 --> 01:21:04.000]  the person behind you will eventually receive my announcement.
+[01:21:04.000 --> 01:21:08.000]  But I want to make sure that they don't accept the announcement to you.
+[01:21:08.000 --> 01:21:09.000]  Now, what do I do?
+[01:21:09.000 --> 01:21:10.000]  I'm like, you know what?
+[01:21:10.000 --> 01:21:13.000]  Eventually, the announcement will go to him.
+[01:21:13.000 --> 01:21:25.000]  And I'll be like, okay, most likely he's getting a two-half answer.
+[01:21:25.000 --> 01:21:28.000]  What I'm going to do is I'm going to give you an announcement
+[01:21:28.000 --> 01:21:30.000]  that looks like it's only four halves.
+[01:21:30.000 --> 01:21:32.000]  By the time you announce it, it will become five halves.
+[01:21:32.000 --> 01:21:34.000]  So it means that you will not accept that.
+[01:21:34.000 --> 01:21:35.000]  So that makes sense to me.
+[01:21:35.000 --> 01:21:38.000]  Is there any legitimate circumstance in which you have to say,
+[01:21:38.000 --> 01:21:41.000]  AS, like, B, B, X to each other?
+[01:21:41.000 --> 01:21:43.000]  This is the legitimate circumstance.
+[01:21:49.000 --> 01:21:50.000]  This is not an attack.
+[01:21:50.000 --> 01:21:51.000]  This is a load balancing.
+[01:21:51.000 --> 01:21:56.000]  Oh, so this is something that would actually be used as not an attack as well?
+[01:21:56.000 --> 01:21:57.000]  Okay.
+[01:21:57.000 --> 01:22:00.000]  Because like I said, BGP is a policy-based protocol,
+[01:22:00.000 --> 01:22:04.000]  and you will do anything and everything to implement your horrible policies.
+[01:22:04.000 --> 01:22:14.000]  Oh, no.
+[01:22:14.000 --> 01:22:16.000]  Local preferences you can't figure out.
+[01:22:16.000 --> 01:22:20.000]  There are ways in which you can figure out what local preferences they might be using.
+[01:22:20.000 --> 01:22:24.000]  Looking at servers only allows you to see what is publicly visible
+[01:22:24.000 --> 01:22:26.000]  if you were a BGP player.
+[01:22:26.000 --> 01:22:29.000]  Local preferences are something local or independent.
+[01:22:30.000 --> 01:22:33.000]  But you could actually figure out, too, looking at servers,
+[01:22:33.000 --> 01:22:35.000]  who is doing AS part of that.
+[01:22:39.000 --> 01:22:40.000]  They are pros and cons.
+[01:22:40.000 --> 01:22:42.000]  These are all well done.
+[01:22:42.000 --> 01:22:49.000]  So anyway, what they did was they carefully sent these some perfect announcements
+[01:22:49.000 --> 01:22:54.000]  towards certain networks, and they allowed them to absorb the traffic
+[01:22:54.000 --> 01:22:55.000]  towards the intended destination.
+[01:22:55.000 --> 01:23:01.000]  So even when they want to take over or control over the traffic going to see.
+[01:23:01.000 --> 01:23:04.000]  So you send these fine-grained announcements,
+[01:23:04.000 --> 01:23:06.000]  and you attract the traffic towards you.
+[01:23:10.000 --> 01:23:19.000]  And in fact, what they did was they let the packets eventually go towards you.
+[01:23:19.000 --> 01:23:23.000]  But in between, what you could do is you could basically snip the traffic.
+[01:23:23.000 --> 01:23:26.000]  So if it is not fully encrypted, if it is not end-to-end encrypted,
+[01:23:26.000 --> 01:23:28.000]  you have access to what is happening.
+[01:23:28.000 --> 01:23:30.000]  You could slow down the packets if you want.
+[01:23:30.000 --> 01:23:33.000]  You could do other things.
+[01:23:33.000 --> 01:23:36.000]  But this is basically what they did, and they didn't apply it,
+[01:23:36.000 --> 01:23:38.000]  which was really interesting.
+[01:23:40.000 --> 01:23:41.000]  So hijacks are common.
+[01:23:41.000 --> 01:23:46.000]  This is 2017, 2020, 2021.
+[01:23:46.000 --> 01:23:52.000]  There are companies that actually monitor BGP announcements time and again,
+[01:23:52.000 --> 01:23:54.000]  and then they will say, ah, that one looks fishy.
+[01:23:54.000 --> 01:23:56.000]  So maybe it is a leak on my back.
+[01:23:58.000 --> 01:23:59.000]  This was interesting.
+[01:23:59.000 --> 01:24:02.000]  Cloudflare is leaking out of my rods.
+[01:24:02.000 --> 01:24:04.000]  Sometimes these things happen.
+[01:24:04.000 --> 01:24:05.000]  Yeah?
+[01:24:05.000 --> 01:24:08.000]  Do you know what the legality was of them hijacking the three people?
+[01:24:08.000 --> 01:24:09.000]  I don't mind.
+[01:24:09.000 --> 01:24:10.000]  I don't mind.
+[01:24:10.000 --> 01:24:11.000]  That's a good question.
+[01:24:11.000 --> 01:24:12.000]  That's a good question.
+[01:24:12.000 --> 01:24:13.000]  This isn't DEF CON.
+[01:24:13.000 --> 01:24:14.000]  I think something is off.
+[01:24:14.000 --> 01:24:16.000]  No, I fully expect that I might have to get away with it.
+[01:24:16.000 --> 01:24:20.000]  So some of these events, DEF CON,
+[01:24:20.000 --> 01:24:22.000]  the other thing that comes to mind is CCC,
+[01:24:22.000 --> 01:24:25.000]  one of the largest conferences in Europe.
+[01:24:25.000 --> 01:24:28.000]  I think it's predominantly in Germany, right?
+[01:24:28.000 --> 01:24:31.000]  And what they do is when they have these events,
+[01:24:31.000 --> 01:24:36.000]  they have a small local network that is designed to host events like this.
+[01:24:36.000 --> 01:24:38.000]  So it's a very small network.
+[01:24:38.000 --> 01:24:44.000]  It's questionable, but still, the implications are not that bad.
+[01:24:45.000 --> 01:24:49.000]  All these things are at principle of EGP.
+[01:24:49.000 --> 01:24:52.000]  So is there kind of like common hate around it?
+[01:24:52.000 --> 01:24:54.000]  What can you do?
+[01:24:54.000 --> 01:24:56.000]  Nobody likes BGP.
+[01:24:56.000 --> 01:24:57.000]  There's nothing you can do.
+[01:24:57.000 --> 01:24:59.000]  You can't change.
+[01:24:59.000 --> 01:25:02.000]  No networking researcher actually likes BGP.
+[01:25:02.000 --> 01:25:04.000]  It's a terrible one.
+[01:25:04.000 --> 01:25:05.000]  Easy to detect hijacks.
+[01:25:05.000 --> 01:25:07.000]  So there are some things to keep in mind, right?
+[01:25:07.000 --> 01:25:11.000]  It's very easy to detect hijacks of your own prefixes, obviously, right?
+[01:25:11.000 --> 01:25:14.000]  I mean, intuitively speaking, when you look at an announcement,
+[01:25:14.000 --> 01:25:18.000]  you might not be able to say whether that is someone pretending to be someone else,
+[01:25:18.000 --> 01:25:23.000]  but you would know for sure if it is your own prefix that you better know, right?
+[01:25:23.000 --> 01:25:26.000]  But much harder to detect globally.
+[01:25:26.000 --> 01:25:27.000]  So community-wide resilience helps.
+[01:25:27.000 --> 01:25:31.000]  Again, this is something that you will see in a lot of network security solutions.
+[01:25:31.000 --> 01:25:34.000]  CT logs, right?
+[01:25:34.000 --> 01:25:40.000]  Public shaming or having a database that everyone can look into and audit always helps.
+[01:25:41.000 --> 01:25:43.000]  So there are companies like BGP.
+[01:25:43.000 --> 01:25:45.000]  When this is, it's no longer there.
+[01:25:45.000 --> 01:25:49.000]  They do out-of-band monitoring of what's happening.
+[01:25:49.000 --> 01:25:50.000]  We will stop here.
+[01:25:50.000 --> 01:25:55.000]  We can move with one particular security solution.

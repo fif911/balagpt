@@ -1,0 +1,880 @@
+But on Friday, I cannot be here, so Bala is going to take over and do the 
+second part of denial of service attacks. The reason for that is that, as you 
+probably heard, we've had elections in this country, and I'm a member of the 
+electoral council, so I have to finalize the election results, however much 
+they may pain me this year. So that means that I'm going to make a start with 
+denial of service attacks, and Bala is going to do the second part of it. I 
+think he also wants to continue with BGP at some point, so it's not that bad. 
+The other thing I wanted to ask is, for the assignment, who of you is 
+struggling with an M1? So there is a solution, he was struggling with the M1, 
+but there is a solution, and you're going to post this on there. For everybody 
+who is still struggling with that, that might be the way to go. Alright, that's 
+I think everything I had in terms of announcements. So denial of service 
+attacks, so everybody knows what they are, it's nothing too complicated, you 
+have a client, a user, and a server, and what you're trying to do is make some 
+victim, the server for instance, unavailable because of actions that you 
+execute on the network. So either it becomes really slow, or it simply doesn't 
+respond anymore at all. So these are the three components that we're interested 
+in, the user, the network, and the server. Okay, and what can we do in all of 
+these cases? For the user, but actually also for the server to some extent, we 
+can overwhelm the CPU capabilities, so some of the resources that are 
+available, or memories sometimes, can be overwhelmed to do a denial of service 
+attack. On the network, we typically try to exhaust the bandwidth, and on the 
+server side, well we simply use all of the resources that are available, 
+whatever those resources are, right, that could be memory, CPU, or lots of 
+other things. Now, what we're going to focus on first is traditional denial of 
+service attacks, which are mostly focusing on the server, or the links towards 
+the server. And denial of service attacks have been quite successful in the 
+past, right, so they're relatively cheap to launch, and until quite recently, 
+they were impressive if they went above a few gigabits per second, right, so 
+until say 2012 or so, this was impressive for a denial of service attack. So a 
+few tens of gigabits per second, that was quite impressive. Then we saw an 
+acceleration, so some new developments, some new techniques came around, and in 
+2014, we reached something that was more or less staggering at the time, 330 
+gigabits per second, which by now is peanuts compared to what we have seen. So 
+Google reports that some of the denial of service attacks that they've seen 
+easily topped several terabits per second. That's really huge amounts of 
+traffic, right, and that's just in terms of bits per second, right, terabits 
+per second, that's a lot, but also if you look at the number of packets per 
+second that are generated, right, so that's 650 megapackets per second. That is 
+even for providers such as Google and Akamai and Cloudflare, all of these large 
+organizations that will help you defend against denial of service attacks, 
+that's a lot of traffic, that really is a lot of traffic. So I don't want to go 
+through all of these numbers, but 2.5 terabits per second, that is a staggering 
+number. That was in 2017, by the way, so that's long ago already, and the 690 
+megapackets per second was in 2020, and that was from an IoT botnet, and we're 
+going to talk about IoT botnets today also. But let's start with really old 
+school denial of service attacks, and when I say old school, really long ago, 
+right, so this was a long time ago, where again we are using IP fragmentation. 
+So IP fragmentations come to the surface several times in this lecture, in this 
+course already, and now it's related to a denial of service attack. So just as 
+a reminder, we do IP fragmentation if a router discovers that the next link 
+cannot handle the packet size, the datagram size that needs to be transmitted, 
+and therefore it needs to be partitioned in smaller fragments. An IP has this 
+more fragments following flag, it has an IP datagram identifier, it has an 
+offset that helps it construct these fragments at the destination. So you 
+fragment it, lots of small little fragments, and then at the destination, at 
+the final end, you actually reconstruct the packets again. And we've already 
+seen that if there is a do not fragment flag set, you do not fragment the flag, 
+but instead you send an ICMP error message. That's not really relevant today. 
+We're just going to look at IP fragmentations itself. So IP fragmentation is 
+related to a number of header fields that I just mentioned. For instance, here 
+we have a datagram of 4000 bytes. So that means a payload of what? How long? If 
+the datagram length, the total length is 4000, it means how many bytes does it 
+carry? Not 4000 actually, because that includes the header. So the payload is 
+only 3980 bytes. There's an IP identifier, we've already used that in our side 
+channels. There's the frag flag, which indicates that there are more fragments 
+following or not. In this case, there are no more fragments following. And 
+there is the offset. Now, if this packet, 4000 bytes, reaches a router that 
+has, I don't know, Ethernet as the next link, which has a maximum packet size 
+of 1500, at least traditional Ethernet has a maximum packet size of 1500 bytes, 
+it needs to be fragmented. So it fragments it in three fragments, so that you 
+can easily reach those 4000 bytes. So the first, all of these fragments get the 
+same identifier. And the first two get a frag flag, a more fragments flag 
+following, a more fragments flag following, a more fragments following flag. 
+Set to one, and the last one simply says this is the last fragment. And then 
+the offset is a 13-bit field, so the length is 16 bits, the offset is a 13-bit 
+field, that indicates at which offset this fragment fits. Okay, so we start at 
+offset zero, that's the first fragment. Right, that's this one. And then the 
+next fragment starts at offset, wait, 185. How is that possible? Now we're 
+going to reach 4000 bytes in this way. Why is this? What's happening here? You 
+multiply it times 4. Times 8. 8. Times 8, yes. Counting multiples of 8, 
+exactly. Yeah, so there's 1480 bytes in the payload, in the data, and the 
+offset is 8 times 185. In other words, the offset field has the value 1480, so 
+we start at 1480, divided by 8. Okay, so now the receiver knows how, if it 
+receives all of the fragments, it knows how to piece all of them together. It 
+knows exactly if it has received all of the fragments, because then all the 
+holes in this datagram should be filled. Okay. So if we look at a trace root of 
+this kind of fragment compilation through the network, we'll see that, let's 
+see where do we start. Start at the bottom here. It's an echo request, and the 
+first fragment starts at offset zero. Right, so it has a length of 1480 bytes. 
+And it starts at offset zero, so it goes from offset zero up to 1479. The next 
+fragment starts at 1480 and then carries another 1480 bytes. And so on, it 
+keeps doing that until, you know, we have sent the entire datagram, which is 
+here, which starts at offset 31,080 and carries 928 bytes now. If you receive 
+all of this, you can piece it together. Right? So this is fragmentation. So one 
+of the classic denial-of-service attacks is known as the ping of death. And it 
+consisted of a single ping message, a large ping message, but a single ping 
+message, which would bring down the receiver. It would simply crash the 
+receiver. And the reason for that is that the offset of the last fragment is 
+such that if you include also the headers to that data, you go beyond the 
+maximum IP datagram size, which is 64k. Right, so 65,535 bytes. So if that 
+happens in all the implementations of almost all machines that we had in those 
+days, it would cause a buffer overflow, which would lead to a crash. So here we 
+see this happening. And this time we start at the top. So here is the first 
+fragment. It's still an ICMP echo request, so a normal ping request. So it's at 
+offset zero. And we add 1480 bytes to it every single time. But we make our 
+packet size so large that in the end we have 398 bytes starting at offset 
+65,120. And if we add those 398 bytes to that, at that offset, we arrive at 
+65,518. And if we then add also the IP header to that, so the extra 20 bytes, 
+we go beyond the maximum IP datagram size. And that would overflow the buffer 
+and would crash the machine. Is that clear why we might get a crash? 
+Interestingly, and so I'm not going to talk about this because we did not 
+further investigate this, we also don't think it's fixed. But we discovered the 
+inverse. We found a web page that can crash any browser. And we think it's 
+something like the ping of that, but it's kind of crazy. It will crash every 
+single browser that we try, from ads, the old ads, the Chrome browser, Firefox, 
+and Safari. They all crashed on this particular web page. It's a while ago, we 
+just kind of dropped that project. Okay, a classic. In a flooding attack, you 
+basically send so much traffic that you overwhelm your victim. So that could be 
+the server itself. Typically, it is the server itself. In theory, it could also 
+be the link towards the victim. Normally, you don't do this directly from your 
+own machine for multiple reasons. One of the reasons is that you become very 
+visible if you send an enormous stream of data from your machine to the victim 
+machine. But also, you need a lot of bandwidth in order to do this, especially 
+if you want to overwhelm a popular server. So what you do instead is you make 
+use of machines that you've compromised a priori. So it's a botnet of machines 
+that you control, and you use that to launch your denial-of-service attack. In 
+general, though, for these flooding attacks, the resources that you expend as 
+an attacker match exactly those used by the receiver or exceed them. But 
+they're comparable to those wasted by the victim. However, for each of these 
+nodes that are participating in the attack, the amount of resources used is 
+relatively small. You don't have to send a terabit of network traffic, terabit 
+per second of network traffic, from any of these sources. It's just a 
+collective. Now, one of the simplest and oldest forms of flooding attacks is 
+known as a SYN flooding attack, also known as a Neptune attack. The idea is 
+that you simply start a TCP connection and you don't finish it. So you start 
+your TCP connection by sending a SYN segment, a TCP SYN segment, and the victim 
+will then reply with a SYNAC. When it replies with a SYNAC, it keeps some state 
+about this connection, so that when the ACK, the third step of that three-way 
+handshake, comes in, it knows, ah, it's this connection, and these are the 
+buffers that I created for this. Now, if you double-send that third step of the 
+three-way handshake, the server is kept dangling. The state is still reserved 
+for this connection. So, this will overwhelm the server. It has lots of 
+half-open connections, and it will eventually lead to the server becoming 
+unavailable for new connections. Moreover, one of the good things about the SYN 
+flooding attack, just like you did in the Midnight at Shimomura attack, is that 
+you can spoof this easily. Because you don't need to receive the SYNAC, you can 
+just use random IP addresses and overwhelm the server with that. Because you 
+don't care, you'll never complete the third phase of the three-way handshake. 
+So, how do we solve this? I was just thinking, doesn't the server throw away 
+all the SYN that it has in its state and make place to the new ones? Well, that 
+could be one way to solve this, right? So, simply forget about all the 
+half-open TCP connections. What else can you do? There's a bunch of things on 
+the next slide. SYN cookies? Yeah, SYN cookies, we're going to talk about that. 
+That's the current way of solving it. Also, you could increase the queue. You 
+could start, indeed, forgetting all the versions, all the half-open 
+connections. But there's a risk that you actually drop legitimate connections. 
+You could try to filter from IP addresses that look dodgy. There's a number of 
+other things. So, this is what you suggest to drop some of the half-open 
+connections. Nowadays, most of the operating systems support SYN cookies. And 
+they will solve most of these problems. SYN cookie is simply a way of 
+generating an initial sequence number in a clever way that allows you to not 
+keep any state about a half-open connection. So, it's a special algorithm for 
+determining the initial sequence number. And this initial sequence number is 
+formed in, you know, it has several parts. It has five bits that are basically 
+the most significant bits of a 32-bit number. So, you do the 32-bit number, 
+which is a counter that gets increased regularly. You do that modulo 32, so 
+five bits. And that's the first part, so the first five bits of your initial 
+sequence number. The next three bits you use to encode your maximum segment 
+size. Your MSS is encoded in these three bits. This is something that you would 
+normally keep track of at the server side. So, this would be part of your 
+state. This is now encoded in the initial sequence number. So, you don't have 
+to keep track of this anymore. You can forget about the maximum segment size 
+for this connection. Because when you receive the SYN-ACK, eventually you will 
+have an acknowledgment to your initial sequence number, so you will also know 
+what the maximum segment size must have been that you agreed upon. Okay, so the 
+maximum segment size is the following three bits. And then there is an 
+additional 24 bits. So, the initial sequence number is 32 bits in total. We've 
+used five bits and three bits, so there's 24 bits left. And in that we have a 
+key hash, which contains this counter that we regularly update. And it also 
+contains the source and destination IP addresses and ports. Yep. If the maximum 
+segment size is just encoded in plain... Yep, that's just plain. Couldn't the 
+response just give you back a different maximum segment size if you're not 
+maintaining any sense of state? Yes, and you'll just have to accept that one. 
+Okay, so what that means is that you send this initial sequence number in your 
+replies, so you send a SYN-ACK in response to the SYN, and then forget about 
+the connection altogether. You don't use up any resources in your queue. This 
+is out of the way until you receive the final SYN-ACK. And the SYN-ACK will 
+contain essentially the same number, plus one, that you sent, so you have that 
+number again. So you know what the maximum segment size was, or was supposed to 
+be. And you can check whether it looks like a valid SYN cookie. You can check 
+whether the secret hash works for a recent value of our counter. So you encoded 
+the counter in those five bits. So does this work for the last value of the 
+counter that we have, the current and the last value of the counter? And only 
+if that is the case, we accept this as a legitimate connection. So we don't 
+want to have just random initial sequence numbers sent to us and accepted. We 
+still check whether it actually looks like a legitimate response to a SYN-ACK 
+that we sent. And only then we can reconstruct this state that we would need 
+for this now established connection. Some disadvantages to SYN cookies is that 
+the sequence number is not completely free. So you have a number of bits that 
+are taken up by the counter and by the maximum segment size. The other 
+disadvantage is that you have a severely limited number of values available for 
+your maximum segment size, only three bits. So you have eight values that you 
+can encode with that. And you cannot include any data in the initial SYN. But 
+other than that, it actually works fairly well. And does it also check that the 
+IP addresses and port numbers line up with the... Yeah, also, yes. So 
+everything that is in the key hash is actually checked out. Okay, so this 
+illustrates the procedure. Essentially, when you send your SYN, you forget 
+about the connection. And you send this special construct. And then you later 
+on check whether or not it matches. All right, so that's classic 
+denial-of-service attacks. We still see SYN flooding occasionally, but it's no 
+longer the most popular way of doing denial-of-service attacks. Nowadays, we 
+use other things. So what do we use nowadays? Does anyone have... For instance, 
+yes. Anything else? Still botnets, yeah, definitely still botnets. Those are 
+the two main tricks that we use for massive denial-of-service attacks. Do we 
+have other modern ways of doing denial-of-service attacks that you know of? No? 
+Oh, we'll get there. So there's some... And we're not going to spend too much 
+time on this, but there are, for instance, denial-of-service attacks that work 
+with very low volume instead of very high volume, which is what botnets and 
+amplification attacks will give you, as we shall see. But really low volume 
+with high complexity. So you're trying to... Maybe a server accepts a regular 
+expression to search through some data, right? Just provide the rights of a 
+regular expression, and the server is going to be super busy. So that is an 
+example of a complexity attack. Another kind of attack that we're going to talk 
+about is a stealthy way of doing a denial-of-service attack. Also kind of cool. 
+All right, so state-of-the-art denial-of-service attacks, and we're going to 
+start with flooding, then we're going to talk about complexity, and then we're 
+going to talk about stealth. Flooding today, as mentioned, is done by means of 
+botnets and by means of amplifiers. I'm going to talk about botnets first. So 
+let's talk about botnets. The idea is that all of the machines that we 
+compromised here, we want to have many of them. So what we're going to do is 
+find vulnerable devices, and look for the devices of which there are more than 
+any other devices, and which are also very insecure, and that means IoT 
+devices. So we're going to look for whatever is out there in terms of IP 
+cameras, refrigerators, and other devices that may be available. You could 
+also, of course, compromise laptops, but this is just a nice illustration of 
+what really large-scale attacks use. Everything after what is known as the 
+Mirai botnet has been using these IoT devices for the really large-scale 
+attacks. So we've tried to compromise all of these devices, collect lots and 
+lots of them, and then let those devices, even though they are weak devices by 
+themselves, they don't have a lot of grunt for generating traffic, 
+collectively, they will generate more than enough to overwhelm any victim. So 
+this has been in the news quite a bit. So the Mirai botnet was the first botnet 
+that compromised all of these IoT devices and used them to launch very 
+substantial attacks. And this was analyzed in many papers, and one of the 
+papers was this one from 2017, that tried to analyze what happened to Mirai, 
+how it grew, and how it was used, and how it operated. There have been a lot of 
+follow-up papers. There's also been a lot of follow-up work on top of Mirai. So 
+newer versions are called Hajime, and you have other IoT-based botnets that all 
+work on the same principle, and all work, or many of them work, on the same 
+code base, because the Mirai source code leaked, and then people started 
+adapting the Mirai source and built new and better botnets. So from the paper, 
+which I think you should all read, Mirai represents a sea change in the 
+evolutionary development of botnets. It's using all sorts of techniques to use 
+low-end devices to overwhelm even well-protected devices. It's not that new. It 
+doesn't do anything very advanced. It just manages to compromise lots and lots 
+of devices. So a short timeline. The Mirai botnet first surfaced in 2016, 
+somewhere in the beginning. Oh no, in August. And launched its first massive 
+attack around the same time for these two, around September 2016, way back. A 
+really big denial-of-service attack on, for instance, a popular blog on 
+security, Craps on Security, which was hosted initially by Akamai, I think, but 
+I'm not entirely sure. And it was taken over by another, Cloudflare, perhaps. 
+Because it was such a massive attack that they didn't want to bear the expenses 
+for handling that attack. It had 600 gigabits per second in traffic volume. 
+That really was unprecedented. We'd never seen anything like that. A massive 
+attack. And like I said, it came from thousands and thousands of these IoT 
+devices that were not very powerful. And in later reports, there was some talk 
+of more than a terabit per second. So how Mirai managed to compromise that many 
+devices, that many low-end devices, was really simple. It tried default 
+passwords on all of these devices, the IoT devices. So it had a set of no more 
+than 62 combinations of username and password. And it tried them out on the 
+devices that it encountered. And that was good enough to compromise hundreds of 
+thousands, and by some accounts, over a million devices that could be used to 
+launch your general service. And it started with some really wide-scale 
+internet scannings, trying to find out where there are devices that look like 
+IoT devices. A very simple way of scanning. And then trying out those default 
+passwords on some well-known ports. For instance, the Telnet port that we 
+talked about earlier. Port number 23, which is an old port. You won't see them 
+enabled on my laptop, on your laptop, or any general-purpose machine, your 
+phone. But on the IoT devices, many of them still had Telnet enabled. And then, 
+moreover, they had Telnet enabled with default username and password. So this 
+was something that, for instance, Bruce Schneier already warned us for. So as 
+early as 2014, there was a warning saying that, look, we're flooding the market 
+with all of these IoT devices, they're super insecure, nobody worries about the 
+security of these devices, and bad things may happen, and bad things did 
+happen. So what Mirai did was it first started scanning the entire IPv4 address 
+space, which is fairly large, but nowadays with fast scanners, you can actually 
+do this in a couple of hours. You don't need days for that, even. And the only 
+thing they did was collect enough responses with banners that looked like, oh, 
+this might be an IoT device. And if it was an IoT device, they would do a login 
+attempt using these 62 username-password pairs. And if they were successful, 
+they reported this device to the administration of Mirai, which would then lead 
+to a customized binary loaded onto this device. So depending on what CPU was 
+powering your IP camera or your fridge, you would load a different program. So 
+this custom program would be loaded on the victim, and the victim would then 
+join the pool of compromised devices and connect to a so-called C2 server, 
+command and control server. This command and control server is a server, it's 
+actually typically a collection of servers, that is used by the cybercriminal, 
+by the bad person, to send commands to the compromised devices. And typically 
+this is done via DNS, so you have some domain generation algorithm that 
+generates random-looking domain names and starts querying those domain names. 
+So you basically look for a response at a particular domain name. Now what the 
+criminals then do is, they register one of those domains, those random-looking 
+domains, and distribute commands on that domain. So other tricks are also used. 
+Sometimes it's fixed IP addresses, but IP addresses in countries that are not 
+very cooperative in shutting down criminal infrastructures. So all of these 
+things happen. But eventually you get in touch with the cybercriminal, with the 
+bot master, that will then instruct your devices, all of these devices, in one 
+go, to attack some victim. And that is exactly what happened in Mirai. Okay, so 
+how did the researchers analyze the Mirai bot app? Well, they used many sources 
+for this. So they used sources from many different organizations. So there's 
+AWS, so Amazon is there, Akamai is there, Baristotal, universities are there, 
+Google is there, a special division of Google called Google Shield, and so on. 
+They were all involved in this study, so it's a large collaborative project. 
+And they collected traces of all of these measurements, these data sources, for 
+this period, 2016-2017. And the data sources consisted of mainly three main 
+ways of detecting bad stuff on the internet. One of them is known as a network 
+telescope. What is a network telescope? Does anyone know? A network telescope 
+is simply something that listens on IP addresses that should not be used at 
+all. So IP addresses that have not been handed out to real users. So all the 
+traffic that you receive there is, by definition, suspect. So there might be an 
+occasional error, but it's more likely that it's related to a tax. For 
+instance, if you start denial of servicing a particular victim with random IP 
+addresses, that victim will respond to that random IP address. So if you have a 
+network telescope, so you have a range of IP addresses that are not supposed to 
+be used, that should not be in use, and you receive this background, this 
+backscatter traffic on those IP addresses, you know something is off. A network 
+telescope. The other source that they used was... Yeah? What do you mean 
+exactly by they are not meant to be in use? So you have basically a number of 
+IP addresses that have not been handed out to real users. So maybe ranges, 
+prefixes that aren't currently reserved or not used, you can monitor to see if 
+traffic is sent to those IP addresses. So you own them? You own them, yes. 
+Yeah, you have to own those. Yeah, because of them. Yeah, yeah. The other 
+source is honeypots. So honeypots are decoy machines that basically sit there 
+waiting to be attacked, hoping to be attacked. So you make them attractive and 
+you make them vulnerable so that the attacker or the botnet will try to infect 
+you. In this case, it was a busy box installation that pretended to be IoT 
+devices. And so it would respond favorably to the Mirai attempt to compromise 
+it. And why do you do this? Because that allows you to obtain the malicious 
+binaries that are being sent to these devices. So you can then analyze those 
+programs. Okay, good. So now we have also some of the binaries and the programs 
+that Mirai was using to analyze. And that allows us to maybe reconstruct how 
+the Mirai botnet communicates with the botmaster. So that's what was done. So 
+that's part of what we know, what we refer to as milkers. So we milk the 
+commands that come from the botmaster and try to obtain as many of them. So we 
+know how often a denial-of-service attack is launched and how the commands from 
+the server tell the bots to progress and maybe scan more and infect more 
+devices. And we do that because we are able to reverse-engineer the 
+communication protocol that was used to communicate with the 
+command-and-control server. So this is a very typical way of doing this. We did 
+this many years ago with the Zeus botnet. We reverse-engineered the 
+communication protocol that was used. It was a peer-to-peer botnet in its 
+peer-to-peer fashion. And we worked towards mapping out, crawling the 
+peer-to-peer network, trying to find out who was infected and what the commands 
+were that were being distributed. And then, by means of that, maybe see if we 
+could take it down. You mentioned that these devices are considered 
+functionally unpatchable. But the attackers are, in effect, patching them just 
+with malware. Yeah, they're downloading stuff on there. There's just no updates 
+that are sent by the manufacturer. So could the manufacturer not take the same 
+approach to hack into their own devices and patch them? Yeah, maybe they 
+should. You have to be very careful, though. Because in 2003, there was this 
+case of the Slammer worm. I think it was... Was it the Slammer? Anyway, it was 
+one of the worms. The beginning of the 2000s was the era of the big worms. So 
+self-propagating malware that would scan the internet and see if there's a port 
+open on a particular server that they would have an exploit for. So they would 
+try to fingerprint the server and say, Ah, yeah, I know this server. I can 
+infect this. Infect it, and then it would scan the rest of the internet from 
+that vantage point. And it would spread like crazy. So the Slammer worm would 
+spread to all infectable hosts on the internet, which was not that many. I 
+think it was 90,000 or so, but within 30 minutes. So it was extremely fast, 
+super fast. So the entire internet, everybody who was vulnerable was infected 
+within 30 minutes. And I'm not sure if it was with that particular worm or with 
+another worm. But what the good guys did was send, exactly as you suggest, 
+another worm into the internet that would patch all of the vulnerabilities that 
+it would find. And it turned out that the good worm generated more damage than 
+the bad worm. So you have to be super careful. Anyway, so this... Sorry, I was 
+just wondering, do big tech companies actively set up honeypots so that they 
+can be kind of at the forefront of the denial-of-service attacks? Yes, yes. And 
+that's like a very common thing now? Yeah, it's fairly common, fairly common. 
+It's not as common as it used to be, because now many of the attacks are on 
+client devices rather than server devices. So not denial-of-service attacks, 
+but if it's client devices, many of the big companies stop caring a little bit, 
+right? It's not their servers that are being attacked. The big worms attacked 
+the servers rather than the clients. It says you use the C2 milkers to receive 
+commands. Don't you also receive commands with honeypots? Only if you run the 
+software there. So if you're running the malicious software on the honeypot, 
+then you would also receive the commands. But frequently this is decoupled. And 
+why would they decouple that? Why would they not simply run the malicious 
+software on the honeypot? Because there are honeypots? Yeah. I assume you don't 
+want to be part of the body? Yeah, exactly. You would be participating in the 
+attack. So what typically happens is that you analyze the malware and defang 
+it. So that means you remove the really malicious parts and just communicate 
+with the command and control server and not do anything bad. But if they have 
+one honeypot that's part of the attack, that doesn't really matter, right? It's 
+just one. And then they can see what it's doing to its full extent. It depends 
+what you do, right? So if you're the honeypot that compromises a machine in a 
+hospital, and there have been hospitals that have gone offline because of 
+cyberattacks, it kind of puts you in an awkward situation. So what we did in 
+the past, we actually did participate in some of these denial of service 
+attacks. So we had botnets. This was many years ago. It was much more primitive 
+botnets in those days. We first engineered them and ran part of these botnets 
+ourselves. This was Dirt Jumper was one of the botnets, if I remember the name 
+correctly. And we raised them. So we did participate in communications to the 
+victim, but only once a minute or so to see if it's still up. Are you still up? 
+Is it still responding? What happens? Does the IP address change? For instance, 
+this might be a countermeasure that's taken by the victim to change the IP 
+address and are less vulnerable because the IP address that is actually being 
+attacked has no longer the IP address that's using the web server. Anyway, so 
+we participated in the attacks, but even that was a little bit on the edge 
+because you are, strictly speaking, contributing to the attack. We wanted to 
+know how often these attacks happened and who were the victims. What exactly is 
+WC2 milkers? Do they connect to the server of the attacker itself? How do they 
+get in the server? So what happens is that, so this is what we did with the 
+Game Over Zeus botnet also. We reverse engineered the communication protocol 
+that is being used. So you write your own clients for this command and control 
+server and you simply wait for the commands or, if you can, you try to elicit 
+as many commands as possible. So that's what you do. Yeah, it's a lot of fun. 
+So if you're interested in this binary malware...
+
+analysis might be very interesting to you. There's a lot of reverse engineering 
+there. And in the past, we no longer do this, but in the past, and I'm not 
+proud of this, we actually used real malware to do the reverse engineering, 
+asking the students to run real malware that we at least thought was defanged, 
+but we were not 100% sure. So we could do a good piece of malware. We never had 
+any complaints, but yeah. So we no longer do that. Um, yeah, it's a lot, it 
+makes it real. Oh, let me just wrap up the Mirai. That's probably time for a 
+break. I don't have time. Is it time for a break already? Yeah, almost time for 
+a break. Let me just wrap up the Mirai format. Okay, so what they did with all 
+of these data sources is track how well it, how fast it grew and what happened 
+to it. So here you can see the growth over time, starting on the 1st of August, 
+and then running up to, where is it? So this is the end of the first day. So 
+this is one day, this box. And you can see that it ramps up fairly quickly. So 
+within one minute, there were some 800 something devices compromised. In 10 
+minutes, some 11,000 devices compromised. And then in 24 hours, there were 
+64,000 devices compromised, which is fast, but it's not blazingly fast. It's 
+actually, you know, a moderate growth in terms of if you're talking about the 
+growth that we've seen. So it's probably because it is cautious, somewhat 
+cautious in scanning and compromise. Unlike the Slammer worm, which was really 
+out of control. It had a really poor scanning algorithm, which led to a lot of 
+traffic. So that was the main problem with these worms. In fact, the Robert 
+Morris worm, so the Morris worm, the internet worm, also had a deficient 
+scanning and targeting algorithm, which led to all of the problems connected to 
+the Morris worm. So this was the reason why people were so upset by this 
+attempt. It was simply too aggressive. Okay, anyway. So it grew, and it only, 
+in one day, we only reached this far. So it's a few tens of thousands of 
+devices, not that many. But eventually though, it grew to a fairly large number 
+of devices that were compromised, close to, you know, a few hundred thousand. 
+If you compare that to all of the other scans from all of the other botnets and 
+other traffic combined, it's, you know, as high as that. And the botnet size 
+kept growing. It went up to, you know, some people say a million, but certainly 
+several hundred thousand devices in November of 2016, which is a fairly large 
+number. Okay, and most of the scans were happening on these ports. So 23 is 
+definitely a popular one. That's a Talnet port that we see there. But also try 
+to log in over SSH and then some other products. Where did the scans come from? 
+So this is what was found with the network telescope. So you simply see where 
+does the traffic come from? Well, it came almost to, you know, half of it came 
+from these three countries, Brazil, Colombia, and Vietnam. And if you add China 
+to that, it's actually a very, very large portion of the total botnet. So 41% 
+just from Brazil, Colombia, and Vietnam. Why do you think that is? I'm sorry, I 
+have a question. About the network telescope, does it have to be like a 
+reserved IP range from where they are operating, or can it be also a normal IP 
+range? It can also be normal IP ranges, yeah. You just have to make sure that 
+you count those IP addresses carefully, but yeah, yeah, definitely. It's better 
+if it's in the normal IP range, right? Because then even if your botnet tries 
+to avoid certain IP ranges that nodes are not used, you will still see them. 
+Why these countries? Most of the default passwords in the devices. Yeah, so 
+it's a hypothesis, but it's likely that these countries have a lot of devices 
+with poor security. So maybe regulations are less strict, or who knows, just 
+more real junk on the market. I come from Brazil, I can. Ah, you can attest to 
+this. How come the China strings have so much need on their presence? Yeah, I 
+don't know. I don't know. This is AliExpress, I think, delivering out lots of 
+new boxes, but yeah. I don't know the quality. All right, so regarding the 
+default passwords and things related to devices, this is the Wall of Shame that 
+they published. So all of these devices have these really exotic passwords. 
+This is all ones, or all zeros, or one, two, three, four, five, six. It's all 
+super bad. Pass. Yeah, pass is another one. And then here's another phenomenon 
+that we see a lot. In Mirai, we saw that there are clusters of devices that are 
+separate from each other. So they all connect to the, to command and control 
+servers using a separate DNS infrastructure. So probably these are separate 
+parts, right? So maybe the botnet was, we see, at least we see that a lot in 
+botnets. They are rented out in, you know, portions. So you have a million 
+devices and I'll sell you 100,000 for a particular purpose. Whether or not 
+that's the case here, I don't know. Talking about selling, how do they monetize 
+them? I don't know. I actually don't know what Mirai made, whether they 
+actually monetized it at all, or just, you know, just really unhappy. I suppose 
+they don't infer the DNS of devices for fun. I think they attacked Minecraft 
+because it pissed them off. That's the key to DDoS. It's not enough to DDoS 
+people in Minecraft. It's really interesting. Yeah. But there are, so the Dirt 
+Jumper, for instance, that we looked at, and Tolos also, another botnet that we 
+looked at, they made money by simply selling the booter services, as it's 
+called, which is just, you know, you pay me and I'll DDoS your school so you 
+don't have to do your exams. Only by way of example, guys. Yeah. Also, the 
+other thing is that the DNS infrastructure announced itself. So it was prepared 
+long before the botnets, the bots in the botnet were actually being used. So 
+there were early signs that the devices were being gathered. All of the attacks 
+launched from Mirai were just flooding attacks, and there were different kinds 
+of flooding attacks. So there was HTTP floods, UDP floods. We still have the 
+SYN floods, the old-fashioned SYN floods in there, but lots of flooding 
+attacks, but only flooding attacks. That's all it did. Okay, so the IoT world 
+is a mess. I don't want to say too much about that. Okay, let's break now, and 
+then we'll talk about amplifiers. And for this, we collected a nice paper by a 
+former PhD student of mine. So he was here at VU many years ago. He's now a 
+professor in Germany, Christian Bosch. And he wrote this paper called 
+Amplification Hell. This was an influential paper on this topic, and it 
+describes the problem of amplification attacks. And again, there've been many 
+follow-up papers analyzing the problem, also looking at more modern 
+implementations of amplification attacks. Okay, so in this case, we're again 
+looking at flooding attacks, so lots of traffic that is being generated. But 
+the idea here is that we pretend to be somebody else contacting some server. So 
+the attacker pretends to be the victim and contacts some server in the hope of 
+generating a response that is larger than the request, significantly larger. In 
+fact, a response that amplifies the request. Okay? So in this case, the 
+resources used by the attacker are very small, because a small request will 
+then elicit a very, very large response. This is not a new idea either. So back 
+in the days, we already had an attack known as a Smurf attack. And a Smurf 
+attack was basically, and I stole this slide from Norton, illustrated here, 
+where, I stole this part of the slide from Norton, where you basically send an 
+echo request to a network with a broadcast address. So you're pretending to be 
+the victim, you're pretending to be A, B, C, D, the victim, and you're sending 
+your echo request to a local broadcast address. So the router, in this 
+particular case, sends this packet to all of these devices, because it's a 
+broadcast, and all of these devices will then do an echo reply to what they 
+think is the sender. Okay, so that means that all of these replies will end up 
+at the victim. Okay? A Smurf attack. Smurf attacks don't normally work anymore 
+in most cases. Why not? Anybody have any idea? I think you cannot send ICMP 
+messages to broadcast. That's right, you can't send, not across the network 
+anyway, so that's right, your router will filter out broadcast ICMP messages. 
+Correct. But the idea is still very much alive, this idea of reflecting of 
+other servers that will then respond to what they think is the sender. It's the 
+basis of amplification attacks. So let's have a look at amplification attacks 
+today, and most of the amplification attacks are UDP-based. Okay? The idea is 
+known as amplification, or sometimes distributed reflective denial-of-service 
+attacks. In this case, the attacker talks to a number of devices pretending to 
+be a victim, and all of these devices will then send a lot of traffic to the 
+victim. What does that mean, a lot of traffic? And what protocols would then 
+send a lot of traffic? Well, there are lots of protocols that send a lot of 
+traffic. Okay? For instance, the Simple Network Management Protocol, SNMP, will 
+send a lot of traffic. And DNS, right? You send a small request to port 53 
+looking for a name, and then the, or maybe looking for name servers, or looking 
+for some other information, and the DNS server will send a large reply to 
+whoever sent the request. So those are some of the normal network services that 
+will actually be used for amplification. Network Time Protocol, in those days, 
+was the best one, and we'll see why. There was a particular type of request 
+that you could send to an MTP server that would lead to a very, very large 
+response. All of those protocols that you see here, by the way, are UDP-based. 
+Why UDP? Well, UDP, of course, is much easier to spoof. You don't have any 
+extra requirements, you can just send a message pretending to be somebody else. 
+UDP is easy for spoofing. Now, the first five protocols that we see here are 
+all typical network protocols. Then we have some legacy protocols, such as 
+quote of the day and character generation. Not gonna say too much about that. 
+What is interesting, though, is that we also use games, or they, the authors, 
+also use games for amplification attacks, and other botnets. Other botnets. So 
+they use other botnets that were based on, in this particular case, 
+peer-to-peer communication. Some of these botnets still exist today. I think 
+Salty is still alive today, even though it's been, I think it started in 2007, 
+if I'm not mistaken. So it's a botnet that's been around forever. But these 
+botnets, they do their own thing. So they make money by transferring money from 
+your account to the criminals, or selling denial of service capabilities, or 
+dropping malware in other people's machines, whatever their way of making money 
+is. But now they are being abused by other attackers that simply use their 
+communication protocols. So they're UDP-based, so you could send a message, and 
+then the botnet, so if you had an infected machine, it would send a very large 
+reply back. It was unrelated to the botnet's activity itself. Kind of cool. So 
+how do we obtain all of these different amplifiers? So we have all of these 
+different protocols, and they all have servers that listen to requests, and we 
+want to know how many there are. How many of these DNS servers can we abuse for 
+amplification attacks? And what is their amplification, what is their DNS-based 
+attack? And how many of these DNS servers what is the amplification that they 
+offer? And the peer-to-peer services, how many are there? How many can we use? 
+Well, to find that out, we have to do one of three things. So we either have to 
+scan the network and simply see how many of these servers are available. How 
+many NTP servers can we find on the internet? NTP servers listen to a 
+particular port, so we can just scan the internet and see how many of those are 
+available. Sometimes we can't scan, but we have to crawl. For instance, if we 
+have a peer-to-peer network, we have to go to a peer and ask for who are your 
+peers, and then we go to all of those peers and ask who are your peers. So we 
+crawl the internet. Finding out all of the machines that we can reach by going 
+from one peer at a time. And we see that sometimes this is also necessary for 
+well-known network servers, such as domain name servers. We'll talk about that 
+in a minute. And sometimes we can simply query. So we query master game servers 
+to see which game servers are registered with that game server. Okay. And what 
+did they find? What did Christian find in terms of amplification that was 
+possible with all of these services? Okay, so here in this table, we see the 
+protocol. We see the number of amplifiers. We see the technique that he used to 
+find those amplifiers. And we see the time it took to get a certain number of 
+amplifiers that he could use. So let's have a look at some of these answers. In 
+this case, we're looking at DNS, authoritative name servers. So these are the 
+authoritative name servers. We cannot get authoritative name servers by simply 
+scanning the internet, looking for everything that responds to port 53. You'll 
+get a lot of name servers, but they're not necessarily the authoritative name 
+servers. There might be open results, there might be anything. So instead, if 
+you want to find out what are authoritative name servers that you can contact, 
+what you can do is simply look for a list of domain names and see what are the 
+authoritative name servers, right? Look for, I don't know, the Alexa 1 million 
+and simply contact all of the, ask for all of the NS records for all of these 
+domains. In contrast, oh, it's not a separate highlight. In contrast, the open 
+resolvers are something that we can obtain through scanning, right? It's simply 
+scan, see which DNS servers respond to my request. And then we know that if we 
+send a request there, it will resolve those requests for me. So what do we see 
+here? We see that the number of amplifiers is staggering. So by the way, this 
+was 2014. It's all about today's state in a minute. For instance, the number of 
+open resolvers, DNS open resolvers is 7.7 million. That is a huge number of 
+open resolvers to pick from. The number of NTP servers is still almost 1.5 
+million. And that is a huge number of open resolvers. Moreover, if we look at 
+the amount of time it takes to get 1,000 of these amplifiers, so 1,000, I don't 
+know, open resolvers, it takes 0.9 seconds. In fact, for all but three 
+protocols, it takes less than one minute to get 1,000 amplifiers. And 1,000 
+amplifiers is enough to launch very substantial denial-of-service attacks. It 
+takes about 1.5 minutes to get 100,000 amplifiers for DNS. This was in 2014. So 
+since then, there's been a lot of effort to try and remove some of these 
+sources of amplification. For instance, NTP servers, there are way fewer that 
+are really usable as hardware amplifiers. What do you mean by obtain? Well, so 
+if you find them, they're yours, right? So you can use them. Yeah, it's not 
+compromised or so. It's just, you know it's there, and I can use it now if I 
+want. So does it mean it takes 1.5 minutes to scan for them? Yes, that's right. 
+Not 1.5 minutes to establish some sort of connection. You don't have to, this 
+is UDP, right? So just set a connection, set a packet, and you're done, yeah. 
+Is there a reason that the table is now including a coefficient of how much 
+each protocol amplifies? Ah, we'll get to that, good point. Yes, very 
+important. But first, let's see whether things really have changed 
+substantially. Okay, unfortunately, even today, or 2022, there's still 2.6 
+million open resolvers that are available for amplification. So there's nothing 
+currently to stop you from launching an amplification denial of service attack. 
+And that's recent work by the University of Trenton. Then your question, so how 
+much do they amplify? Because that, of course, matters. If you have only 1,000 
+amplifiers, is that enough to launch a substantial denial of service attack, 
+for instance? Well, there are two measures that we want to look at. So there's 
+the bytes amplification factor, which basically says for every byte that I 
+send, how many bytes get sent towards the victim. And there's a packet 
+amplification factor that says for every packet that I send, how many packets 
+will be sent to the victim, right? And both of them are interesting for denials 
+of service attack. Do I highlight anything here? No, I don't highlight anything 
+here. Let me just do it explicitly then. If we look at, I don't know, DNS, the 
+amplification factor over all the authoritative name servers, on average, is 
+roughly 50. So for every byte that I send, roughly 50 bytes will be sent to the 
+victim. That's a great amplification factor. However, if we just look at the 
+top 50%, so the 50% with the worst amplification factor, the number goes up to 
+76. And if we look at the top 10%, although all of the authoritative name 
+servers that I collected, and we look at the 10% that is the worst or the best 
+in the eyes of the attacker, we see that the amplification factor is as high as 
+basically 100. So every byte that we send elicits 100 bytes towards the 
+attacker. This is all from the same DNS request? Yeah, it's typically a 
+specific request that you send, mainly the ones that have a large record that 
+is being sent to you. For this graph here, when you say top 50% and top 10%, 
+they're just sending the same request across the board to all of these servers? 
+Yes. What differs between what would typically differ if you're sending the 
+same request that would cause it to be, say, 20 bytes bigger? Well, so if you 
+have a large record in your DNS server there and it actually gets served by, 
+for instance, some text info, then you're getting a large response. Oh, so it's 
+a matter of, like, the ones at the top that you might not answer? Right, 
+exactly, okay. And we'll see an example of what really matters in the case of, 
+clearly the one that stands out, right? So NTP, the average amplification 
+factor, byte amplification factor for NTP, is some high, already 550 or 560 or 
+so, but if we just look at the top 1%, the amplification factor is staggering, 
+right? So it's 4,000, almost 7,000, 4,700. That's a huge amplification factor, 
+okay. Why is that? Well, we'll see that this is due to a particular command 
+that is or is not supported by your NTP server, okay? Let's see, I already 
+talked about that. Oh, and the main thing here is that we're requesting 
+statistics, as client statistics on the previous slide. Here it's very 
+specifically mentioned as monlist. Monlist is a command that you can send to an 
+NTP server, and what it will do is very helpfully send you all of the hosts 
+that have contacted it in recent times. So it will send back up to 600 hosts 
+that have contacted this NTP server. So if you implement this command and 
+you're a popular NTP server, you get a lot of data, right? You actually get a 
+lot of bytes back. So the NTP monlist command will give you all the information 
+about the hosts that have contacted us, which is also great for another reason, 
+right? Because if you're doing reconnaissance of what are the IP addresses in 
+this organization that are now infiltrating, this is also very useful, right? 
+So NTP monlist is a bad command. Would it also be useful for finding out which 
+other NTP servers might be contacting it that you could kind of alter it? I'm 
+not sure if they're also listed. That's a good question. I don't know. But if 
+you thought that was bad, there's always memcached, which by the way, should 
+not be on the internet, right? There's absolutely no reason why a memcached 
+server is available on the public internet. But many of them are. Turns out 
+that if you use those, you can launch a 1.7 terabits per second denial of 
+service attack. And again, memcached should not be available on the public 
+internet. There's no good reason for that. What does that do? So memcached, 
+it's just an in-memory database. And you send a request, it's UDP based. So you 
+send a request to your database for something really big, and you get a lot of 
+data. That's just all it does. Is 1.7 terabytes per second, is that just the 
+number of amplifiers times the dictation value? Yes. Okay. Okay. Was there 
+anything else? Yeah, I'll get to the application factor in a minute again, yes. 
+For practicality reasons, I suppose that there is not only one machine that is 
+issuing requests for the amplification. Probably not, although you can probably 
+get very far with just a single machine, right? So when you say practicality, 
+you mean in terms of the load on the requester, or whether or not it's easy to 
+stop it? No, in terms of load on the requester. Yeah, so. High load with, like, 
+you cannot send 1.1 terabits with one machine. But you don't have to send 1.7 
+terabytes. Yeah, you don't, but like, you cannot send the requests for those, 
+for the amplification with one machine. You can, with the, you know. I very 
+much doubt that it would be possible. Probably not quite that many, but the 
+amplification factor for MAP-Cache-D is, I think, 50,000. So you don't need 
+that many requests to make it really difficult for even a reasonably well. So 
+let me say, maybe a podnet with, like, a thousand pods in a. Easily, right? So 
+how many requests can you send per second on a modern machine? It's tens of 
+thousands, right? So that, you know, tens of thousands times 50,000. That 
+really is quite a lot already. Was there any analysis done on, like, if we take 
+all of these servers with server-protected amplification factor, how big those 
+real-world attacks are compared to, like, a theoretical maximum? Oh, yeah. So 
+the thing is, we don't know whether we know all of the protocols that offer 
+amplification. And we keep discovering new things, as I will show now, 
+actually. But that would be interesting, right? So how good are the bad guys 
+doing, right? So, you know, the slacking. Can we optimize them? Yeah, exactly. 
+Help the bad guys do a proper, you know, offset. Okay, so let's, yeah, there 
+was another question. Sorry. Just one last thing. BitTorrent went on the list 
+and you never got around to it? Yeah. Is it just initiating, like, tangents 
+that the client will drop, or is it actually triggering a default download of 
+the things you need? No, it's simply just asking, if I remember correctly, but 
+I have to look it up. I think it's just asking for pH. Yeah, the 
+reamplification factor is really low, so. Yeah, I think it's just that. So 
+that's the reason. It has a request queue, and so it will bring them out and 
+drop. Yeah. Okay, so this is where we are now, right? So we can launch 
+fantastic denial of service attacks with these amplification attacks. Maybe not 
+as good as theoretically possible, but they're pretty good. That's the state of 
+the art. And what we're interested in is, is this limited to UDP? So if we drop 
+support for UDP, would the problem go away? Or, paraphrased, can we do this 
+from TCP only? Now, this is not easy, right? So clearly, with some of these UDP 
+protocols, the amplification factor currently is fantastic, but can we do 
+anything with TCP? It would be difficult, right? Because if we have a user 
+here, it first needs to set up this connection to the server, and only then 
+will the server send data, actual data, to the client. Okay, so if we spoof 
+this user, then what may happen is that the server will reply to the spoofed 
+user, and the user itself will not send the final act. The best thing that can 
+happen is that the SYN act gets retransmitted. So you get a really modest 
+amplification, right? So you send one SYN, which is really small, 20 bytes TCP 
+header, plus a 20 bytes IP header, and then you get multiple SYN acts, maybe, 
+right? But that's modest. But that's modest. Anything else requires the 
+handshake to be completed, right? If there's no handshake, the server will not 
+send any data to the victim. However, that is assuming that we have an 
+end-to-end connection, that the client talks to the actual server. And 
+nowadays, this is no longer always the case. There are many so-called 
+middleboxes that are in between the client and the server. Middleboxes might be 
+NAT boxes, or, I don't know, the Great Firewall of China, right? So the 
+middleboxes that are used for censoring. So the middleboxes may potentially 
+serve as amplifiers. For instance, if we have our attacker that pretends to be 
+a victim, and it talks to a real server here, but there's a middlebox in 
+between. That middlebox will inspect the data that goes through it, and it will 
+say, this is good data, but this is bad data. Maybe it's because you're 
+censoring your citizens. They cannot access certain information. That's a very 
+common way to do this. Could also be protecting against outside threats. The 
+middlebox, in our example, serves as a sensor. Example serves as a sensor. And 
+what it will do is, if it detects something is not okay, so it has content that 
+is being censored, it will inject its own response. It will say, bad request, 
+don't look for this data. Okay, and we're making use of that. So here's the 
+scenario. The attacker, pretending to be the victim, sets up a connection to 
+the VUSAC server, in this particular case, through a middlebox, a censoring 
+middlebox. And the server will send a SYNAP to the real victim, the real user, 
+and we don't care about it. So we're not interested in that SYNAP. The next 
+thing we will do as an attacker is send data that will never be accepted by the 
+server, because it didn't come from the real victim, didn't have the right 
+sequence numbers, but it will go through the middlebox. And if we provide 
+content, so the server will drop this, but if we provide content that should be 
+censored, that is forbidden, the middlebox will look at it and decide, wait. I 
+will inject this content telling the victim that this page is blocked. So in 
+other words, my request here has led to a response. And these middleboxes, 
+these censoring middleboxes, tend to send very large pages, HTML pages that are 
+very substantial, because you need to explain exactly what these users have 
+done wrong, maybe nice images to go with it, et cetera, et cetera. And that 
+gets sent directly to the victim. But why? Why would it do this? Because the 
+middlebox should know that there is no connection established yet. The 
+middlebox is stateless. Why is it stateless? Because it wouldn't have the 
+capacity to keep track of all the state, I'm assuming. Yeah, so it's exactly 
+that for two reasons. One of them is for scale. So it has limited state or no 
+state, that's true. And one of the reasons is that there's simply too many 
+connections, and if you have to do that, it makes your middleboxes really 
+expensive, right? It becomes a really whopping big router, more powerful than 
+an actual router on the internet. You have to keep track of all the TCP 
+connections. Okay, let me just go through this. The other reason is that, it's 
+not here yet. The other reason is that besides the number of connections, you 
+don't know whether the route that is taken by the SYNAP coming from the server 
+or the other responses is exactly the same as the route that was followed by 
+the first packet. There may be another route that did not involve this 
+middlebox. So maybe the connection was established, you were just not aware of 
+it. You did not see this, because there is no guarantee that packets will 
+follow the same route through the internet. You just know that they start at 
+the start and they end at the end. Everything that happens in between that, you 
+don't know. Okay, so the middlebox cannot be sure whether or not the connection 
+has been established. So the only thing it will do is apply really simple 
+rules. So it says, if the destination port is a TCP port 443, the destination 
+IP address is that, we're gonna start monitoring everything related to this 
+connection, right? So we're gonna assume that it's a connection and we're just 
+going to monitor packets. And we're gonna see if at any point we receive a 
+packet of TCP segment that has the thin flag set, we know that we can forget 
+about it. That's all it does, right? So it will simply track, it will start 
+tracking the moment it sees the first connection and then it will start 
+filtering everything that is censored and it will forget about it whenever it 
+sees the thin flag. Okay, it's that simple. And that means that, and these are 
+the reasons. And that means that it will actually start responding, assuming 
+that this is actually over an established connection. The middlebox only 
+monitor the client that's trying to access the server. It doesn't monitor the 
+server's response. Well, depends on what kind of middlebox it is. We're now 
+assuming something like, I don't know, censoring in India or China, where there 
+is actually, you know, you're trying to prevent your citizens from accessing 
+certain content on the web. Mostly it's one way only. Yeah. In this example, 
+we're also assuming that there's no encrypted session, right? You can see the 
+client that takes the first. There could be an encrypted session, but you're 
+the attacker, right? So you're just sending it in the clear. Oh. All right, 
+you're sending the permissible content. Yeah, correct, got it, yeah. Okay. So 
+this paper describes how you can actually trigger these middleboxes and 
+weaponize them for CCP reflected attacks. And what the researchers did to 
+investigate this is, well, you have to be careful, right? So you want to find 
+out how many of these middleboxes are there that I can use, that I can launch 
+denials of service attacks with. But you want to do that ethically, right? So 
+if you're going to send, just to try this out, send from a machine in China, a 
+packet with forbidden content, right? So maybe something on, you know, anti-Xi 
+Jinping, maybe, right? So something like that, or pornography or whatever it 
+is, right? And you're spoofing an IP address from somebody in China, and it 
+gets flagged. Maybe that citizen is in trouble, right? You don't want that. So 
+what the researchers did was very carefully make sure that they only attack 
+themselves, right? So they made sure that the attacker and the victim are the 
+same IP address. That's important. And then they simply tried this out, using a 
+data set of potentially interesting paths. So the path does contain probably 
+middleboxes. And for that, there is actually a source, a quack, which contains 
+everything that we know currently or that these data collectors know regarding 
+censorship. So there's active measurements that are being done, and they 
+collect the data of everything that's being censored. So you know that, well, 
+these paths seem to have censorship. And they found a few hundred endpoints 
+that are most likely to have censoring middleboxes along the path, and they 
+simply tried those out. And then they tried to trigger these middleboxes to 
+generate packet sequences. And so the biggest part here is the part that 
+contains what we think is censored content. So what the researchers assumed was 
+censored, they had a bunch of these keywords that they used, and they sent 
+this. And then they looked at how often the censoring actually took place, and 
+what the de-amplification factor was that they obtained for this. And it's 
+interesting because some of the combinations don't make a lot of sense, right? 
+So if you send a SYN packet, which is what you would normally do, and then you 
+have an acknowledgment in this case, with a push flag also set, with the bad 
+content in there, you succeed in some 70% of the cases with an amplification 
+factor of 7.5. But it turns out that even if you don't have an acknowledgment 
+in the bad content, you still have roughly the same success rate, but with a 
+much higher amplification factor. So they apparently send more data in that 
+case. Weird stuff. If you don't send the SYN packet at all, so the middle box 
+should not be even aware that this is a connection, it's still relatively 
+successful. So 44% of the cases worked, and the amplification factor is better 
+than if you have an established connection. And if you also add a push there, 
+the amplification factor goes up even more, although we have fewer of those 
+that actually work. Okay, but what's, yeah? Just to clarify, that was 7.455, 
+not 7,465, correct? Um, no, it's a comma, yes. So it's seven, the number is 
+right next to it. Yeah, actually I think it is a thousand, yeah, you're right. 
+Yeah, okay, yeah, good point. Because the reason why I think that is that here 
+we see the amplification factor that we are able to obtain with, well, both 
+UDPs, so there's some examples of UDP, NDP 556, and there's MAMCache 51,000, so 
+this is log scale, right? Just for clarification. And the middle boxes are 
+there, right? At least some of them. It's amplification factors of over a 
+million, right? So that's why I think it probably was 7.5,000. So the 
+amplification factors are truly staggering. Okay, any questions about, yes? 
+What are the middle boxes actually sending? Presumably it would just be some 
+web page that is like this page is large, which I can't see being that big. 
+Being a million, yes, yeah, I should have mentioned this. So one of them is 
+that it simply sends a lot of data, so much more data than the request. But the 
+other thing is that sometimes there are loops, so the same content that 
+triggers the middle box passes the middle box multiple times, and that will 
+actually show, that's maybe poor configurations or whatever it is that they do 
+there, but because of that, so there's looping involved, that triggers these 
+enormous amounts of responses. The packet continues on its way past the middle 
+box? So probably the middle box pushes it off to some other server, and then 
+that server sends back a reply that will eventually also be going through the 
+middle box again, and maybe that reply also contains the sense of contact. So 
+that will actually trigger the, have a look at the paper, the paper describes 
+it in some more detail, what they surmised was the case, and it has to do with 
+looping. All right, do we still have a few minutes? Yes, because the other 
+things are relatively quick. There's two things that we still wanna discuss, 
+that's complexity attacks and stealth attacks. And complexity attacks, I 
+already mentioned this, what we do in general in denial of service attacks is 
+use up some of the resources along the way or at the destination. Okay, but can 
+we also do this in general? And that's where we get algorithmic complexity 
+attacks. And the interesting thing there is that they're very difficult to 
+detect, because you have low volume stream of requests that lead to a lot of 
+load on the server. A lot of load on the server. It's a worst case scenario for 
+the server that in this particular case is a catastrophic case for the server. 
+And an example of that is a black nurse and the Apache range header attack. So 
+black nurse exploited a vulnerability in a firewall, and it simply used a lot 
+of CPU cycles for certain ICMP messages. And the Apache range header attack, 
+similarly for particular headers in Apache. So that's really low volume attacks 
+that lead to a lot of processing on the server side. Like I said, regular 
+expressions are another example where people have shown that some servers are 
+super vulnerable to expensive regular expressions. The last thing I wanna 
+discuss before we go home. Oh wait, that clock is not working. That clock is 
+not good. Are we late yet? Oh shit, okay. Ah, okay, I'll talk to you then. 
+Sorry.

@@ -1,0 +1,1283 @@
+--------------------------------------------------------------------------------
+
+Part 01
+
+--------------------------------------------------------------------------------
+
+is spoofing at the link layer to make sure
+that you as an attacker receive all the traffic
+from all the people that are hopelessly attacked,
+was never going to spark spoofing, right?
+So we use this adverse resolution for the tool
+to obtain all of the traffic by pretending to be
+a host that we're not.
+And then if we could disturbly,
+we could make ourselves a complete man in a minute.
+We also looked a little bit at a very simple IP-based spoofing.
+For instance, spoofing and some, you know,
+packets that were, you know, at the level of DNS replies
+where we pretend to be a domain that we were not.
+All super basic stuff.
+I would talk about DNS-based attacking much more detail
+in a later lecture.
+So that's something that we're, you know,
+we started scratching the surface there,
+but the real attacks are yet to come.
+But before we do that,
+I really want to talk about a much more complicated protocol
+to spoof or to hijack both of them are difficult.
+So that's TCP.
+And why is this so much more difficult than in the case
+of UDP or IP?
+Anybody want to take any yes?
+It's stable.
+It's stateful.
+And if you want to hijack the connection,
+if you want to spoof, you know,
+some packet coming from a particular host,
+you can send that to the server
+and then the server is going to reply to somebody else, right?
+So the server is going to reply to the host
+that you're trying to spoof.
+Now that's all, you know, well and good.
+Of course, also vacation in IP or UDP.
+But there's one thing that makes this much more difficult.
+Namely, the connection setup makes use
+of sequence numbers and acknowledgement numbers.
+So that's what it establishes before it begins.
+And you don't know the sequence and acknowledgement numbers.
+So the sequence numbers of both of those sorts.
+So the reply sent to somebody else
+and you really don't know what the appropriate sequence
+and acknowledgement numbers are.
+That makes it much more difficult.
+Anyway, we'll talk about TCP in some detail.
+So DTP is kind of the workhorse of the internet nowadays.
+Still most of the communication that we send
+is sent over to TCP.
+It has some really wonderful problems.
+It's connection oriented.
+So you set up a connection first,
+but then you get all sorts of wonderful things
+in exchange for that.
+You get a reliable connection.
+So we have a packet gets lost, is dropped, or is modified.
+This will be detected.
+It will be delivered in order and on top of that,
+it offers wonderful things such as flow control
+and congestion and composite difference.
+What is flow control?
+Not to be messenger, I don't know.
+What's your problem with that?
+I wonder why is that a good thing?
+What is flow control?
+No, actually, it's not the link so much.
+So it's the switch, I promise.
+No, also not the switch.
+It's the buffer on the receiver side.
+The receiver side, yeah.
+So if your receiver cannot keep up,
+you don't want to swamp the receiver with too much data.
+So DTP makes sure that you control the flow of data
+that is sent to the receiver,
+such that it keeps base with the processing speed
+of the receiver.
+Wonderful scheme where you advertise windows.
+Anyway, what about congestion control?
+That is actually all about making sure
+that there is not too much traffic on the links
+in between you and the receiver.
+If there is too much traffic on the links in between you
+and the receiver, you don't notice this directly,
+at least not in all the DTP protocols,
+not in the traditional DTP protocols,
+but you notice it indirectly by packet loss.
+Your packets don't arrive,
+or they take a very, very long time to arrive,
+and then you as a sender decide,
+something must be wrong.
+I've got to do something about this.
+Maybe I should stop sending someone,
+show you scale back.
+Wonderful stuff.
+It's also fairly complicated compared
+to the other protocols that we looked at IP
+and also Unity.
+Now let's talk about the reliability
+and about those sequence number,
+because sequence number,
+because that is at the center
+of many of the things that TCP is trying to do,
+including congestion control, for instance.
+So we detect that the packets has been lost
+because of sequence number or acknowledgement numbers
+not coming in, for instance,
+or duplicate acknowledgments coming in.
+All sorts of things that are built on those acknowledgments.
+And most importantly, it implements reliability,
+reliable transfer by means of acknowledgement.
+So whenever you send bytes from one side to another,
+here we are.
+When you send bytes,
+there should be an acknowledgement saying
+I've received all of those bytes, right?
+So bytes up to and including
+and present 89, and now I'm ready for byte number 90.
+Okay, if that acknowledgement has lost,
+these speeds don't define out.
+Maybe in the simplest days after a timeout,
+and it will simply re-transmit the bytes
+that it sent to review.
+So clearly those sequence numbers are important
+for the reliable, and it goes both ways.
+It's a data transfer, it's a bi-directional connection.
+So somehow TCP must agree
+upon the initial sequence numbers.
+They don't start at zero, okay?
+So they start at some random number
+that is somewhere in the space of zero
+and to the power of 32.
+And the initial sequence numbers are agreed upon
+during the connection setup.
+So whenever you want to set up a TCP connection,
+and I, this is my cursor,
+you send the so-called TCP-SIN segment, right?
+So this is a normal TCP segment
+with one particular plus flag to set the SIN flag.
+Okay, and in that first packet,
+where the SIN flag is set,
+you indicate what your initial sequence number
+will be for this connection.
+And the server replies also with a SIN packet,
+the SIN flag is set, and the acknowledgement flag is set.
+So the first segment that you set,
+the acknowledgement flag was not set because you're not
+diagnosing anything, you're initiating the connection.
+In the reply from the server,
+both the SIN and the ACK flag are both set, okay?
+It's a SIN app.
+And the server indicates what its initial sequence number
+is going to be.
+And as an acknowledgement number, it uses your number,
+your sequence number, your sequence number plus one.
+Okay, so it basically indicates,
+I am ready for what X plus one
+and however many you want to send to.
+And finally, the three-way handshake TCP handshake,
+I'm just re-tapping, I guess you all know this,
+but it may have been a while ago,
+the three-way handshake finishes by you
+then sending an acknowledgement,
+so no SIN flag is set, just a regular acknowledgement
+where you indicate a sequence number Y plus one
+and an acknowledgement number X plus one.
+Is that the video we're on?
+I don't know.
+Yeah, that's the video we're on.
+Yeah, so it should be an acknowledgement equals Y plus one
+and a sequence number is equals X plus one.
+Okay, so now both of you are aware of,
+you know, what sequence numbers to use
+for this connection and we're over in this third packet,
+you can already send data.
+This is the first packet where you're allowed to send data.
+You don't have to do it,
+and if you do a TCP dump in practice,
+you will often see in real implementations
+that this is also an empty packet
+and it's immediately followed by a fourth packet
+that actually carries the data.
+But you can send the data already in this one, yes?
+Synchronize.
+Synchronize.
+Synchronize.
+Synchronize.
+Synchronize.
+Synchronize is the initial sequence number.
+R C V D, sorry, R C V D, C R C V D.
+Receive, so these are the states.
+What we see on this on this side,
+we initially start in a closed state
+and we send the same packet to a server
+that is in the listen state.
+When it receives the synth packet,
+it transfers to the syn received state.
+Sent to synak back, which means that,
+you know, we've transferred to the syn sent state.
+We've now reached the established state.
+As soon as we receive the synak,
+we are in established state
+and whenever the receiver receives our reply,
+it's also in the established state.
+Basic DC.
+And like I said, this one may contain data already.
+Now these sequence numbers are transferred
+in the TCP header, right?
+So we have a TCP header that contains a bunch of things,
+the board numbers that we want to use,
+source port, destination port,
+sequence number, acknowledgement number.
+Then we have all the flags here,
+there's a receiver window that we advertise.
+Then we're not going to look at in this particular case
+and there's a checksum and there's some other things
+that we're not going to look at.
+The important things though are port numbers,
+sequence numbers, acknowledgement numbers
+and some of the flags.
+Those are all things that we'll be able to do.
+So the sequence numbers just to reiterate this,
+they specify the position in a byte stream.
+TCP is a sensor, a stream of bytes.
+So if you want to send 20 bytes,
+you basically indicate if this is the first 25 set.
+You're sending the initial sequence number
+is the first byte that you're going to send
+and then you simply send 20 bytes and you add that, right?
+So then the receiver acknowledges those 20 bytes.
+If you've received more than 20 bytes,
+so you should receive two packets already,
+two times 20 bytes.
+The receiver may acknowledge both of those at the same time
+and will simply acknowledge the last byte it received,
+in sequence.
+So just to be clear, the sequence number 13423
+means that we contain the bytes in the byte stream
+from byte number 13423 to whatever,
+number of bytes we add to that, right?
+So however many bytes are in this packet.
+So there are 10 bytes in this packet
+that will be 134, up to and including 13422.
+Where does it specify the length of the data?
+So you have an IP header with as a length
+and you have TCP header length, right?
+So that's, you can infer the length of the data.
+Yeah, good question.
+So the accomplishment number basically indicates
+if we have an accomplishment number of 16754,
+I have received all the bytes up to
+and including 16753 and I'm now ready for 16754.
+So what is it?
+There's like one missing in between,
+one on the left-hand of that.
+Yeah, it will not acknowledge the last packet it received,
+it will simply acknowledge again,
+the data that it has received.
+So that is fully received?
+Yeah, exactly, fully received all the bytes
+from the beginning up to that point.
+Yeah, and it will keep some of the bytes
+that it received early, right?
+So there's a gap there, it will keep it in a buffer.
+I think that's the next slide, probably.
+Yes, okay, so it uses Windows, receiver Windows
+and sender Windows.
+So the sender window on the left is simply
+the bytes that you're allowed to send before you have to wait
+for the acknowledgments to trickle in.
+So you can send an entire sender's window of data
+before you have to wait for acknowledgments.
+So this may be multiple packets, perhaps.
+And maybe you have sent a few of those already
+and you're, you know, now fill your entire window
+but you can't send anymore
+because you have to receive the accounts first.
+More importantly, perhaps,
+you also can receive a window full of data.
+And that means that even if the data
+is not exactly in sequence,
+so there is a gap, you can store that.
+You can store that as long as it's in window.
+So you have,
+you have a window from all the bytes
+from your acknowledgments number plus a window size.
+Okay, you say, you know, some kilowatts
+that you're allowed to buffer before
+you will simply not accept.
+So if anything arrives beyond this window size,
+you will not accept it anymore, right?
+So that's, we're gonna see why this is critical
+in a little bit.
+So in other words, the segment will be accepted only
+if the sequence number is between the acknowledgement number
+and the announcement number possibly.
+What about the flagship of other previous slides?
+The last equality, the inequality
+and the helocybin here as well.
+The con announcement says I'm ready for this number.
+Let's see, so it's the acknowledgement number
+I kind of think about that for a minute.
+A version of the acknowledgement of the next sequence
+that I may also be playing, right?
+Yes, so I'm ready for the next, for this part, yes,
+exactly, I guess.
+Also, I have a question.
+For the window size, is that set when the scene is set?
+No, should the window size?
+What is the sequence number?
+The sequence number is set when the scene is set, yeah.
+For your, there is the window set by the sequence number?
+The windows are set dynamically to the change
+over the course of the connection.
+So there's an initial receiver window
+that you advertise to the other side
+and then the other side also advertises
+its receiver window to you exactly like that
+and then over time that size may shrink or it may grow.
+Okay, so the sequence number says it starts here.
+Oh, no, it's not the sequence number, it's a separate field.
+So it actually advertises the receiver window explicitly.
+As if.
+Now you're trying to understand
+how the sequence number is,
+that's the start of the bits, right?
+Yeah, it's, so we basically way start counting, right?
+So let's say our sequence number is 1000.
+So the first byte that we're gonna send is byte.
+So it will have the sequence number 1000,
+but it means it's the first byte that we're gonna send, right?
+And then, you know, we send 100 bytes,
+we are sequence number of the next packet
+that we're gonna send is going to be 1100
+because we've sent 100 bytes.
+11, 11, 11, 11.
+No, it's 100 to 100, 99.
+So the next one is going to be one, 11.
+Oh, okay.
+Right.
+Okay.
+So that there's a flags just to reiterate on those.
+They convey useful information for TCP connection establishment,
+TCP connection teardown, and some other things.
+Some things that we're not going to be concerned with
+are the loss to the urgent flag and the push flag.
+Push flag simply means we're gonna see it.
+And in some TCP dump file that we're gonna look at.
+But it basically means that the other side should push this data,
+not wait for anything.
+It should be immediately pushed to the application
+as soon as possible.
+But it's not relevant for now at least.
+The other flags are important.
+So not the urgent one,
+but the same flag we've already seen,
+only used twice in a TCP connection,
+in addition to the legitimate TCP connection.
+Right?
+At the very beginning, you, as a client,
+send it in a TCP send packet,
+and the service sends the same act back.
+That's also as the send flag.
+Then there's an acknowledgement flag
+which is set in all the packets except the first one.
+Then there's a thin flag which you use to teardown
+the connection in a controlled manner.
+I'm gonna briefly look at that,
+but thin is not too interesting to us.
+And as a reset flag,
+which is a request to the other side
+to terminate this connection immediately.
+And that we will look at later.
+So if we look at a TCP dump file of a connection setup,
+we see here that it starts with the usual R communication
+who has this MAC address
+with this particular IP address.
+So we want to know this IP address,
+and it's a reply comes in and it says this MAC address.
+Next, we see that there is a packet of TCP segments
+sent from 192.168.10 and port numbers,
+source port number 1,026 to the server
+which runs at 192.168.120, port number 23.
+Does anyone know which port there is,
+by any chance, port 23.
+This will not be at the exam as well as the TCP.
+No, it's not the TCP, that's 22.
+Almost, almost right.
+It's the same?
+Nope.
+Also, FTP is 21 as it is 22.
+Tell that was the right answer,
+I don't know who came up with that, it's tell that.
+Yes, good.
+So it's a really simple direct connection
+where you can interact with a remote system.
+We don't use download so much anymore,
+but it's very good for demonstrating some of the,
+so we're going to be using it in our course
+to explain something.
+So it talks through the tell that demon
+on the server's site,
+and what it tells the tell that demon is,
+I want to set up a connection.
+So this is a SIM packet.
+It's a SIM packet, and that's the only flag I set.
+It indicates that it doesn't carry any data,
+zero bytes, but it has this sequence number.
+So it proposes this sequence number for the client's site.
+And then the server replies with a SIM and an ACK.
+It replies, this is the sequence number
+that the server will be using.
+It's again zero bytes, doesn't contain any data.
+And it acknowledges the sequence number of the client,
+possible.
+Finally, the client replies again,
+which is simply an acknowledgement
+of the sequence number proposed here, possible.
+So that is the exchange of the sequence numbers.
+Is there a reason why in this image
+on some of the servers and the last one?
+Yeah, it's the, if there is data in the connection,
+you can see the first part and the last part.
+So it's maybe for convenience.
+Yeah, are all these numbers always 32 minutes for?
+Yes, sequence numbers and acknowledgement numbers
+for IPv4 are always, and then what happens
+if a sequence number is chosen,
+that's really close to up and then.
+Yeah, it will roll over.
+This will be taken care of.
+Let's see, what else did I want to say about this?
+Oh yeah, and then the connection teared down,
+which is a lot more complicated.
+Now, even though it's a controlled way
+of tearing down connection,
+it starts with a request to finish.
+So thin flag is set, the connection is still ignomatous,
+because it's an active connection
+that it tries to teared down.
+And right after that, there is a reply
+coming from the server, there's a reply coming from the client
+that says, acknowledge that.
+And then the client also sends a finish connection
+to the server, and the server acknowledges that.
+In the meantime, while the connection is kind of
+almost torn down on the server side,
+it will still keep replying,
+acknowledging that the data is sent.
+It's a bit messy.
+You can never be 100% sure that the connection really
+was torn down that in practice
+that works quite reliably.
+We don't want to mess with the connection teared down
+too much in this list.
+In the third one, it's the second message,
+speaking of the second message.
+Yeah, it is actually,
+and so it has to do with,
+you don't know whether the acknowledgement arrives, right?
+So you also have to be sure that the server
+received your acknowledgement,
+so you want to send your Fin packet,
+and that then also gets acknowledged.
+Yeah, but I mean, the third message has the same.
+Sorry?
+From the email teared down,
+the third message has the same acknowledgement
+as the second message.
+The acknowledgement number, yes, correct.
+But it's just, you know, that message may be lost, right?
+And then you don't know if the other side
+knows that you have received the Fin packet, right?
+So it's just an extra precaution
+to make it more plausible than to detect this.
+It's still not sure because even on the last exchange,
+you may also miss things.
+But at least you know that then the server
+has received something and you've received something,
+it's very unlikely that you're both unaware
+that the connection is torn up.
+But that's the reason, right?
+So you've got to be sure that the other side is aware,
+that you are aware that the other side
+wants to tear down the connection, and it's message.
+So this connection teared down is quite nice.
+I don't know if it's just to say about the second information, right?
+Yeah.
+OK, I'm going to talk about scanning later.
+But these are some of the things that we can use to scan.
+OK, so one of the things that we can do is,
+so the scanning is all about trying
+to find out which services are running on some remote host.
+For instance, we're attackers.
+We want to know if there's anything
+interesting to attack on the other side.
+So are you running a web server?
+And if so, which web server is it a web server for which I know
+there's a vulnerability that I can just exploit,
+using some exploit that is available in math,
+exploit, or whatever it is that you use.
+OK, so the first thing I want to know is,
+is there a web server at all?
+So what I'm going to do is scan your machines,
+scan all the ports on your machine.
+And one way to do that is simply
+setting up connections to all the ports.
+So a connect scan will simply try to set a full TSP handshake
+with every port on your machine.
+And if I'm lucky, right, so there is a reply
+on the web server's port number, 48, right?
+Or on talent, 23, or FTP, 21, right?
+So then I know that servers, these are well-known port
+numbers, so those services are very
+lively running on that machine.
+And then you start to figure out which version of a web server,
+what web server is running, or what talent that demon is running,
+and whether or not you have a vulnerability,
+but it's a good start for the reconnaissance.
+OK, the problem with setting up a full connection
+to a remote service is that this is slow and it's noisy.
+There's typically a log message generated
+when there is an actual connection to the server.
+So if this is, if you're trying to do this on a lot of machines,
+you become visible as an attacker.
+So a more advanced way of doing that
+is what is known as a half-open scan for a synced scan.
+In that case, we don't complete the TSP handshake.
+So we only send a synced packet and we wait
+to see if there's a synced app returning.
+But we never complete the third phase of the TCP handshake.
+So synced and now we simply reset it.
+Then there will be, if it was never a connection,
+it will never be a log message generated.
+OK, normally not.
+OK.
+So you never send the final hack.
+The only disadvantage there is that you can only do this
+if you have root capabilities.
+So if you're doing this from a machine
+where you don't have root capabilities,
+you need to be super user to craft these packets
+with lipknap, for instance, as we saw last time.
+If you don't have that, you cannot do this.
+And then there are all sorts of other combinations of flags
+that you can use to scan.
+So like I said, normally, you have
+to set up a connection first before you communicate
+with a server, that's TCP.
+But sometimes, that's even replies
+if you send a thin packet to a server.
+If there is a thin packet sent to a server,
+then depending on whether you get a reset packet back
+or nothing back, you know whether or not
+the server is actually running on that machine.
+It may depend on the operating system,
+but this is one of the tricks that you can use.
+And finally, what you can do is use some of the other flags
+in combinations, right?
+So maybe set all the flags to one.
+This is known as your Christmas scan
+because your packet is lit up like a Christmas tree.
+Everything is on all the bells and whistles.
+And then depending on your operating system,
+you may be able to distinguish between open ports
+and ports that are not listened to it.
+What are flags?
+The flags are, again, those fields in your TCP
+have a subset of sin flag.
+And they use it.
+And is this sort of the cosmetics can't easily
+use those things like this or this or this or this?
+Yeah, they also use that fingerprint OS.
+There are other tricks to do that also,
+but this is fun.
+Yeah.
+Do you also need to move it for a glance scan?
+Yeah, also.
+Yeah.
+You cannot craft from a user-space program normally a packet
+that says it has all the other flags.
+OK, but that was just digressing a little bit.
+I want to go back to this synchronization
+with this initial sequence number.
+Because which initial sequence number are we using?
+I said, we're not going to be using 0 for every connection,
+but we're only going to be using it.
+It has to be some more or less random number.
+And the original TCP standard said,
+you have to pick a sequence number
+and increment that every four microseconds.
+And the early BSD Unix systems would use a number that
+was incremented by 64,000 every half second,
+and also 64,000 every time a new connection was established.
+OK.
+So you've got different sequence numbers all the time.
+One of the reasons is that you don't
+want to have confusion if there's an old connection that
+is using roughly the same sequence number
+as your connection.
+And maybe it was torn down, but it wasn't entirely successful.
+The reset packet was lost.
+And then a new connection is set up.
+You may get confusion as to whether or not
+this is a live connection or a new connection.
+That was the reason, initially.
+Is the TCP standard specified any kind of starting value
+for which this TCP state machine should begin with?
+No, it's different every single time.
+It's a random value.
+I've got the initial TCP number here.
+There's no specification for what number should start with.
+No.
+No.
+In fact, it has to be as random as possible.
+That is actually the new way of thinking.
+Is there a secret to choosing this random?
+Yes.
+Very much so.
+And we're going to look at some of those.
+That's fantastic.
+We're going to go through world attacks
+to create these sequence numbers.
+So like I said, TCP spoofing attacks are difficult.
+You want to send some packets pretending to be somebody else.
+And to do that, you need to set up a TCP connection first.
+But you have to set up a TCP connection to somebody else.
+And the server will reply to that somebody else.
+And that somebody else, so the CINAC,
+will go to somebody else.
+And that somebody else will then receive the server's sequence
+number.
+So you will never see the server's sequence number.
+Go to cell, else number.
+That's a problem.
+So somehow you have to be able to find
+that initial sequence number.
+And that is the reason why you cannot have the sequence number
+always be the same, because then you would know.
+And you could predict that there's no.
+There may also be an issue with the fact
+that as an attacker, you're on the wrong different IP
+and a different port.
+So injecting data into some TCP stream
+is already limited by that.
+Yeah, absolutely.
+Yes.
+We're going to see one example of a kind of TCP
+hijacking attack that you can do on a local array
+now, everything's become much simpler, right?
+Because then you can also see the sequence numbers trivially.
+But you can send Ivan facts anyway, right?
+So as long as if you knew what the server had sent to the other party
+that you're trying to spoof, then you could reply with data
+to the server, and everything would be great again.
+But that's difficult.
+So TCP spoofing is all about that.
+We're trying to impersonate another host
+either when we're establishing a connection
+or, as we all see later, in hijacking attacks,
+when there is a connection between hosts,
+and we just want to insert data in that connection.
+Hijack, the existing connection.
+And the attack that we're going to look at first
+is an attack that was invented by Robert Takon-Morse.
+A name that should be familiar.
+Who is this?
+The Morris worm.
+The Morris worm, also, yes.
+So here's another cool thing that he did.
+And so he wrote a paper on this.
+And it was famously exploited by Kevin Mitnick.
+Kevin Mitnick was, if you remember, the quintessential bat guy
+of the hacking scene, he's one that went to jail for a long time.
+And there were lots of people asking Kevin to be free.
+So this is Robert Takon-Morse.
+This is Kevin Mitnick, who exploited it.
+And the other person in this attack
+is the administrator of the San Diego Super Computer Center,
+Chutomu, Chumumu-Morse.
+And so on a particular day, Christmas day, why Christmas day?
+It would be an active place on Christmas day.
+Why?
+It's a very obvious reason.
+Because there are problems.
+There's nobody there, right?
+So if you want to be unobserved as stealthy as possible,
+Christmas day would be a very good day.
+Now, it's so happened that on this Christmas day,
+Chumumu-Morse was indeed not present at the San Diego Super
+Computer Center.
+He was on his way with his family to holiday destination.
+And when he was there along the way,
+he got a phone call from one of his grad students, I think,
+who had observed something interesting,
+and he rushed back to see what was going on.
+And this is, this attack is kind of the stuff of legend.
+Movies have been made about this.
+Not necessarily good movies.
+But there is a movie called Take Down from Barringer,
+for instance.
+And it's based on a book that was written by Chutomu,
+Chumumu-Morse, about this incident.
+It's one of the most famous security incidents in history.
+I think now in a second after the Stuxnet attack
+on the Iranian nuclear enrichment facility.
+So in the movie, by the way, the really cool guy
+is Chumumu-Morse, who's also the writer of the book.
+So I think that's made himself look good.
+And it's a bad movie, but it's still worth speaking.
+There's also a slightly better or factual movie
+made by the hacking community of freedom downtime.
+And basically, because of this incident,
+but also because of some of the other things
+that you don't, Kevin Mitnick became this celebrity.
+People describe the most wonderful miraculous capabilities
+to him.
+He could launch nuclear strikes with whistling
+into a phone from his penitentiary.
+So that's the kind of stuff that Kevin, if you're a real hacker,
+this is what you can do apparently.
+Anyway, Kevin Mitnick dot this year.
+So he's one of the most famous hackers ever,
+not necessarily a good guy, but he was definitely famous.
+And was released from jail, I think, in 2012 or so.
+He managed to run a consultancy firm,
+a security consultant firm ever since.
+But he don't.
+Anyway, so what was this attack all about?
+It basically was Kevin Mitnick attacking
+a victim that had a special relationship
+with a particular server.
+So the victim was an axe terminal,
+wasn't doing, wasn't a very powerful machine.
+But it was once you run, the axe terminal,
+you had access to everything in the San Diego Supergreen
+field center.
+And the axe terminal, you connect to this from the outside
+world, like you had to log in, like you needed to,
+in those days, provide username and password.
+Except if you were a trusted server, all right?
+So if you log in, if you had a log in request coming
+from a trusted server, you would not
+have to provide a username and password
+across this sort of trusted server.
+So what he tried to do was impersonate this trusted server.
+So this is the idea.
+There's Mitnick on the left.
+There's a trusted server, and there's a victim.
+So Mitnick tried to log into the axe terminal
+by first taking out the server, making sure
+that the server was completely incommodicated, right?
+So it would not respond to anything anymore.
+How do you do this?
+You don't?
+Deos, right?
+So exactly, just a denial of service attack.
+Doesn't need to have to be distributed,
+but as long as you can take out the server that is sufficient.
+So the given is node A trusts node B,
+and node C wants to impersonate B with respect to A.
+Opening a T should be in action to node A
+in this particular case.
+And the way you would do that is first little node B,
+right?
+So the trusted server had to be down,
+no more communication to that.
+And for that, use a sin flood attack.
+So it's just one of the most standard denial of service
+attacks, as you can think about, sending lots and lots
+of sin packets to the server that the server would then
+be replied to with sin acts as quickly as possible,
+and then leave the server down, right?
+So that's a sin flood attack.
+If you do that, the server is stuck with lots of half open
+connections that it cannot close,
+because someone is trying to communicate with it.
+And at some point, it's going to run out of slots
+for those new connections.
+So that's exactly what it did.
+So that means that if middleick have the middleick now
+sets up a connection to the victim,
+a sin segment to the victim, the victim
+is going to reply to the server with a sin act.
+But at least that server is now not
+going to say, hey, I don't know what this is.
+I've never set up an action.
+I send a reset back, right?
+Because that would be the normal behavior.
+Because the server is too busy handling
+all those sin packets, it would simply ignore this, right?
+So no annoying reset packets.
+Like I said, the victim replies to B,
+and can admit Nick does not receive that.
+But he wants to pretend that he did,
+and somehow get the right sequence number of the server.
+So you must know the sequence number of the server,
+because he needs to send an acknowledgment number that
+matches the sequence number that the server sent
+to the trusted server.
+That's right, the victim sent to the trusted server.
+OK, how do you do this?
+Well, there's two possibilities.
+Somehow, if you're able to eavesdrop on the connection,
+if you can see packets from A to B,
+here from A to B, then you know the sequence number.
+But that's not the case, unfortunately, here.
+Because Kevin and Nick is on the other side of the internet
+and does not see the traffic between the server
+and the external.
+So the only other option that he has
+is to guess the correct sequence number.
+Let's assume that he is able to guess the sequence number
+of the server for now.
+What do you do next?
+Well, what he did was create a backdoor.
+A permanent backdoor on the machine.
+So on this machine, like I said, you
+could log in from a trusted server or from the outside
+if you were able to identify yourself
+with the right username and password.
+Using a protocol that is a little bit like what we currently
+have with SSH, except that it was more primitive and not
+encrypted, it was RSA, a remote shell.
+And remote shell used a file called the dot R host file
+on these unique spaces.
+And then, for instance, at the top you see in R host file,
+which indicates that the user, Jimmy,
+was able to log in from the host, Hamlet,
+and get access to the machine, to the actual Hamlet.
+It would have, in its files, to IP address the correspondence.
+And also host Irving could log in from that same machine
+on this action.
+Hamlet would be the trusted server.
+No, Hamlet, well, the trusted server had the advantage
+that it could log, anybody could log in from the trusted server.
+Right.
+This is like a user password.
+Yes, exactly.
+And a lot of it is Hamlet.
+It's a machine.
+It's a machine.
+If there's also a wild card, so if you have a plus,
+it means any machine or anyone.
+So if there's a plus space plus in your dot R host file,
+that means anybody can log into this machine from anywhere.
+So that is the first thing that Kevin tries to do,
+assuming that he's able to do this, right?
+If he's able to send the third packet of the TCP handshake
+in that packet, he can already send data.
+And that data can contain an echo plus plus to the dot R host file.
+Right.
+And then he has a backdoor on the machine.
+He can log into the machine from anywhere.
+Is that clear?
+OK.
+So that's what he did.
+Doesn't he first have to guess the apologies not
+record?
+Yes.
+Well, so with the sequence number of the,
+yeah, he's acknowledged the number of the sequence number
+of the server.
+So somehow, that's something we still need to cover.
+If you want to execute more command,
+always do the TCP connection that you have to start with.
+You will have to guess in the next automated number,
+because they can go back on the previous item.
+And then the things will send the data to the videos
+and not record, right?
+Yep.
+Yep.
+Correct.
+And why do you think this is no longer a problem in this case?
+I don't know why, because now he can access the external
+command connection.
+Yeah, with a new connection, exactly.
+So this is the advantage, right?
+So if you want to send multiple commands to this external
+and you want to make a look around, you want to do an LS,
+a CD, and then steal some information,
+or move to another machine, there's
+a lot of commands that you need to send,
+probably with interaction, but you
+would have to do this guessing every single time.
+Instead, put the apologies and plus plus to the ROS file,
+set up a new connection, a legitimate connection now
+to the axiom around, and then you can do whatever you want.
+So you can just reuse the question
+if you don't want any, and you just
+get the rest of them.
+As long as you don't know how many parts the server is going
+to send, right?
+Yeah, guessing that it's a static.
+And what's worse, the server is not going to send it to you.
+But then you don't see, right?
+So you type LS.
+It will not be sent to you.
+Yeah, I was only trying to write the command up,
+and then you can basically something
+that's zero length of body.
+Sure, sure, sure.
+You can do all those things you can easily do.
+You can build things.
+But if, yeah, that's definitely, you can definitely do that.
+But as long as you really care about the bytes
+that are sent up, then, you know, you
+need to have them sent to you.
+Maybe detectable by the extra amount of the back row is created.
+Is it detectable?
+Yeah.
+Yeah, I mean, in principle, yes.
+So what he did was he would have this plus plus added
+to the dot R host file.
+He would not overwrite the dot R host file.
+He would just add it.
+And then when he was done, he would remove this.
+So the dot R host file, and so he would cover his traces.
+It's an important sample.
+We would like you to do the same thing in your assignments.
+OK.
+Moving on.
+So summarizing the attack, I'm going
+to do this twice in two different slides.
+So first of all, what the attack did was, making it,
+was talk to the victim.
+They would talk to the victim.
+And try to, sorry, the first thing he did, of course,
+was make sure that the trusted server was killed.
+Then he would talk to the victim and set up a connection.
+The scene packet is set.
+The acknowledgment is not set.
+The thin packet is not set.
+And he would propose his own sequence number.
+He would talk to the victim.
+The victim would reply to the server,
+but that would not respond.
+The server could not respond.
+But of course, there is the sequence number of the server
+that the victim, that the victim needed to guess.
+And we still haven't covered that yet.
+But apparently, he was able to do this.
+So here is the final phase of the
+server is going to be used.
+So guess the acknowledgment number
+that you have to put into your package.
+That's one thing that we have to do.
+Make sure that the server cannot respond,
+so there's a denial of service attack.
+Then establish the connection, install the back door,
+and then let the server respond.
+That's what we're going to do.
+So, yeah?
+So you could use the auto-service attack
+setting on the same package to guess the sequence number.
+Well, you don't need to set up denial of service attack,
+because you do want replies to come back that way.
+Yeah, so that's exactly what he did.
+Yeah, he simply set up a lot of connections,
+trying to see if there was a pattern in the...
+But now you're ruining my entire lecture.
+Yes, yes, yes.
+Thank you.
+That's what he did, right?
+So the question was, this is Kevin Mitnick in those days.
+And Kevin guessed the sequence number.
+And the question is, is this difficult?
+Well, it's not difficult if the Unix systems were built,
+such as the VSD, sort of the original RFC standards,
+described the sequence number development,
+or the VSD Unix sequence number development
+that was on the previous slide,
+where you can find by 64,000 every,
+what is it, how?
+Two microseconds, what was it?
+Eight microseconds, I forgot.
+And every new connection, then it's really simple.
+But that's, we were already passed that.
+But is there still a pattern that you condition?
+Well, it turns out that if you look at the TCP sequence numbers
+of the old implementation, older operating systems of those days,
+it wasn't always completely random.
+And this was illustrated by Michael Salasti.
+That's, I think, in the early 2006 or so.
+I think, but I'm not entirely sure.
+When he faulted the sequence numbers development,
+so he would fault on the ZAP axis, the last sequence number,
+and sort of the difference between the last sequence number,
+and the sequence number.
+Before that, on the Y axis, he would fault the difference
+between the sequence number, and the one before that,
+and on the X axis, the one before that.
+Now, why do you do this?
+Well, it's just so that you can glance at it and say,
+this does not look random, right?
+So if it looks random, it will be scattered all over the space.
+Random, as far as 2 to the power 32 will go.
+But it will be uniformly distributed.
+Well, if we do this, some operating systems
+in the time of Michael Salasti show both success.
+This one, so this is Windows 2000 and Windows XP,
+it's not entirely random, right?
+So you can see that there is at least some patterns,
+so there seems to be a bit of a cube shape in that thing.
+It's not entirely random.
+And so this is the newer version of XP, I think.
+The original version of XP, and Windows 98,
+clearly was not random at all, it was very predictable.
+Linux was originally random.
+Free BSD was even more random.
+iOS by system, so the operating system of the routers,
+the routers, clearly very not random.
+And after it was fixed, it was no longer even
+see it as super random.
+Mac OS, very random.
+HP Unix when it still existed, probably it was a good reason
+it died.
+Anyway, so in many operating systems, there is a pattern.
+There is a pattern.
+And then it's certainly the case.
+Now I'm moving my head.
+OK.
+Right.
+Getting notifications on my screen in the wrong machine slides.
+Yes, all right.
+Yeah.
+So what Robotapp and Morris indicated was that you can
+actually guess these secrets almost.
+And then you can run this attack that's
+having a mid-necked implant.
+We're going to look at that.
+And then we're going to look at other types of attacks.
+So the Jean-Gere attack, it's slightly more advanced,
+except that it's in a local error network.
+So it's in that sense, less advanced.
+But it does a hijack, rather than a spoofing attack.
+And then there is more than attacks
+that we're going to look at also.
+When do we stand in terms of time?
+So time for a break.
+All those for a break.
+For 30 years.
+Oh, so that is definitely time for a break.
+OK.
+So let's do it right now.
+OK.
+
+--------------------------------------------------------------------------------
+
+Part 02
+
+--------------------------------------------------------------------------------
+
+
+So one of the things that Kevin Mitnick had to do, as mentioned, was guess the patterns,
+guess the sequence number that the ax terminal was using in its communication with the trusted
+server, and that Kevin Mitnick would not have drew.
+As mentioned, it stood me earlier, the reason, the way you can do that is by simply setting
+up connections to the server, many connections, set up many connections to, sorry, to the
+external, sort of many connections to the external, and simply observe the initial sequence
+number, let it get back, and see if there's a pattern, right, if there's a pattern, you
+know you can predict what the sequence number will be the next time you send this spoofed
+TCP seconds to the server, so that's how Kevin Mitnick did it, and guess what?
+This is what you have to do when you get to be Kevin Mitnick in assignment one, so this
+is exactly what you're going to be doing, be Kevin Mitnick, now there's a lot of stuff
+in that assignment, you have to craft packets, you have to make sure that the server is not
+replying anymore, you have to discern the pattern that we use in the initial sequence
+number, this is of course not super predictable, and then you have to make sure that you do
+it, but this is not the end of the TCP spoofing techniques, there's a lot of extra stuff
+that has been investigated, and we're going to look at some of the super advanced attacks
+that we've had in recent years, either in the end of this lecture or beginning of the
+next one, so we already talked about Mitnick and Robert Morris, but now we're going to
+look at another type of attack where we would really want to hijack an existing TCP connection,
+so Morris, sorry, Mitnick had it easy because he set up his own connection and just had
+to guess sequence number that he could use as a hypnosis number correctly, and then he
+could install a backdoor, and he was done, now we're going to look at what if we want
+to break in on an existing connection, and we're going to start with the easiest case,
+when we are on the same local area network, and all the problems of guessing sequence
+numbers go away because we can use an ARK spoofing attack to draw all the traffic towards us,
+look at what the sequence numbers are, and simply use those, but we still need to deal
+with some complexities as we shall see. We're going to spoof TCP segment and insert data
+in an existing stream, for instance, after a user has walked in and you want to insert
+some combinational commands, sorry, we know what you want to do, so you have to use the
+right sequence and adjust the numbers, but you can use that as your solution. So we assume
+that the attacker can sniff the traffic, and the attacker wants to break in on an existing
+connection. To do that, the attacker waits until the connection is quiet, so all of the
+transmitted data between client and server have been acknowledged, and then the attacker
+simply sends, where is my user there, simply sends some data to the server, right, with the
+appropriate sequence number, of course, the sequence number that corresponds to the client,
+what will happen if the attacker does that? So in this case, the attacker sends, what,
+about 30 bucks to the server in this case, what will happen? There will be an endorsement
+sent by the server to the client, to the client, what will happen now? The client did not send
+the data, so what? No, it doesn't reset, no, no, but it's going to confuse the crap out of the
+client, right, so if I understand, going to say, look, you know, this acknowledgement, it doesn't
+make any sense, let me tell you again what my sequence number is, and I will acknowledge your
+sequence number, what will happen now? Yeah, so what does the server come to do?
+Yeah, and what will happen now? Forever, right, indeed, this is known as an
+x-form, so if you insert data into an existing connection, an x-form will arise, what will the
+x-form finish, if ever?
+
+When the A sends the final judgement back to the server, A or a
+spoof version of a, of a, right, so you could also, if you, as an attacker, then send the
+right acknowledgement, then it will be quiet, it's one way, another, another way is, any other
+suggestions? One of them dies? One of them dies, can it, well, at least one of them is
+two minutes, it can actually, it can die, but it can also simply terminate the connection, so
+that's the other thing the attacker can do, just send a reset, right, is there anything else
+that the attacker can do? Yeah, yeah, yeah, yeah, that's correct, but we already covered that
+one, yeah, yeah, there's one other thing, so what are they exchanging, they're just
+exchanging, yep. Yeah, you mean an acknowledgement of the right data, so that the client is happy
+again, yeah, that's correct, that you could also do that, yes, but the other thing is, so all
+they're exchanging is, uh, acknowledgments without data, right, there's nothing in there, well,
+acknowledgments without data are not re-transmitted, so if any of the acknowledgments, uh, would not
+arrive, so it would be dropped, then it would all be fine again, so then the extra one dies,
+can you think of a way to make an acknowledgement, uh, deluxe? Yeah, yes, the denial of service could
+happen, yeah, that's definitely one possibility, it's not that there actually, so it's a noisy way
+of doing it, at least if you're generating a lot of traffic, you can also do it without generating
+a lot of traffic, uh, maybe use, uh, airpiece moving to redirect message to you, to you or to
+an all-existing analysis, exactly, you can now use arc spoofing again to quell the arc, add the
+extra, correct, okay, so all of this
+
+I think we'll be on the, uh, the next few slides, but we've,
+you know, well done, you should quickly clarify, so the attacker can use go-off on the thing,
+yeah, so this means when he sends the, um, the road-based sequence to the server, um, he has,
+they cover the server, um, registers that as a, that as a message from the client, and not from
+just an introduction, because it's a difference, uh, IP important from the attack. No, so will you
+send it with spoof IP and spoof, uh, forward number, so that, so that, that is the, the trick,
+yeah, okay, so as shown here, right, so you have a, uh, connection between client and server,
+and the attacker sends a spoofed, TCHB segment with the client sequence number, and some additional
+data, and this is very much the data, and then of course the, uh, the server is going to ignore
+that, and the client is going to ignore that again, and server, and client, and server, and
+we have a, a program system, so there's no way that's an actual, um, and I think I've mentioned
+all this, so this will go on forever, we'll see an example that shortly, um, this is not the
+interesting one, we'll go on forever, ever, ever, okay, as mentioned, we can quell the
+x-storm by, you know, losing the packet, making sure that the packet gets dropped, um, uh, or,
+by sending the right acknowledgments, so that the, uh, the party normal needs to, uh,
+ignore this, um, or to re, by resetting the connection, because then it's also the x-storm
+at least dies, and at least your, uh, system administrator is not going to say, what's going
+on on this network segment, because it turns into a denial of service attack if you just keep,
+you know, uh, sending lots and lots of, uh, of act packages all the time.
+
+Okay, we mentioned all of that, so this is what we're going to do, we're going to inject
+all right, so now what is the best thing for the attacker to do when you're, uh, talking to the,
+uh, uh, talking as an attacker to the server or the client, well, the best thing to do is to
+make sure that the, uh, acknowledgments, uh, the sort of sequence numbers of the, uh, the client
+and sequence number of the server are completely disconnected, right, so there's a complete
+desynchronization of the two, so that, uh, the window of the, uh, the client and the window
+of the server are so far apart that part that whatever the client sends will simply be ignored
+by the server, that would be great, right, so in other words, if we're able to desynchronize client
+and server, for instance, by sending lots and lots and lots of data, then it would all be okay,
+because whatever they send, it would not be ignored, there's no accident and it just falls
+on the floor, that would be nice, so complete synchronization happens if the, um, uh, sequence
+number of the client is much smaller than the acknowledgement number used by the server,
+or the sequence number of the client is much greater than the acknowledgement of the server
+plus the window, or doesn't even have to be much greater, but at least greater than almost
+the number of the server plus the window that the other server has because then it will simply
+be ignored, or the sequence number of the, and the sequence number of the server is much less
+than the acknowledgement of the client, or the sequence number of the server is greater than
+the acknowledgement number of the client plus the window sends, then it would simply be ignored.
+
+Like I said, why is this good for the attacker because it's good because then all the data
+that is sent by either party will be out of windows for the other part.
+Fantastic.
+So the only one that sees the traffic is the attacker that sniffs the local area network traffic.
+So sees what the client wanted to do to send and can also communicate whatever it wants with the server
+and modify.
+Complete desynchronization.
+If we do such desynchronization, we can hijack the communication channel completely and insert the reward.
+We can do this, for instance, at a very early stage.
+If we want, right?
+So that's the simplest way to do it.
+You see, as an attacker on the network, a synac, sorry, a synac response, a wheezing bar, you know, you're observing this.
+And the first thing you do, as soon as you see the synac, is send a reset packet to the server.
+If the client sends a synac and a legitimate synac, the server replies with a synac.
+You immediately reply to the server with a reset, pretending to be declined.
+Server then immediately resets this one as the connection.
+The client, on the other hand, receives the synac, so moves to the established state.
+The client thinks it actually has a legitimate TCP connection.
+At that point, you immediately set up a new connection to the server with the same source point number and the spoofed IP address of the client.
+The server with a new sequence number, completely different from that of the client.
+The server will then also come up with a new sequence number.
+So you now have a client that thinks it has established a connection and a server that also thinks it has established a connection.
+Except neither of them really has established a connection with each other.
+So again, running over this one at a time, to the attacker waits for the synac.
+That resets the connection on the server side and opens a new connection to the server with a spoofed IP address, same board number, and a different initial sequence number.
+The server, of course, will then send the synac to the original client.
+But the synac has a sequence and acknowledgement numbers that are nowhere near the client's window.
+It's completely distinct numbers.
+So the attacker will acknowledge the synac and the client will ignore the synac.
+So the attacker acknowledges the synac with a spoofed IP address and spoofed board number and the server will then also think that it is in an established state.
+And the client and the server at the end of these exchanges can no longer change data.
+Okay, so right now the client in this point and I want to send, I have a connection, I want to send something to the server, it will send directly to the server, right?
+It will be sent to the middleman.
+Well, but your assumption is still that we are on the same local area network and we have already seen in the previous lecture that we can use an arc spoofing attack to receive all the data also.
+So it will also be sent by the server, but the server will ignore it because it's out of the window.
+Is this clear? Any questions about this?
+Okay, let's see this in action and I'm not going to go through the entire thing, which you can when you're at home and look at the slides.
+I want to say that I spend this entire morning or at least a substantial part of this morning color coding the lines one at a time.
+So I'm very proud of this, I hope you're grateful, but it makes it a little easier to follow.
+So green and I hope I didn't make any mistakes.
+Green is the client, blue is the server, red is the attacker.
+Okay, so here we see that the client initially sets up the connection, right?
+It has a sequence number of eight something or other and it connects to the town that port.
+The server then replies with a synac, synac, there with the appropriate acknowledgement number that corresponds to the client.
+And both are at some point where the third packet is sent by the client in an established state and they do some stuff, right?
+And remember what they do here, client sends some data, as you can see here, the client sends some data, right?
+We don't care.
+So there is a connection between the client and the server.
+Now, however, relauns this generate attack and reset the connection on the server side.
+So we're sending a reset packet, here's the flag, the reset packet to the server, and immediately set the new synth packet to the server with the new sequence number that we want to use pretending to be the client.
+So having the IP address of the client and also the server responds with a synac and then with its new sequence number that's also going to be different.
+Okay, great.
+So that synac of the server is unacceptable to the client.
+So it will acknowledge this and then the server will acknowledge that.
+And then there's an X storm which goes on for a bit until we do something, right?
+So we as an attacker will make sure that the storm is quit.
+Okay.
+So we do this by, in this particular case, by endorsing the server synth packet with the attacker's new sequence number, so the server synth packet.
+Okay.
+Good.
+We also send the data that the, because it's a new connection to the server, we make sure that we bring it back to the state that the connection was in when we interrupted it, right, when we reset it, by resending the data of the original client.
+Okay.
+So that's six bytes that were sent.
+Okay.
+Then we have a wonderful little X storm again.
+It goes on for a bit.
+And then at some point we come to rewrites the data that is sent by both of these parties, right?
+So we receive the data coming in this case from the server, right?
+We receive data from the server, which will never arrive at the client anymore, because it doesn't have a real connection anymore with the server.
+So the only ones that see this is the attacker, right?
+So the attackers, they can see the traffic, and we can now rewrite it, make it something else completely.
+So for instance, we can use it to ask for login information again.
+And if the client provides that, we can tap that information.
+I don't want to go through this in great detail, but the entire attack is on the slides.
+And the reason I don't want to go through this in great detail is because it's a lot of traffic.
+So appreciate the effort.
+Okay.
+How we do this?
+So we de-synchronize immediately, but as soon as we can, by sending a reset packet, and then immediately setting up a new connection again.
+Later.
+Later.
+Yeah.
+Well, one reason could be asking for additional credentials, because you can pretend to be the server and in that legitimate connection that the client has set up, you ask for additional credentials.
+Clear other questions?
+Let's see where we scan the internal terminal.
+More.
+I fear that the next topic might take longer than 15 minutes.
+Because it's complicated attack.
+Now we're going to talk about a modern attack.
+So some of these things now become very difficult.
+So we have to come up with other ways to do this TCP high-tech.
+But, okay.
+So let me just run up and then we stopped a little bit earlier in those 10 minutes or so.
+There are tools that help you do at all of these attacks.
+So there's also some other attacks.
+It's a convenient way where you simply say, I want to watch certain connections 
+And then I'm going to hijack one of those connections.
+For instance, here what we do is a connection zero.
+Then we enter data into the connection to my old machine.
+So a lot of time we go.
+And we echo phosphos to do our host file.
+So it's a little bit like that.
+So Hunt is a program that allows you to do this with really simple connection if you have visibility on the local area naturally.
+So for now let's stop here and say TCP spoofing in high-tech is really difficult because we have a very large space of sequence numbers that we have to get correct.
+So we have to determine the other party's sequence numbers.
+With Kevin Midnight we were able to just look at the pattern and see if we could find something that allows us to predict the next sequence to use.
+With the filter attack we assume that we have some visibility on the sequence numbers that were used.
+We just worried about making sure that the axle was not too bad and thought about what we could do with the connections.
+For instance, ask for extra potential.
+But what we really want to do is do an off path attack regardless of the strength of the sequence number selection, the initial sequence number.
+So we really want to have, even if it's completely random, we want to be able to obtain that initial sequence number from across the Internet.
+So we're on the other side of the Internet and we still want to somehow obtain the sequence number that is used between a server and a completely different file.
+And that is what we're going to talk about next time when we talk about TCP off path attacks.
+So it's completely off path attack. It means that we don't have the geometry convenience that we can actually see the local traffic.
+We have to do it completely remotely.
+And as we shall see, we'll use side channels to determine the distance action.
+Alright, with that, out of the way, we've been to stop 10 minutes earlier this time.
